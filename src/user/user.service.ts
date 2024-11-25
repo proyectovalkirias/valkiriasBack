@@ -16,8 +16,8 @@ export class UserService {
         return userWithoutPass;
     }
 
-    async getUserById(userId: string): Promise<Partial<User>> {
-        const user = await this.userRepository.getUserById(userId);
+    async getUserById(id: string) {
+        const user = await this.userRepository.getUserById(id);
         if(!user) throw new NotFoundException('User not found');
 
         const { password, ...userWithoutPass } = user;

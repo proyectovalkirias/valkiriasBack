@@ -44,6 +44,11 @@ export class User {
     @Column({default: true})
     @ApiProperty()
     active: boolean;
+
+    @Column({default: false})
+    @ApiProperty()
+    isAdmin: boolean;
+
 }
 
 
