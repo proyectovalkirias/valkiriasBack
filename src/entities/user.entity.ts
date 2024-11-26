@@ -41,6 +41,18 @@ export class User {
     })
     password: string;
 
+    @Column({ nullable: true })
+    @ApiProperty({
+        description: 'Profile picture',
+    })
+    photo: string;
+
+    @Column({ nullable: true })
+    @ApiProperty({
+        description: 'Google Token'
+    })
+    googleAccessToken: string;
+
     @Column({default: true})
     @ApiProperty()
     active: boolean;
