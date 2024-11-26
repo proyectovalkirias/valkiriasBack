@@ -44,6 +44,18 @@ export class UserDto {
         password: string;
 
     @ApiProperty({
+        description: 'Profile picture'
+    })    
+    @IsString()
+    photo?: string;
+
+    @ApiProperty({
+        description: 'Google Token'
+    })
+    @IsString()
+    googleAccessToken?: string;
+
+    @ApiProperty({
         description: 'Password confirmation',
         example: 'Valkirias123'
     })    

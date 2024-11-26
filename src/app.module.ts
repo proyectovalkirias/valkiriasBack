@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import typeOrmConfig from './config/typeorm'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule, 
     UserModule, 
     GoogleModule,
+    PassportModule.register({ defaultStrategy: 'jwt'}),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_KEY_SECRET,
