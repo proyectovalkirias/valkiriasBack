@@ -13,6 +13,5 @@ import { UserRepository } from 'src/user/user.repository';
   ],
   providers: [GoogleService, UserRepository],
   controllers: [GoogleController]
-
 })
 export class GoogleModule {}
