@@ -3,7 +3,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { GoogleModule } from './google/google.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import typeOrmConfig from './config/typeorm'
+import typeOrmConfig from './config/typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -16,13 +16,13 @@ import { PassportModule } from '@nestjs/passport';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => 
+      useFactory: (configService: ConfigService) =>
         configService.get('typeorm'),
     }),
-    AuthModule, 
-    UserModule, 
+    AuthModule,
+    UserModule,
     GoogleModule,
-    PassportModule.register({ defaultStrategy: 'jwt'}),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_KEY_SECRET,

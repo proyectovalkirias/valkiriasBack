@@ -11,9 +11,9 @@ import { JwtModule } from '@nestjs/jwt';
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule
+    JwtModule,
   ],
   providers: [AuthService, UserRepository],
-  controllers: [AuthController]
+  controllers: [AuthController],
 })
 export class AuthModule {}
