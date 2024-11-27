@@ -10,10 +10,8 @@ import { UserRepository } from 'src/user/user.repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule,
   ],
   providers: [GoogleService, UserRepository],
-  controllers: [GoogleController],
+  controllers: [GoogleController]
 })
 export class GoogleModule {}
