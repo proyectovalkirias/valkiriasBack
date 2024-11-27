@@ -7,18 +7,18 @@ import { LoginDto } from 'src/dtos/loginDto';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService){}
+  constructor(private readonly authService: AuthService) {}
 
-    @ApiOperation({ summary: 'SignUp'})
-    @Post('signup')
-    signUp(@Body() user: UserDto){
-        return this.authService.signUp(user);
-    }
+  @ApiOperation({ summary: 'SignUp' })
+  @Post('signup')
+  signUp(@Body() user: UserDto) {
+    return this.authService.signUp(user);
+  }
 
-    @ApiOperation({ summary: 'Login'})
-    @Post('login')
-    login(@Body() login: LoginDto) {
-        const { email, password } = login;
-        return this.authService.login(email, password);
-    }
+  @ApiOperation({ summary: 'Login' })
+  @Post('login')
+  login(@Body() login: LoginDto) {
+    const { email, password } = login;
+    return this.authService.login(email, password);
+  }
 }

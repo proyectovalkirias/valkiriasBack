@@ -8,10 +8,11 @@ import { User } from 'src/entities/user.entity';
 import { UserRepository } from 'src/user/user.repository';
 
 @Module({
-  imports:[
+  imports: [
     TypeOrmModule.forFeature([User]),
   ],
   providers: [GoogleService, UserRepository],
   controllers: [GoogleController]
+
 })
 export class GoogleModule {}
