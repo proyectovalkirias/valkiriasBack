@@ -49,6 +49,14 @@ export class UserDto {
   password: string;
 
   @ApiProperty({
+    description: 'Password confirmation',
+    example: 'Valkirias123',
+  })
+  @IsNotEmpty()
+  @Validate(matchPassword, ['password'])
+  confirmPassword: string;
+  
+  @ApiProperty({
     description: 'Profile picture',
   })
   @IsString()
@@ -60,11 +68,4 @@ export class UserDto {
   @IsString()
   googleAccessToken?: string;
 
-  @ApiProperty({
-    description: 'Password confirmation',
-    example: 'Valkirias123',
-  })
-  @IsNotEmpty()
-  @Validate(matchPassword, ['password'])
-  confirmPassword: string;
 }
