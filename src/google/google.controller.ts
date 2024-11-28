@@ -26,8 +26,11 @@ export class GoogleController {
     const res = this.googleService.googleLogin(req);
     if (!res) {
       throw new NotFoundException('Google login failed');
+  
     }
-
-    return res;
+     return({
+      token: (await res).token
+    })
+   
   }
 }
