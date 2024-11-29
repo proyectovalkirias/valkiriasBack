@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import axios from 'axios';
 import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
@@ -9,27 +10,64 @@ export class GoogleService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async googleLogin(user: any) {
+  async getGoogleAuthToken(code: string) {
+    try {
+      const tokenResponse = await axios.post(
+        'https://oauth2.googleapis.com/token',
+        {
+          code,
+          client_id: process.env.GOOGLE_CLIENT_ID,
+          client_secret: process.env.GOOGLE_CLIENT_SECRET,
+          redirect_uri: process.env.GOOGLE_CALLBACK_URL,
+          grant_type: 'authorization_code',
+        }
+      );
 
-    const { email, firstname, lastname, photo } = user;
+      return tokenResponse.data.access_token;
+    } catch (error) {
+      throw new BadRequestException('Error  retrieving Google token')
+    }
+  }
 
-        // if (!user) throw new NotFoundException('No user from Google');
+  async getUserInfo(access_token: string) {
+    try {
+      const userinfo = await axios.get(
+        'https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          }
+        }
+      );
 
-    let dbuser = await this.userRepository.getUserByEmail(email);
-
-    if (!dbuser) {
-      user = await this.userRepository.createUser({
-        email,
-        firstname,
-        lastname,
-        photo,
-      
-      });
-
-      const payload = { email: dbuser.email, sub: dbuser.id };
-      const token = this.jwtService.sign(payload);
-
-      return { user: dbuser, token };
+      return userinfo.data;
+    } catch (error) {
+      console.error('Error retrieving user info from Google:', error.response?.data || error.message);
+      throw new BadRequestException('Error retrieving user info from Google')
     }
   }
 }
+
+  // async googleLogin(user: any) {
+
+  //   const { email, firstname, lastname, photo } = user;
+
+  //       // if (!user) throw new NotFoundException('No user from Google');
+
+  //   let dbuser = await this.userRepository.getUserByEmail(email);
+
+  //   if (!dbuser) {
+  //     user = await this.userRepository.createUser({
+  //       email,
+  //       firstname,
+  //       lastname,
+  //       photo,
+      
+  //     });
+
+  //     const payload = { email: dbuser.email, sub: dbuser.id };
+  //     const token = this.jwtService.sign(payload);
+
+  //     return { user: dbuser, token };
+  //   }
+  // }
+
