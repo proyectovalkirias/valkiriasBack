@@ -1,13 +1,16 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   NotFoundException,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { GoogleService } from './google.service';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
 
 @ApiTags('google')
 @Controller('google')
@@ -17,24 +20,23 @@ export class GoogleController {
   @Get()
   @UseGuards(AuthGuard('google'))
   googleLogin() {
-    return 'Redirecting to Google';
+    return 'Redirecting to Google...';
   }
 
   @Get('redirect')
   @UseGuards(AuthGuard('google'))
-  async googleRedirect(@Req() req) {
-    const res = this.googleService.googleLogin(req);
+  async googleRedirect(@Req() req, @Res() res: Response) {
+    const user = req.user;
+
     console.log('User after Google authentication:', req.user);
 
-    if (!res) {
-      throw new NotFoundException('Google login failed');
+    if (!user) {
+      throw new BadRequestException('Google autentication failed');
     }
 
+    const loginResponse = await this.googleService.googleLogin(user)
 
-     return({
-      profile: req.user,
-      token: req.user.accessToken,
-    })
-   
+
+     return res.status(200).json(loginResponse);  
   }
 }
