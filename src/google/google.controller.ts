@@ -24,12 +24,16 @@ export class GoogleController {
   @UseGuards(AuthGuard('google'))
   async googleRedirect(@Req() req) {
     const res = this.googleService.googleLogin(req);
+    console.log('User after Google authentication:', req.user);
+
     if (!res) {
       throw new NotFoundException('Google login failed');
-  
     }
+
+
      return({
-      token: (await res).token
+      profile: req.user,
+      token: req.user.accessToken,
     })
    
   }

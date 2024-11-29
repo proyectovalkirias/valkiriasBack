@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { GoogleService } from './google.service';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
 
@@ -20,14 +19,25 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
+    console.log('Google profile:', profile);
+    console.log('Access token:', accessToken);
+  
+    if(!profile){
+      return 'Perfil no encontrado'
+    }
+    
+
     const { name, emails, photos } = profile;
+
     const user = {
       email: emails[0].value,
-      firstname: name.givenName,
-      lastname: name.familyName,
-      photo: photos[0].value,
+      firstname: name?.givenName,
+      lastname: name?.familyName,
+      photo: photos?.[0].value,
       accessToken,
     };
+
+    console.log('Datos de usuario:', user);
 
     done(null, user);
   }
