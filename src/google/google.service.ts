@@ -9,27 +9,27 @@ export class GoogleService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async googleLogin(req) {
-    if (!req.user) throw new NotFoundException('No user from Google');
+  async googleLogin(user: any) {
 
-    let user = await this.userRepository.getUserByEmail(req.user.email);
+    const { email, firstname, lastname, photo } = user;
 
-    if (!user) {
+        // if (!user) throw new NotFoundException('No user from Google');
+
+    let dbuser = await this.userRepository.getUserByEmail(email);
+
+    if (!dbuser) {
       user = await this.userRepository.createUser({
-        email: req.user.email,
-        firstname: req.user.givenName,
-        lastname: req.user.familyName,
-        photo: req.user.picture,
-        googleAccessToken: req.user.accessToken,
+        email,
+        firstname,
+        lastname,
+        photo,
+      
       });
 
-      const payload = { email: user.email, sub: user.id };
-      const jwt = this.jwtService.sign(payload);
+      const payload = { email: dbuser.email, sub: dbuser.id };
+      const token = this.jwtService.sign(payload);
 
-      return {
-        user,
-        token: jwt,
-      };
+      return { user: dbuser, token };
     }
   }
 }

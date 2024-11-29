@@ -16,29 +16,34 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 
   async validate(
     accessToken: string,
+    refreshToken: string,
     profile: any,
-    done: VerifyCallback,
+    done: (error: any, user?: any) => void,
   ): Promise<any> {
     console.log('Google profile:', profile);
     console.log('Access token:', accessToken);
+    try {
+      if(!profile){
+        return 'Perfil no encontrado'
+      }
+        
+      const { name, emails, photos } = profile;
   
-    if(!profile){
-      return 'Perfil no encontrado'
+      const user = {
+        email: emails[0].value,
+        firstname: name?.givenName,
+        lastname: name?.familyName,
+        photo: photos?.[0].value,
+        accessToken,
+      };
+  
+      console.log('Datos de usuario:', user);
+  
+      done(null, user);
+    } catch (error) {
+      console.error('Error en GoogleStrategy validate:', error);
+      done(error, null);
     }
-    
 
-    const { name, emails, photos } = profile;
-
-    const user = {
-      email: emails[0].value,
-      firstname: name?.givenName,
-      lastname: name?.familyName,
-      photo: photos?.[0].value,
-      accessToken,
-    };
-
-    console.log('Datos de usuario:', user);
-
-    done(null, user);
   }
 }
