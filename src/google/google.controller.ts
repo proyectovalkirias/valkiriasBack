@@ -32,9 +32,8 @@ export class GoogleController {
       
       // Obtiene la información del usuario con el token
       const userInfo = await this.googleService.getUserInfo(accessToken);
-
       res.status(HttpStatus.OK).json({
-        user: userInfo,
+        // user: userInfo,
         token: accessToken, 
       });
     } catch (error) {
