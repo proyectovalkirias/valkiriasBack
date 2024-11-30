@@ -55,7 +55,7 @@ export class UserDto {
   @IsNotEmpty()
   @Validate(matchPassword, ['password'])
   confirmPassword: string;
-  
+
   @ApiProperty({
     description: 'Profile picture',
   })
@@ -67,5 +67,4 @@ export class UserDto {
   })
   @IsString()
   googleAccessToken?: string;
-
 }

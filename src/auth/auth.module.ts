@@ -8,9 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User]),  
-  ],
+  imports: [TypeOrmModule.forFeature([User])],
   providers: [AuthService, UserRepository],
   controllers: [AuthController],
 })

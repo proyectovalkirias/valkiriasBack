@@ -1,4 +1,4 @@
-import { v2 as cloudinary, UploadApiResponse} from 'cloudinary';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { config as dotenvConfig } from 'dotenv';
 import { Injectable } from '@nestjs/common';
 dotenvConfig({ path: '.env' });
@@ -23,4 +23,4 @@ export class CloudinaryService {
   async deleteImage(publicId: string): Promise<void> {
     return cloudinary.uploader.destroy(publicId);
   }
-};
+}
