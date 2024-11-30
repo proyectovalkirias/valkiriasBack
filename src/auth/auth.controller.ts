@@ -1,8 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDto } from 'src/dtos/userDto';
 import { LoginDto } from 'src/dtos/loginDto';
+import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -20,5 +21,20 @@ export class AuthController {
   login(@Body() login: LoginDto) {
     const { email, password } = login;
     return this.authService.login(email, password);
+  }
+
+  @ApiOperation({ summary: `Forgot Password` })
+  @Get(`:email`)
+  forgotPassword(@Param(`email`) email: string) {
+    return this.authService.forgotPassword(email);
+  }
+
+  @ApiOperation({ summary: `Change Password` })
+  @Put(`change-password/:id`)
+  changePassword(
+    @Param(`id`) id: string,
+    @Body() newPassword: forgotPasswordDto,
+  ) {
+    return this.authService.changePassword(id, newPassword);
   }
 }

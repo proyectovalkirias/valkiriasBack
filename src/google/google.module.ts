@@ -11,9 +11,9 @@ import { GoogleStrategy } from './google.strategy';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    PassportModule.register({ defaultStrategy: 'google'})
+    PassportModule.register({ defaultStrategy: 'google' }),
   ],
   providers: [GoogleService, UserRepository, GoogleStrategy],
-  controllers: [GoogleController]
+  controllers: [GoogleController],
 })
 export class GoogleModule {}

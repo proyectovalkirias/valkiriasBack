@@ -7,7 +7,6 @@ import typeOrmConfig from './config/typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ProductModule } from './no-spec/product/product.module';
 import { ProductModule } from './product/product.module';
 
 @Module({

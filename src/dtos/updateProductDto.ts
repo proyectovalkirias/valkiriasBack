@@ -1,29 +1,27 @@
-import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
-
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateProductDto {
+  @IsString()
+  @IsNotEmpty()
+  name?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    name?: string;
+  @IsString()
+  @IsNotEmpty()
+  description?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    description?: string;
+  @IsNotEmpty()
+  @IsString()
+  price?: number;
 
-    @IsNotEmpty()
-    @IsString()
-    price?: number;
+  @IsString()
+  @IsNotEmpty()
+  sizes?: string[];
 
-    @IsString()
-    @IsNotEmpty()
-    sizes?: string[];
+  @IsString()
+  @IsNotEmpty()
+  category?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    category?: string;
-
-    @IsNotEmpty()
-    @IsBoolean()
-    isAvailable?: boolean;
-  }
+  @IsNotEmpty()
+  @IsBoolean()
+  isAvailable?: boolean;
+}

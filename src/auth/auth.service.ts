@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,12 +9,16 @@ import { User } from 'src/entities/user.entity';
 import { UserRepository } from 'src/user/user.repository';
 import * as bcrypt from 'bcrypt';
 import { transporter } from 'src/config/mailer';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
+    @InjectRepository(User) private readonly userDBRepository: Repository<User>,
   ) {}
 
   async signUp(user: Partial<User>) {
@@ -80,5 +85,43 @@ export class AuthService {
       token,
       user,
     };
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userRepository.getUserByEmail(email);
+    if (!user) {
+      throw new NotFoundException(`Usuario no encontrado`);
+    }
+    await transporter.sendMail({
+      from: '"Olvidaste tu contraseña" <proyecto.valkirias@gmail.com>',
+      to: user.email,
+      subject: 'Cambiar contraseña',
+      html: `
+          <b>Has olvidado tu contraseña?</b>
+          <b>Toca aquí para poder cambiar tu contraseña: <a href="">Cambiar contraseña</a></b>
+          `, // Se pondría el link de front para cambiar la contraseña.
+    });
+    return `Te enviamos un gmail para cambiar tu contraseña, por favor verificalo`;
+  }
+
+  async changePassword(id: string, newPassword: forgotPasswordDto) {
+    const user = await this.userRepository.getUserById(id);
+    if (!user) {
+      throw new NotFoundException(`Usuario no encontrado`);
+    }
+    const isSamePassword = await bcrypt.compare(
+      newPassword.password,
+      user.password,
+    );
+    if (isSamePassword) {
+      throw new ConflictException(`La contraseña no puede ser la misma`);
+    }
+    if (newPassword.password !== newPassword.confirmPassword) {
+      throw new ConflictException(`Las contraseñas deben coincidir`);
+    }
+    const hashedPassword = await bcrypt.hash(newPassword.confirmPassword, 10);
+    user.password = hashedPassword;
+    this.userDBRepository.save(user);
+    return `La contraseña se cambió correctamente.`;
   }
 }

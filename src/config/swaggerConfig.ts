@@ -5,7 +5,7 @@ export const setupSwagger = (app: INestApplication) => {
   const SwaggerConfig = new DocumentBuilder()
     .setTitle('Proyecto Valkirias')
     .setDescription(
-     `Esta API es la columna vertebral de un ecommerce desarrollado para un emprendimiento real dedicado a la personalización de prendas y artículos, como remeras, buzos, gorras, tazas, entre otros.  
+      `Esta API es la columna vertebral de un ecommerce desarrollado para un emprendimiento real dedicado a la personalización de prendas y artículos, como remeras, buzos, gorras, tazas, entre otros.  
     Su propósito es gestionar el flujo de operaciones esenciales, como la administración de productos, usuarios y pedidos, asegurando una experiencia eficiente tanto para los administradores del negocio como para los clientes finales.\n\n
     Proyecto Académico\n
     Este proyecto fue desarrollado como trabajo final de la carrera de Full Stack Developer en Soy Henry, donde el equipo aplicó los conocimientos adquiridos durante la cursada.  
@@ -30,8 +30,8 @@ export const setupSwagger = (app: INestApplication) => {
     - Envío de correos electrónicos para confirmar registro de usuario y pedidos realizados.\n\n
     Objetivo del Proyecto:\n
     El objetivo principal de esta API es proporcionar una solución robusta para un emprendimiento real de prendas personalizadas, 
-    permitiendo a los usuarios interactuar con un catálogo dinámico, gestionar pedidos de forma fluida y personalizar sus compras según sus necesidades. `
- )
+    permitiendo a los usuarios interactuar con un catálogo dinámico, gestionar pedidos de forma fluida y personalizar sus compras según sus necesidades. `,
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();

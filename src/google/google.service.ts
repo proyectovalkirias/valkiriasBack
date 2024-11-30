@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
 import { UserRepository } from 'src/user/user.repository';
@@ -20,54 +24,57 @@ export class GoogleService {
           client_secret: process.env.GOOGLE_CLIENT_SECRET,
           redirect_uri: process.env.GOOGLE_CALLBACK_URL,
           grant_type: 'authorization_code',
-        }
+        },
       );
 
       return tokenResponse.data.access_token;
     } catch (error) {
-      throw new BadRequestException('Error  retrieving Google token')
+      throw new BadRequestException('Error  retrieving Google token');
     }
   }
 
   async getUserInfo(access_token: string) {
     try {
       const userinfo = await axios.get(
-        'https://www.googleapis.com/oauth2/v3/userinfo', {
+        'https://www.googleapis.com/oauth2/v3/userinfo',
+        {
           headers: {
             Authorization: `Bearer ${access_token}`,
-          }
-        }
+          },
+        },
       );
 
       return userinfo.data;
     } catch (error) {
-      console.error('Error retrieving user info from Google:', error.response?.data || error.message);
-      throw new BadRequestException('Error retrieving user info from Google')
+      console.error(
+        'Error retrieving user info from Google:',
+        error.response?.data || error.message,
+      );
+      throw new BadRequestException('Error retrieving user info from Google');
     }
   }
 }
 
-  // async googleLogin(user: any) {
+// async googleLogin(user: any) {
 
-  //   const { email, firstname, lastname, photo } = user;
+//   const { email, firstname, lastname, photo } = user;
 
-  //       // if (!user) throw new NotFoundException('No user from Google');
+//       // if (!user) throw new NotFoundException('No user from Google');
 
-  //   let dbuser = await this.userRepository.getUserByEmail(email);
+//   let dbuser = await this.userRepository.getUserByEmail(email);
 
-  //   if (!dbuser) {
-  //     user = await this.userRepository.createUser({
-  //       email,
-  //       firstname,
-  //       lastname,
-  //       photo,
-      
-  //     });
+//   if (!dbuser) {
+//     user = await this.userRepository.createUser({
+//       email,
+//       firstname,
+//       lastname,
+//       photo,
 
-  //     const payload = { email: dbuser.email, sub: dbuser.id };
-  //     const token = this.jwtService.sign(payload);
+//     });
 
-  //     return { user: dbuser, token };
-  //   }
-  // }
+//     const payload = { email: dbuser.email, sub: dbuser.id };
+//     const token = this.jwtService.sign(payload);
 
+//     return { user: dbuser, token };
+//   }
+// }
