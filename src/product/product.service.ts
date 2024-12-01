@@ -14,6 +14,22 @@ export class ProductService {
     private readonly cloudinaryProvider: CloudinaryService,
   ) {}
 
+
+
+  async getAllProducts() {
+    return this.productRepository.find();
+  }
+
+  async getProductById(productId: string) {
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+    });
+    if (!product) throw new NotFoundException(`Product with ID ${productId} not found`);
+
+    return product;
+  }
+
+
   async createProduct(
     createProductDto: CreateProductDto,
     files: Express.Multer.File[],
