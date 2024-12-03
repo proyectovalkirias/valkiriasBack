@@ -1,10 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { User } from './user.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('products')
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
+  
+  @ManyToOne(() => User, (user) => user.products)
+  @JoinColumn({ name: 'userId'})
+  @ApiProperty()
+  user: User;
+  
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
@@ -25,4 +32,5 @@ export class Product {
 
   @Column({ type: 'text', array: true, nullable: true })
   photos: string[];
+
 }

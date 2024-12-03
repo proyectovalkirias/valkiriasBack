@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -14,8 +14,8 @@ export class UserRepository {
     return this.userRepository.find();
   }
 
-  getUserById(userId: string): Promise<User> {
-    return this.userRepository.findOne({ where: { id: userId } });
+  getUserById(id: string): Promise<User> {
+    return this.userRepository.findOne({ where: { id: id } });
   }
 
   getUserByEmail(email: string): Promise<User | null> {
@@ -29,5 +29,33 @@ export class UserRepository {
 
   userUpdate(id: string, updateUser: Partial<User>) {
     return this.userRepository.update(id, updateUser);
+  }
+
+  async deactivateUser(id: string) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['products'],
+    });
+
+    if(!user) throw new NotFoundException('User not found');
+
+    user.active = false;
+    await this.userRepository.save(user);
+
+    return 'Disabled User'
+  }
+
+  async activeUser(id: string) {
+    const user = await this.userRepository.findOneBy({ id });
+    if(!user) throw new NotFoundException('User bnot found');
+
+    user.active = true;
+    await this.userRepository.save(user);
+
+    return 'Active User';
+  }
+
+  removeUser(id: string) {
+    return this.userRepository.delete({ id: id });
   }
 }

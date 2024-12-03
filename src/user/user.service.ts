@@ -60,4 +60,20 @@ export class UserService {
 
     return userWithoutPass;
   }
+
+  async deactiveUser(id: string) {
+    return await this.userRepository.deactivateUser(id);
+  }
+
+  async activeUser(id: string) {
+    return await this.userRepository.activeUser(id);
+  }
+
+  async removeUser(id: string) {
+    const user = await this.userRepository.getUserById(id);
+    if(!user) throw new NotFoundException('User not found');
+
+    await this.userRepository.removeUser(id);
+    return 'User removed successfully';
+  }
 }
