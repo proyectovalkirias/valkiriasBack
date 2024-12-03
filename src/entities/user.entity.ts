@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Product } from './product.entity';
 
 @Entity({
   name: 'users',
@@ -60,4 +61,11 @@ export class User {
   @Column({ default: false })
   @ApiProperty()
   isAdmin: boolean;
+
+  @OneToMany(() => Product, (products) => products.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  products: Product[];
 }
