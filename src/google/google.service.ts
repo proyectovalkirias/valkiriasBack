@@ -10,8 +10,8 @@ import { UserRepository } from 'src/user/user.repository';
 @Injectable()
 export class GoogleService {
   constructor(
-    private readonly jwtService: JwtService,
-    private readonly userRepository: UserRepository,
+    // private readonly jwtService: JwtService,
+    // private readonly userRepository: UserRepository,
   ) {}
 
   async getGoogleAuthToken(code: string) {
