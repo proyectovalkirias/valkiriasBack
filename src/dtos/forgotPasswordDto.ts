@@ -17,7 +17,7 @@ export class forgotPasswordDto {
 
   @ApiProperty({
     description: 'Password confirmation',
-    example: 'Valkirias123',
+    example: '#Valkirias123',
   })
   @IsNotEmpty()
   @Validate(matchPassword, ['password'])
