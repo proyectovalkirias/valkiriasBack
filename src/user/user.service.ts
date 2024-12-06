@@ -58,6 +58,7 @@ export class UserService {
     const user = Object.assign(findUser, updateUser);
     const { password, ...userWithoutPass } = user;
 
+
     return userWithoutPass;
   }
 

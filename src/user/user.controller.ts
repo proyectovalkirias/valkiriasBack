@@ -16,7 +16,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Get User By Email' })
-  @Get(':email')
+  @Get('email/:email')
   getUserByEmail(@Param('email') email: string) {
     return this.userService.getUserByEmail(email);
   }
@@ -41,7 +41,7 @@ export class UserController {
 
   @ApiOperation({ summary: 'Update User' })
   @Put(':id')
-  udpdateUser(@Param('id') id: string, @Body() updateUser: UserDto) {
+  updateUser(@Param('id') id: string, @Body() updateUser: UserDto) {
     return this.userService.updateUser(id, updateUser);
   }
 
