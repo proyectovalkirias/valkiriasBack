@@ -37,17 +37,17 @@ export class UserRepository {
       relations: ['products'],
     });
 
-    if(!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException('User not found');
 
     user.active = false;
     await this.userRepository.save(user);
 
-    return 'Disabled User'
+    return 'Disabled User';
   }
 
   async activeUser(id: string) {
     const user = await this.userRepository.findOneBy({ id });
-    if(!user) throw new NotFoundException('User bnot found');
+    if (!user) throw new NotFoundException('User bnot found');
 
     user.active = true;
     await this.userRepository.save(user);

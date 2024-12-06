@@ -30,7 +30,7 @@ export class GoogleController {
 
       // Obtiene la información del usuario con el token
       const userInfo = await this.googleService.getUserInfo(accessToken);
-      res.redirect(`http://localhost:3001`)
+      res.redirect(`http://localhost:3001`);
       // res.status(HttpStatus.OK).json({
       //   // user: userInfo,
       //   token: accessToken,
@@ -44,4 +44,3 @@ export class GoogleController {
     }
   }
 }
-

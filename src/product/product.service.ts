@@ -14,8 +14,6 @@ export class ProductService {
     private readonly cloudinaryProvider: CloudinaryService,
   ) {}
 
-
-
   async getAllProducts() {
     return this.productRepository.find();
   }
@@ -24,11 +22,11 @@ export class ProductService {
     const product = await this.productRepository.findOne({
       where: { id: productId },
     });
-    if (!product) throw new NotFoundException(`Product with ID ${productId} not found`);
+    if (!product)
+      throw new NotFoundException(`Product with ID ${productId} not found`);
 
     return product;
   }
-
 
   async createProduct(
     createProductDto: CreateProductDto,
