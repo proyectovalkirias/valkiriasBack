@@ -104,8 +104,8 @@ export class AuthService {
     return `Te enviamos un gmail para cambiar tu contraseña, por favor verificalo`;
   }
 
-  async changePassword(id: string, newPassword: forgotPasswordDto) {
-    const user = await this.userRepository.getUserById(id);
+  async changePassword(email: string, newPassword: forgotPasswordDto) {
+    const user = await this.userRepository.getUserByEmail(email);
     if (!user) {
       throw new NotFoundException(`Usuario no encontrado`);
     }

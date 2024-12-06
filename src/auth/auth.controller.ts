@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDto } from 'src/dtos/userDto';
@@ -30,11 +30,11 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: `Change Password` })
-  @Put(`change-password/:id`)
+  @Put(`change-password`)
   changePassword(
-    @Param(`id`) id: string,
+    @Query(`email`) email: string,
     @Body() newPassword: forgotPasswordDto,
   ) {
-    return this.authService.changePassword(id, newPassword);
+    return this.authService.changePassword(email, newPassword);
   }
 }
