@@ -98,8 +98,8 @@ export class AuthService {
       subject: 'Cambiar contraseña',
       html: `
           <b>Has olvidado tu contraseña?</b>
-          <b>Toca aquí para poder cambiar tu contraseña: <a href="">Cambiar contraseña</a></b>
-          `, // Se pondría el link de front para cambiar la contraseña.
+          <b>Toca aquí para poder cambiar tu contraseña: <a href="http://localhost:3001/ChangePassword">Cambiar contraseña</a></b>
+          `, // Se debe cambiar al link de render o donde despleguemos a la hora de presentar.
     });
     return `Te enviamos un gmail para cambiar tu contraseña, por favor verificalo`;
   }
