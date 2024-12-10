@@ -32,7 +32,7 @@ export class ProductController {
 
   @ApiOperation({ summary: 'Create a new product' })
   @ApiConsumes('multipart/form-data')
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiBody({
     description: 'Pon los datos del producto y sube imagenes:',
