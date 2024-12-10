@@ -5,6 +5,7 @@ import { Product } from '../entities/product.entity';
 import { CloudinaryService } from '../config/cloudinary';
 import { CreateProductDto } from '../dtos/createProductDto';
 import { UpdateProductDto } from '../dtos/updateProductDto';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class ProductService {
@@ -14,8 +15,6 @@ export class ProductService {
     private readonly cloudinaryProvider: CloudinaryService,
   ) {}
 
-
-
   async getAllProducts() {
     return this.productRepository.find();
   }
@@ -24,22 +23,28 @@ export class ProductService {
     const product = await this.productRepository.findOne({
       where: { id: productId },
     });
-    if (!product) throw new NotFoundException(`Product with ID ${productId} not found`);
+    if (!product)
+      throw new NotFoundException(`Product with ID ${productId} not found`);
 
     return product;
   }
 
-
   async createProduct(
     createProductDto: CreateProductDto,
-    files: Express.Multer.File[],
+    photos: Express.Multer.File[],
+    owner: User,
   ) {
     const uploadedImages = await Promise.all(
-      files.map((file) => this.cloudinaryProvider.uploadImage(file)),
+      photos.map(
+        async (file) => await this.cloudinaryProvider.uploadImage(file),
+      ),
     );
-
+    if (typeof createProductDto.sizes === 'string') {
+      createProductDto.sizes = [createProductDto.sizes];
+    }
     const product = this.productRepository.create({
       ...createProductDto,
+      user: owner,
       photos: uploadedImages.map((img) => img.secure_url),
     });
 
