@@ -19,23 +19,52 @@ export class Product {
   user: User;
 
   @Column({ type: 'varchar', length: 255 })
+  @ApiProperty({
+    description: 'Product name',
+    example: 'Remera de algodón'
+  })
   name: string;
 
   @Column({ type: 'text' })
+  @ApiProperty({
+    description: 'Product description'
+  })
   description: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @ApiProperty({
+    description: 'Product price',
+    example: 1000.00
+  })
   price: number;
 
   @Column({ type: 'varchar', array: true })
+  @ApiProperty({
+    description: 'Product size'
+  })
   sizes: string[];
 
+  @Column()
+  @ApiProperty({
+    description: 'Product color'
+  })
+  color: string;
+
   @Column({ type: 'boolean', default: true })
+  @ApiProperty({
+    description: 'Product available'
+  })
   isAvailable: boolean;
 
   @Column({ type: 'varchar', length: 100 })
+  @ApiProperty({
+    description: 'Product Category'
+  })
   category: string;
 
   @Column({ type: 'text', array: true, nullable: true })
+  @ApiProperty({
+    description: 'Product images'
+  })
   photos: string[];
 }
