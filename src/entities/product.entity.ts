@@ -21,62 +21,62 @@ export class Product {
   @Column({ type: 'varchar', length: 255 })
   @ApiProperty({
     description: 'Product name',
-    example: 'Remera de algodón'
+    example: 'Remera de algodón',
   })
   name: string;
 
   @Column({ type: 'text' })
   @ApiProperty({
-    description: 'Product description'
+    description: 'Product description',
   })
   description: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   @ApiProperty({
     description: 'Product price',
-    example: 1000.00
+    example: 1000.0,
   })
   price: number;
 
   @Column({ type: 'varchar', array: true })
   @ApiProperty({
-    description: 'Product size'
+    description: 'Product size',
   })
   sizes: string[];
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   @ApiProperty({
-    description: 'Product color'
+    description: 'Product color',
   })
   color: string;
 
   @Column({ type: 'boolean', default: true })
   @ApiProperty({
-    description: 'Product available'
+    description: 'Product available',
   })
   isAvailable: boolean;
 
   @Column({ type: 'varchar', length: 100 })
   @ApiProperty({
-    description: 'Product Category'
+    description: 'Product Category',
   })
   category: string;
 
   @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
-    description: 'Product images'
+    description: 'Product images',
   })
   photos: string[];
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   @ApiProperty({
-    description: 'Choice of Stamping Area'
+    description: 'Choice of Stamping Area',
   })
   stamped: string;
 
-  @Column({ type: 'int', nullable: true})
+  @Column({ type: 'int', nullable: true })
   @ApiProperty({
-    description: 'Stock'
+    description: 'Stock',
   })
-  stock: number
+  stock: number;
 }

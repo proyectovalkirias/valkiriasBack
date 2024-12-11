@@ -70,7 +70,7 @@ export class User {
   isAdmin: boolean;
 
   @OneToMany(() => Order, (orders) => orders.user)
-  @JoinColumn({ name: 'orderId'})
+  @JoinColumn({ name: 'orderId' })
   orders: Order[];
 
   @OneToMany(() => Product, (products) => products.user, {

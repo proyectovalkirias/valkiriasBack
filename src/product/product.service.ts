@@ -121,7 +121,9 @@ export class ProductService {
     }
 
     if (filters.category) {
-      query.andWhere('product.category = :category', { category: filters.category });
+      query.andWhere('product.category = :category', {
+        category: filters.category,
+      });
     }
 
     if (filters.sizes) {
@@ -132,7 +134,9 @@ export class ProductService {
 
     const products = await query.getMany();
     if (products.length === 0) {
-      throw new NotFoundException('No se encontraron productos que coincidan con los filtros especificados.');
+      throw new NotFoundException(
+        'No se encontraron productos que coincidan con los filtros especificados.',
+      );
     }
     return products;
   }

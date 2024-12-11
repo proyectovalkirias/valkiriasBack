@@ -17,7 +17,6 @@ export class UpdateProductDto {
   @IsNotEmpty()
   sizes?: string[];
 
-  
   @IsNotEmpty()
   color?: string;
 
