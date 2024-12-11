@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class UpdateProductDto {
   @IsString()
@@ -17,6 +17,10 @@ export class UpdateProductDto {
   @IsNotEmpty()
   sizes?: string[];
 
+  
+  @IsNotEmpty()
+  color?: string;
+
   @IsString()
   @IsNotEmpty()
   category?: string;
@@ -24,4 +28,10 @@ export class UpdateProductDto {
   @IsNotEmpty()
   @IsBoolean()
   isAvailable?: boolean;
+
+  @IsString()
+  stamped?: string;
+
+  @IsNumber()
+  stock?: number;
 }
