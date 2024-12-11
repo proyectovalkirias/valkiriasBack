@@ -60,6 +60,10 @@ export class ProductController {
           items: { type: `string`, maxLength: 1 },
           example: [`S`],
         },
+        color: {
+          type: 'string',
+          example: `Blanco`,
+        },
         category: {
           type: `string`,
           example: `Remeras`,
@@ -67,6 +71,14 @@ export class ProductController {
         photos: {
           type: 'array',
           items: { type: `string`, format: 'binary' },
+        },
+        stamped: {
+          type: `string`,
+          example: `Estampado grande en el frente`,
+        },
+        stock: {
+          type: `number`,
+          example: 10,
         },
       },
     },
@@ -92,8 +104,6 @@ export class ProductController {
     @Request() req,
   ) {
     const owner = req.user;
-    console.log(req);
-    console.log(req.user);
     return await this.productService.createProduct(
       createProductDto,
       photos,
