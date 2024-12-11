@@ -6,6 +6,7 @@ import { CloudinaryService } from '../config/cloudinary';
 import { CreateProductDto } from '../dtos/createProductDto';
 import { UpdateProductDto } from '../dtos/updateProductDto';
 import { User } from 'src/entities/user.entity';
+import { FilterDto } from 'src/dtos/filterDto';
 
 @Injectable()
 export class ProductService {
@@ -110,5 +111,33 @@ export class ProductService {
     const parts = url.split('/');
     const filename = parts[parts.length - 1];
     return filename.split('.')[0];
+  }
+
+  async filterProducts(filters: FilterDto): Promise<Product[]> {
+    const query = this.productRepository.createQueryBuilder('product');
+
+    if (filters.color) {
+      query.andWhere('product.color = :color', { color: filters.color });
+    }
+
+    if (filters.category) {
+      query.andWhere('product.category = :category', {
+        category: filters.category,
+      });
+    }
+
+    if (filters.sizes) {
+      query.andWhere(':sizes = ANY(product.sizes)', {
+        sizes: filters.sizes,
+      });
+    }
+
+    const products = await query.getMany();
+    if (products.length === 0) {
+      throw new NotFoundException(
+        'No se encontraron productos que coincidan con los filtros especificados.',
+      );
+    }
+    return products;
   }
 }

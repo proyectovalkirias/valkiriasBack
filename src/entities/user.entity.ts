@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Product } from './product.entity';
+import { Order } from './order.entity';
 
 @Entity({
   name: 'users',
@@ -67,6 +68,10 @@ export class User {
   @Column({ default: false })
   @ApiProperty()
   isAdmin: boolean;
+
+  @OneToMany(() => Order, (orders) => orders.user)
+  @JoinColumn({ name: 'orderId' })
+  orders: Order[];
 
   @OneToMany(() => Product, (products) => products.user, {
     cascade: true,

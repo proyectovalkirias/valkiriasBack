@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
 <<<<<<< HEAD
@@ -15,6 +16,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
   Param,
   ParseFilePipe,
   Post,
+  Query,
   Request,
   UploadedFiles,
   UseGuards,
@@ -33,6 +35,8 @@ import { CreateProductDto } from 'src/dtos/createProductDto';
 import { UpdateProductDto } from 'src/dtos/updateProductDto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { FilterDto } from 'src/dtos/filterDto';
+import { Product } from 'src/entities/product.entity';
 
 @ApiTags('products')
 @Controller('products')
@@ -49,7 +53,7 @@ export class ProductController {
     return this.productService.createProduct(createProductDto, files);
 =======
   @ApiConsumes('multipart/form-data')
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiBody({
     description: 'Pon los datos del producto y sube imagenes:',
@@ -73,6 +77,10 @@ export class ProductController {
           items: { type: `string`, maxLength: 1 },
           example: [`S`],
         },
+        color: {
+          type: 'string',
+          example: `Blanco`,
+        },
         category: {
           type: `string`,
           example: `Remeras`,
@@ -80,6 +88,14 @@ export class ProductController {
         photos: {
           type: 'array',
           items: { type: `string`, format: 'binary' },
+        },
+        stamped: {
+          type: `string`,
+          example: `Estampado grande en el frente`,
+        },
+        stock: {
+          type: `number`,
+          example: 10,
         },
       },
     },
@@ -105,8 +121,6 @@ export class ProductController {
     @Request() req,
   ) {
     const owner = req.user;
-    console.log(req);
-    console.log(req.user);
     return await this.productService.createProduct(
       createProductDto,
       photos,
@@ -142,6 +156,15 @@ export class ProductController {
   @Get()
   getAllProducts() {
     return this.productService.getAllProducts();
+  }
+
+  @Get('filter')
+  async filterProducts(@Query() filters: FilterDto): Promise<Product[]> {
+    if (Object.keys(filters).length === 0) {
+      throw new BadRequestException('Necesito un Valkifiltro, Valkisalame.');
+    }
+
+    return this.productService.filterProducts(filters);
   }
 
   @ApiOperation({ summary: 'Get a product by id' })

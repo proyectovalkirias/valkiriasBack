@@ -19,6 +19,15 @@ export class CreateProductDto {
   sizes: string[];
 
   @IsNotEmpty()
+  color: string;
+
+  @IsNotEmpty()
   @IsString()
   category: string;
+
+  @IsString()
+  stamped: string;
+
+  @IsNumber()
+  stock: number;
 }
