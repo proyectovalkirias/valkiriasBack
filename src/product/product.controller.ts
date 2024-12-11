@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   FileTypeValidator,
@@ -7,6 +8,7 @@ import {
   Param,
   ParseFilePipe,
   Post,
+  Query,
   Request,
   UploadedFiles,
   UseGuards,
@@ -24,6 +26,8 @@ import { CreateProductDto } from 'src/dtos/createProductDto';
 import { UpdateProductDto } from 'src/dtos/updateProductDto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { FilterDto } from 'src/dtos/filterDto';
+import { Product } from 'src/entities/product.entity';
 
 @ApiTags('products')
 @Controller('products')
@@ -124,6 +128,15 @@ export class ProductController {
   @Get()
   getAllProducts() {
     return this.productService.getAllProducts();
+  }
+
+  @Get('filter')
+  async filterProducts(@Query() filters: FilterDto): Promise<Product[]> {
+    if (Object.keys(filters).length === 0) {
+      throw new BadRequestException('Necesito un Valkifiltro, Valkisalame.');
+    }
+
+    return this.productService.filterProducts(filters);
   }
 
   @ApiOperation({ summary: 'Get a product by id' })
