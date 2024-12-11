@@ -44,7 +44,7 @@ export class Product {
   })
   sizes: string[];
 
-  @Column()
+  @Column({ nullable: true})
   @ApiProperty({
     description: 'Product color'
   })
@@ -67,4 +67,16 @@ export class Product {
     description: 'Product images'
   })
   photos: string[];
+
+  @Column({ nullable: true})
+  @ApiProperty({
+    description: 'Choice of Stamping Area'
+  })
+  stamped: string;
+
+  @Column({ type: 'int', nullable: true})
+  @ApiProperty({
+    description: 'Stock'
+  })
+  stock: number
 }
