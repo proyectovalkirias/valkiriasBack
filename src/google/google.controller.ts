@@ -1,12 +1,14 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   HttpStatus,
+  Post,
   Query,
   Res,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GoogleService } from './google.service';
 import { Response } from 'express';
 
@@ -43,4 +45,23 @@ export class GoogleController {
       // });
     }
   }
+
+  @ApiOperation({ summary: 'Logout'})
+  @Post('logout')
+  async googleLogout(@Body('token') token: string, @Res() res: Response) {
+    try {
+      if(!token) throw new BadRequestException('Token is required');
+
+      await this.googleService.revokeGoogleToken(token);
+      res.status(HttpStatus.OK).json({message: 'Logout successfull'});
+
+    } catch (error) {
+      console.error('Google Logout error:', error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: 'Error handling Google Logout',
+        error: error.message,
+      });
+    }
+  }
+  
 }

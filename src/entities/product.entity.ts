@@ -38,7 +38,7 @@ export class Product {
   })
   price: number;
 
-  @Column({ type: 'varchar', array: true })
+  @Column({ type: 'varchar', array: true, nullable: true })
   @ApiProperty({
     description: 'Product size',
   })

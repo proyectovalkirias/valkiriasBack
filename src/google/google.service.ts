@@ -50,4 +50,19 @@ export class GoogleService {
       throw new BadRequestException('Error retrieving user info from Google');
     }
   }
+
+  async revokeGoogleToken(token: string) {
+    try {
+      const revokeUrl = `https://oauth2.googleapis.com/revoke?token=${token}`;
+      const response = await axios.post(revokeUrl, {}, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        }
+      });
+
+    } catch (error) {
+      console.log('Error revoking Google Token:', error.response?.data || error.message);
+      throw new BadRequestException('Error revoking Google Token')
+    }
+  }
 }
