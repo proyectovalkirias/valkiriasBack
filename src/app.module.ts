@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ProductModule } from './product/product.module';
+// import { MpModule } from './mp/mp.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ProductModule } from './product/product.module';
       },
     }),
     ProductModule,
+    // MpModule,
   ],
   controllers: [],
   providers: [],

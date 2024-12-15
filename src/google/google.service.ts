@@ -1,15 +1,15 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+
 import axios from 'axios';
+import { User } from 'src/entities/user.entity';
 import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class GoogleService {
-  constructor() {} // private readonly userRepository: UserRepository, // private readonly jwtService: JwtService,
+  constructor( private readonly userRepository: UserRepository) {} 
 
   async getGoogleAuthToken(code: string) {
     try {
@@ -51,14 +51,37 @@ export class GoogleService {
     }
   }
 
+  async handleGoogleAuth(code: string){
+    try {
+      const accessToken = await this.getGoogleAuthToken(code);
+
+      const userInfo = await this.getUserInfo(accessToken);
+
+      let user = await this.userRepository.getUserByEmail(userInfo.email);
+      if(!user) {
+        user = await this.userRepository.createUser({
+          firstname: userInfo.given_name || '',
+          lastname: userInfo.family_name || '',
+          email: userInfo.email,
+          googleAccessToken: accessToken,
+          photo: userInfo.picture || '',
+        });
+      } else {
+        user.googleAccessToken = accessToken;
+        user.photo = userInfo.picture;
+        await this.userRepository.userUpdate(user.id, user);
+      }
+      return user;
+
+    } catch (error) {
+      throw new BadRequestException('Error handling Google Auth')
+    }
+  }
+
   async revokeGoogleToken(token: string) {
     try {
       const revokeUrl = `https://oauth2.googleapis.com/revoke?token=${token}`;
-      const response = await axios.post(revokeUrl, {}, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        }
-      });
+      await axios.post(revokeUrl);
 
     } catch (error) {
       console.log('Error revoking Google Token:', error.response?.data || error.message);

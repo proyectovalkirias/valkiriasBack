@@ -40,13 +40,13 @@ export class UserDto {
     description: 'User password',
     example: 'Valkirias123',
   })
-  @IsNotEmpty()
+ 
   @IsString()
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,15}$/, {
     message:
       'Password debe contener entre 8 y 15 caracteres, una mayuscula y una minuscula',
   })
-  password: string;
+  password?: string;
 
   @ApiProperty({
     description: 'Password confirmation',
