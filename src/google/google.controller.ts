@@ -30,7 +30,7 @@ export class GoogleController {
       console.log('Received access token:', accessToken);
       
       
-      const userInfo = await this.googleService.getUserInfo(accessToken);
+      // const userInfo = await this.googleService.getUserInfo(accessToken);
       
       const user = await this.googleService.handleGoogleAuth(code);
       

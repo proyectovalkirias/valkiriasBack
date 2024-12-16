@@ -1,3 +1,6 @@
 // import { MercadoPagoConfig } from 'mercadopago';
 
-// export const mercadoPagoConfig = new MercadoPagoConfig({ accessToken: 'ACCESS_TOKEN'});
+// const accessToken = process.env.ACCESS_TOKEN
+
+// export const mercadoPagoConfig = new MercadoPagoConfig({ 
+//     accessToken });
