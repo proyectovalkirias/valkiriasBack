@@ -42,7 +42,7 @@ export class User {
   })
   email: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   @ApiProperty({
     description: 'User password',
     example: 'Valkirias123',

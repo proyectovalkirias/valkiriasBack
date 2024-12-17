@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
@@ -8,13 +13,11 @@ export class GoogleAuthGuard implements CanActivate {
   constructor() {
     this.googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
   }
-  async canActivate(
-    context: ExecutionContext,
-  ): Promise<boolean>{
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization?.split(' ')[1];
 
-    if(!token) {
+    if (!token) {
       throw new UnauthorizedException('No se proporcionó un token de Google');
     }
 
@@ -30,7 +33,6 @@ export class GoogleAuthGuard implements CanActivate {
       };
 
       return true;
-
     } catch (error) {
       throw new UnauthorizedException('Invalid Token');
     }

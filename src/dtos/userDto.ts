@@ -40,7 +40,6 @@ export class UserDto {
     description: 'User password',
     example: 'Valkirias123',
   })
- 
   @IsString()
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,15}$/, {
     message:

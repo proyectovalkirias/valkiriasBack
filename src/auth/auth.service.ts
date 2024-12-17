@@ -12,6 +12,7 @@ import { transporter } from 'src/config/mailer';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
+import { registerMail } from 'src/mails/registerMail';
 
 @Injectable()
 export class AuthService {
@@ -40,13 +41,10 @@ export class AuthService {
     });
 
     await transporter.sendMail({
-      from: '"Te Registraste en Valkirias ✍" <proyecto.valkirias@gmail.com>',
+      from: '"Valkirias" <proyecto.valkirias@gmail.com>',
       to: user.email,
       subject: 'Registro existoso',
-      html: `
-          <b>Te has registrado en la página Valkirias correctamente, ahora solo debes iniciar sesión.</b>
-          <b>Toca aquí para dirigirte directamente al inicio de sesión en Valkirias: <a href="http://localhost:3001/Login">Ir a Iniciar Sesión</a></b>
-          `, // Se debe cambiar al link de render o donde despleguemos a la hora de presentar.
+      html: registerMail, // Se debe cambiar al link de render o donde despleguemos a la hora de presentar.
     });
 
     return 'User created successfully';

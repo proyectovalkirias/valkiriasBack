@@ -4,8 +4,8 @@ import { MpService } from './mp.service';
 import { ProductModule } from 'src/product/product.module';
 
 @Module({
-  imports:[ProductModule],
+  imports: [ProductModule],
   controllers: [MpController],
-  providers: [MpService]
+  providers: [MpService],
 })
 export class MpModule {}
