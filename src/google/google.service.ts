@@ -51,14 +51,12 @@ export class GoogleService {
     }
   }
 
-  async handleGoogleAuth(code: string){
+  async handleGoogleAuth(accessToken: string) {
     try {
-      const accessToken = await this.getGoogleAuthToken(code);
-
       const userInfo = await this.getUserInfo(accessToken);
-
+  
       let user = await this.userRepository.getUserByEmail(userInfo.email);
-      if(!user) {
+      if (!user) {
         user = await this.userRepository.createUser({
           firstname: userInfo.given_name || '',
           lastname: userInfo.family_name || '',
@@ -72,11 +70,11 @@ export class GoogleService {
         await this.userRepository.userUpdate(user.id, user);
       }
       return user;
-
     } catch (error) {
-      throw new BadRequestException('Error handling Google Auth')
+      throw new BadRequestException('Error handling Google Auth');
     }
   }
+  
 
   async revokeGoogleToken(token: string) {
     try {
