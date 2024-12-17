@@ -1,4 +1,4 @@
-// import { Controller } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 
-// @Controller('mp')
-// export class MpController {}
+@Controller('mp')
+export class MpController {}

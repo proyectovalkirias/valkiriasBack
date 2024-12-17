@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { GoogleModule } from './google/google.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import typeOrmConfig from './config/typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ProductModule } from './product/product.module';
-// import { MpModule } from './mp/mp.module';
+import { MpModule } from './mp/mp.module';
 
 @Module({
   imports: [
@@ -23,7 +22,6 @@ import { ProductModule } from './product/product.module';
     }),
     AuthModule,
     UserModule,
-    GoogleModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       global: true,
@@ -33,7 +31,7 @@ import { ProductModule } from './product/product.module';
       },
     }),
     ProductModule,
-    // MpModule,
+    MpModule,
   ],
   controllers: [],
   providers: [],
