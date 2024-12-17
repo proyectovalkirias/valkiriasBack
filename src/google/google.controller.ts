@@ -30,12 +30,33 @@ export class GoogleController {
       console.log('Received access token:', accessToken);
       
       
-      // const userInfo = await this.googleService.getUserInfo(accessToken);
-      
       const user = await this.googleService.handleGoogleAuth(code);
-      
 
-      res.redirect(`http://localhost:3001?token=${accessToken}&user=${JSON.stringify(user)}`);
+      res.status(HttpStatus.OK).json({
+        message: 'User authenticated successfully',
+        token: accessToken,
+        user: {
+          id: user.id,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          photo: user.photo,
+        },
+      });
+
+      // return {
+      //   token: accessToken,
+      //   user: {
+      //     id: user.id,
+      //     firstname: user.firstname,
+      //     lastname: user.lastname,
+      //     email: user.email,
+      //     photo: user.photo,
+      //   },
+      // };
+
+
+      // res.redirect(`http://localhost:3001?token=${accessToken}&user=${JSON.stringify(user)}`);
    
     } catch (error) {
       console.error('Google Auth error:', error);
