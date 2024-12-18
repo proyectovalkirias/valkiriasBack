@@ -41,9 +41,9 @@ export class MpService {
         body: {
           items,
           back_urls: {
-            success: 'https://localhost:3000/mp/success',
-            failure: 'https://localhost:3000/mp/failure',
-            pending: 'https://localhost:3000/mp/pending',
+            success: 'https://localhost:3001/mp/success',
+            failure: 'https://localhost:3001/mp/failure',
+            pending: 'https://localhost:3001/mp/pending',
           },
           auto_return: 'approved',
         },
@@ -56,8 +56,8 @@ export class MpService {
         url: response.init_point,
       };
     } catch (error) {
-      console.error('Error al crear la preferencia de pago:', error);
-      throw new Error('Error al crear la preferencia de pago');
+      console.error('Failed to create payment preference:', error);
+      throw new Error('Failed to create payment preference');
     }
   }
 }
