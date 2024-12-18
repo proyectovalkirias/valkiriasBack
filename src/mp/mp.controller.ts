@@ -1,11 +1,15 @@
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { MpService } from './mp.service';
 import { url } from 'inspector';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('payment')
 @Controller('payment')
 export class MpController {
     constructor(private readonly mercadoPagoService: MpService) {}
 
+
+    @ApiOperation({summary: 'Create a payment with Mercado Pago.'})
     @Post('create')
     async creaPayment(@Body() products: any[]) {
         if(!products || !Array.isArray) {
