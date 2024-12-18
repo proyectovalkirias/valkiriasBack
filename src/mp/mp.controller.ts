@@ -12,10 +12,12 @@ export class MpController {
     @ApiOperation({summary: 'Create a payment with Mercado Pago.'})
     @Post('create')
     async creaPayment(@Body() products: any[]) {
-        if(!products || !Array.isArray) {
+        console.log('Request body:', products);
+        if(!products || !Array.isArray(products)) {
             throw new BadRequestException('Invalid or empty products list');
         }
         try {
+            console.log('Received products:', products);
             const preference = await this.mercadoPagoService.createPaymentPreference(products);
 
             return{
