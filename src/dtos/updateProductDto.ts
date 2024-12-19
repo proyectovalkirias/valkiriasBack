@@ -1,36 +1,44 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class UpdateProductDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   name?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   price?: number;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   sizes?: string[];
 
-  @IsNotEmpty()
+  @IsOptional()
   color?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   category?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
   isAvailable?: boolean;
 
   @IsString()
+  @IsOptional()
   stamped?: string;
 
   @IsNumber()
+  @IsOptional()
   stock?: number;
 }

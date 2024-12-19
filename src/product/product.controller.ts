@@ -1,12 +1,10 @@
 import {
   BadRequestException,
   Body,
+  ConflictException,
   Controller,
-  FileTypeValidator,
   Get,
-  MaxFileSizeValidator,
   Param,
-  ParseFilePipe,
   Post,
   Query,
   Request,
@@ -24,7 +22,10 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from 'src/dtos/createProductDto';
 import { UpdateProductDto } from 'src/dtos/updateProductDto';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { FilterDto } from 'src/dtos/filterDto';
 import { Product } from 'src/entities/product.entity';
@@ -71,11 +72,11 @@ export class ProductController {
         },
         photos: {
           type: 'array',
-          items: { type: `string`, format: 'binary' },
+          items: { type: 'string', format: 'binary' },
         },
         stamped: {
-          type: `string`,
-          example: `Estampado grande en el frente`,
+          type: `array`,
+          items: { type: 'string', format: 'binary' },
         },
         stock: {
           type: `number`,
@@ -84,30 +85,36 @@ export class ProductController {
       },
     },
   })
-  @UseInterceptors(FilesInterceptor(`photos`))
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: 'photos' }, { name: 'stamped' }], {
+      limits: { fileSize: 50000000 }, // Peso máximo 50MB
+      fileFilter: (req, files, res) => {
+        if (!/(jpg|jpeg|png|webp|svg)$/.test(files.mimetype)) {
+          return res(
+            new BadRequestException(
+              'El archivo pesa más de 50MB o el formato no es válido',
+            ),
+            false,
+          );
+        }
+        res(null, true);
+      },
+    }),
+  )
   @Post()
   async createProduct(
     @Body() createProductDto: CreateProductDto,
-    @UploadedFiles(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({
-            maxSize: 50000000,
-            message: 'El archivo no puede pesar 50mb o más',
-          }),
-          new FileTypeValidator({
-            fileType: /(jpg|jpeg|png|webp|svg)$/,
-          }),
-        ],
-      }),
-    )
-    photos: Express.Multer.File[],
+    @UploadedFiles()
+    files: { photos?: Express.Multer.File[]; stamped?: Express.Multer.File[] },
     @Request() req,
   ) {
     const owner = req.user;
+    const photos = files.photos;
+    const stamped = files.stamped;
     return await this.productService.createProduct(
       createProductDto,
       photos,
+      stamped,
       owner,
     );
   }
@@ -122,6 +129,56 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Update a product' })
+  @ApiConsumes('multipart/form-data')
+  // @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiBody({
+    description: 'Pon los datos a actualizar del producto:',
+    schema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: `string`,
+          example: `Remera`,
+        },
+        description: {
+          type: `string`,
+          example: `Remera básica color blanco`,
+        },
+        price: {
+          type: 'decimal',
+          example: 1000,
+        },
+        sizes: {
+          type: `array`,
+          items: { type: `string`, maxLength: 1 },
+          example: [`S`],
+        },
+        color: {
+          type: `array`,
+          items: { type: `string`, maxLength: 1 },
+          example: ['Blanco'],
+        },
+        category: {
+          type: `string`,
+          example: `Remeras`,
+        },
+        photos: {
+          type: 'array',
+          items: { type: `string`, format: 'binary' },
+        },
+        stamped: {
+          type: `array`,
+          items: { type: `string`, format: `binary` },
+        },
+        stock: {
+          type: `number`,
+          example: 10,
+        },
+      },
+    },
+  })
+  @UseInterceptors(FilesInterceptor(`photos`))
   @Post('update/:productId')
   updateProduct(
     @Param('productId') productId: string,

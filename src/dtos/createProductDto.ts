@@ -27,9 +27,6 @@ export class CreateProductDto {
   @IsString()
   category: string;
 
-  @IsString()
-  stamped: string;
-
   @IsNumber()
   @Type(() => Number)
   stock: number;

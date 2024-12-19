@@ -33,11 +33,17 @@ export class ProductService {
   async createProduct(
     createProductDto: CreateProductDto,
     photos: Express.Multer.File[],
+    stamped: Express.Multer.File[],
     owner: User,
   ) {
-    const uploadedImages = await Promise.all(
+    const uploadedPhotos = await Promise.all(
       photos.map(
-        async (file) => await this.cloudinaryProvider.uploadImage(file),
+        async (photo) => await this.cloudinaryProvider.uploadImage(photo),
+      ),
+    );
+    const uploadedStamped = await Promise.all(
+      stamped.map(
+        async (stamp) => await this.cloudinaryProvider.uploadImage(stamp),
       ),
     );
     if (typeof createProductDto.sizes === 'string') {
@@ -49,7 +55,8 @@ export class ProductService {
     const product = this.productRepository.create({
       ...createProductDto,
       user: owner,
-      photos: uploadedImages.map((img) => img.secure_url),
+      photos: uploadedPhotos.map((img) => img.secure_url),
+      stamped: uploadedStamped.map((img) => img.secure_url),
     });
 
     return this.productRepository.save(product);
