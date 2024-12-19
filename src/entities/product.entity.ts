@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { text } from 'body-parser';
 
 @Entity('products')
 export class Product {
@@ -25,7 +26,7 @@ export class Product {
   })
   name: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar' })
   @ApiProperty({
     description: 'Product description',
   })
@@ -68,7 +69,7 @@ export class Product {
   })
   photos: string[];
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
     description: 'Choice of Stamping Area',
   })
