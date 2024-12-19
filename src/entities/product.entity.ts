@@ -25,7 +25,7 @@ export class Product {
   })
   name: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar' })
   @ApiProperty({
     description: 'Product description',
   })
@@ -68,11 +68,11 @@ export class Product {
   })
   photos: string[];
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
-    description: 'Choice of Stamping Area',
+    description: 'Product images',
   })
-  stamped: string;
+  stamped: string[];
 
   @Column({ type: 'int', nullable: true })
   @ApiProperty({
