@@ -70,16 +70,19 @@ export class Product {
   photos: string[];
 
   @Column({ type: 'text', array: true, nullable: true })
+
   @ApiProperty({
     description: 'Choice of Stamping Area',
   })
   smallPrint: string[];
 
   @Column({ type: 'text', array: true, nullable: true })
+
   @ApiProperty({
-    description: 'Choice of Stamping Area',
+    description: 'Product images',
   })
   largePrint: string[];
+
 
   @Column({ type: 'int', nullable: true })
   @ApiProperty({

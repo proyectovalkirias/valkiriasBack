@@ -1,3 +1,4 @@
+
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
@@ -9,6 +10,7 @@ export class UpdateProductDto {
     example: 'Remera'
   })
   @IsString()
+
   @IsNotEmpty()
   @Length(4, 50)
   name?: string;
@@ -33,12 +35,13 @@ export class UpdateProductDto {
   price: number;
 
 
+
   @ApiProperty({
     description: 'Product sizes',
     example: ['S', 'M', 'L']
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   sizes?: string[];
 
 
@@ -54,9 +57,8 @@ export class UpdateProductDto {
     example: 'Remeras'
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   category?: string;
-
   
   @ApiProperty({
     description: 'Product small print'
