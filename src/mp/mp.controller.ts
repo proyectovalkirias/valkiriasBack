@@ -32,4 +32,22 @@ export class MpController {
         }
     }
 
+    @ApiOperation({summary: 'Mp notifications'})
+    @Post('webhooks')
+    async webhookMp(@Body() body: any){
+        try {
+            if(!body || !body.preferenceData) {
+                throw new BadRequestException('Invalid wenhook body');
+            }
+
+            await this.mercadoPagoService.webhookMp(body);
+            return {
+                status: 'Success'
+            };
+        } catch (error) {
+            console.error('Error processing webhook:', error.message);
+            throw new BadRequestException('Failed to process webhook')
+        }
+    }
+
 }

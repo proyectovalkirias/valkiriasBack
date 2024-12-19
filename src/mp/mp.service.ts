@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { mercadoPagoConfig } from '../config/mpConfig';
-import { Preference } from 'mercadopago';
+import { Payment, Preference } from 'mercadopago';
 import { ProductService } from 'src/product/product.service';
 
 @Injectable()
@@ -41,17 +41,15 @@ export class MpService {
         body: {
           items,
           back_urls: {
-            success: 'https://localhost:3001/mp/success',
-            failure: 'https://localhost:3001/mp/failure',
-            pending: 'https://localhost:3001/mp/pending',
+            success: 'https://localhost:3001/Mp/success',
+            failure: 'https://localhost:3001/Mp/failure',
+            pending: 'https://localhost:3001/Mp/pending',
           },
           auto_return: 'approved',
         },
       };
 
-      const response = await new Preference(mercadoPagoConfig).create(
-        preferenceData,
-      );
+      const response = await this.preference.create(preferenceData)
       return {
         url: response.init_point,
       };
@@ -59,5 +57,28 @@ export class MpService {
       console.error('Failed to create payment preference:', error);
       throw new Error('Failed to create payment preference');
     }
+  }
+
+  async webhookMp(body: any) {
+    
+    try {
+      if(body.preferenceData) {
+        const payment = await new Payment(mercadoPagoConfig).get(body.preferenceData);
+        console.log('Payment received:', payment);
+
+
+        if(payment.status === 'approved') {
+          console.log('Payment approved:', payment.order)
+
+        } else if (payment.status === 'rejected') {
+          console.log('Payment rejected:', payment.id);
+        }
+      }
+        
+    } catch (error) {
+      console.error('Error processing webhook:', error.message);
+      throw new Error('Failed to process webhook');
+    }
+
   }
 }
