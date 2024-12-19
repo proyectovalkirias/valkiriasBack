@@ -73,7 +73,13 @@ export class Product {
   @ApiProperty({
     description: 'Choice of Stamping Area',
   })
-  stamped: string;
+  smallPrint: string[];
+
+  @Column({ type: 'text', array: true, nullable: true })
+  @ApiProperty({
+    description: 'Choice of Stamping Area',
+  })
+  largePrint: string[];
 
   @Column({ type: 'int', nullable: true })
   @ApiProperty({
