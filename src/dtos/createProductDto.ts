@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 
 export class CreateProductDto {
@@ -12,14 +13,15 @@ export class CreateProductDto {
   description: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Type(() => Number)
   price: number;
 
   @IsNotEmpty()
   sizes: string[];
 
   @IsNotEmpty()
-  color: string;
+  color: string[];
 
   @IsNotEmpty()
   @IsString()
@@ -29,5 +31,6 @@ export class CreateProductDto {
   stamped: string;
 
   @IsNumber()
+  @Type(() => Number)
   stock: number;
 }

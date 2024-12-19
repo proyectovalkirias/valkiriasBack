@@ -43,6 +43,9 @@ export class ProductService {
     if (typeof createProductDto.sizes === 'string') {
       createProductDto.sizes = [createProductDto.sizes];
     }
+    if (typeof createProductDto.color === 'string') {
+      createProductDto.color = [createProductDto.color];
+    }
     const product = this.productRepository.create({
       ...createProductDto,
       user: owner,

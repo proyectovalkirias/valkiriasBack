@@ -44,11 +44,11 @@ export class Product {
   })
   sizes: string[];
 
-  @Column({ nullable: true })
+  @Column({ type: `varchar`, array: true, nullable: true })
   @ApiProperty({
     description: 'Product color',
   })
-  color: string;
+  color: string[];
 
   @Column({ type: 'boolean', default: true })
   @ApiProperty({
