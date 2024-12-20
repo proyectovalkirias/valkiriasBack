@@ -33,7 +33,8 @@ export class ProductService {
   async createProduct(
     createProductDto: CreateProductDto,
     photos: Express.Multer.File[],
-    stamped: Express.Multer.File[],
+    smallPrint: Express.Multer.File[],
+    largePrint: Express.Multer.File[],
     owner: User,
   ) {
     const uploadedPhotos = await Promise.all(
@@ -41,8 +42,13 @@ export class ProductService {
         async (photo) => await this.cloudinaryProvider.uploadImage(photo),
       ),
     );
-    const uploadedStamped = await Promise.all(
-      stamped.map(
+    const uploadedSmallPrint = await Promise.all(
+      smallPrint.map(
+        async (stamp) => await this.cloudinaryProvider.uploadImage(stamp),
+      ),
+    );
+    const uploadedLargePrint = await Promise.all(
+      largePrint.map(
         async (stamp) => await this.cloudinaryProvider.uploadImage(stamp),
       ),
     );
@@ -56,7 +62,8 @@ export class ProductService {
       ...createProductDto,
       user: owner,
       photos: uploadedPhotos.map((img) => img.secure_url),
-      stamped: uploadedStamped.map((img) => img.secure_url),
+      smallPrint: uploadedSmallPrint.map((img) => img.secure_url),
+      largePrint: uploadedLargePrint.map((img) => img.secure_url),
     });
 
     return this.productRepository.save(product);
@@ -76,7 +83,9 @@ export class ProductService {
   async updateProduct(
     productId: string,
     updateProductDto: UpdateProductDto,
-    files?: Express.Multer.File[],
+    photos: Express.Multer.File[],
+    smallPrint: Express.Multer.File[],
+    largePrint: Express.Multer.File[],
   ) {
     const product = await this.productRepository.findOne({
       where: { id: productId },
@@ -84,13 +93,33 @@ export class ProductService {
     if (!product)
       throw new NotFoundException(`Product with ID ${productId} not found`);
 
-    if (files && files.length > 0) {
-      const uploadedImages = await Promise.all(
-        files.map((file) => this.cloudinaryProvider.uploadImage(file)),
+    if (photos && photos.length > 0) {
+      const uploadedPhotos = await Promise.all(
+        photos.map((file) => this.cloudinaryProvider.uploadImage(file)),
       );
       product.photos = [
         ...product.photos,
-        ...uploadedImages.map((img) => img.secure_url),
+        ...uploadedPhotos.map((img) => img.secure_url),
+      ];
+    }
+
+    if (smallPrint && smallPrint.length > 0) {
+      const uploadedSmallPrint = await Promise.all(
+        smallPrint.map((file) => this.cloudinaryProvider.uploadImage(file)),
+      );
+      product.smallPrint = [
+        ...product.smallPrint,
+        ...uploadedSmallPrint.map((img) => img.secure_url),
+      ];
+    }
+
+    if (largePrint && largePrint.length > 0) {
+      const uploadedLargePrint = await Promise.all(
+        largePrint.map((file) => this.cloudinaryProvider.uploadImage(file)),
+      );
+      product.largePrint = [
+        ...product.largePrint,
+        ...uploadedLargePrint.map((img) => img.secure_url),
       ];
     }
 

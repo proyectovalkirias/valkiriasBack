@@ -8,6 +8,7 @@ import {
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { text } from 'body-parser';
+import { IsOptional } from 'class-validator';
 
 @Entity('products')
 export class Product {
@@ -43,13 +44,13 @@ export class Product {
   @ApiProperty({
     description: 'Product size',
   })
-  sizes: string[];
+  sizes?: string[];
 
   @Column({ type: `varchar`, array: true, nullable: true })
   @ApiProperty({
     description: 'Product color',
   })
-  color: string[];
+  color?: string[];
 
   @Column({ type: 'boolean', default: true })
   @ApiProperty({
@@ -70,19 +71,16 @@ export class Product {
   photos: string[];
 
   @Column({ type: 'text', array: true, nullable: true })
-
   @ApiProperty({
     description: 'Choice of Stamping Area',
   })
-  smallPrint: string[];
+  smallPrint?: string[];
 
   @Column({ type: 'text', array: true, nullable: true })
-
   @ApiProperty({
     description: 'Product images',
   })
-  largePrint: string[];
-
+  largePrint?: string[];
 
   @Column({ type: 'int', nullable: true })
   @ApiProperty({
