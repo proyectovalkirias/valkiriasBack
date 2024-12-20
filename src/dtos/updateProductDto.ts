@@ -17,7 +17,6 @@ export class UpdateProductDto {
     required: false,
   })
   @IsString()
-  @IsNotEmpty()
   @Length(4, 50)
   @IsOptional()
   name?: string;
@@ -28,7 +27,6 @@ export class UpdateProductDto {
     required: false,
   })
   @IsString()
-  @IsNotEmpty()
   @Length(10, 150)
   @IsOptional()
   description?: string;
@@ -69,7 +67,6 @@ export class UpdateProductDto {
     required: false,
   })
   @IsString()
-  @IsOptional()
   @IsOptional()
   category?: string;
 

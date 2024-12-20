@@ -33,8 +33,8 @@ export class ProductService {
   async createProduct(
     createProductDto: CreateProductDto,
     photos: Express.Multer.File[],
-    smallPrint: Express.Multer.File[],
-    largePrint: Express.Multer.File[],
+    smallPrint: Express.Multer.File[] | null | undefined,
+    largePrint: Express.Multer.File[] | null | undefined,
     owner: User,
   ) {
     const uploadedPhotos = await Promise.all(
@@ -42,16 +42,28 @@ export class ProductService {
         async (photo) => await this.cloudinaryProvider.uploadImage(photo),
       ),
     );
-    const uploadedSmallPrint = await Promise.all(
-      smallPrint.map(
-        async (stamp) => await this.cloudinaryProvider.uploadImage(stamp),
-      ),
-    );
-    const uploadedLargePrint = await Promise.all(
-      largePrint.map(
-        async (stamp) => await this.cloudinaryProvider.uploadImage(stamp),
-      ),
-    );
+
+    let uploadedSmallPrint: string[] | null = null;
+    let uploadedLargePrint: string[] | null = null;
+
+    if (smallPrint && smallPrint.length > 0) {
+      uploadedSmallPrint = await Promise.all(
+        smallPrint.map(async (stamp) => {
+          const imgUploaded = await this.cloudinaryProvider.uploadImage(stamp);
+          return imgUploaded.secure_url;
+        }),
+      );
+    }
+
+    if (largePrint && largePrint.length > 0) {
+      uploadedLargePrint = await Promise.all(
+        largePrint.map(async (stamp) => {
+          const imgUploaded = await this.cloudinaryProvider.uploadImage(stamp);
+          return imgUploaded.secure_url;
+        }),
+      );
+    }
+
     if (typeof createProductDto.sizes === 'string') {
       createProductDto.sizes = [createProductDto.sizes];
     }
@@ -62,8 +74,8 @@ export class ProductService {
       ...createProductDto,
       user: owner,
       photos: uploadedPhotos.map((img) => img.secure_url),
-      smallPrint: uploadedSmallPrint.map((img) => img.secure_url),
-      largePrint: uploadedLargePrint.map((img) => img.secure_url),
+      smallPrint: uploadedSmallPrint,
+      largePrint: uploadedLargePrint,
     });
 
     return this.productRepository.save(product);
@@ -83,9 +95,9 @@ export class ProductService {
   async updateProduct(
     productId: string,
     updateProductDto: UpdateProductDto,
-    photos: Express.Multer.File[],
-    smallPrint: Express.Multer.File[],
-    largePrint: Express.Multer.File[],
+    photos?: Express.Multer.File[],
+    smallPrint?: Express.Multer.File[],
+    largePrint?: Express.Multer.File[],
   ) {
     const product = await this.productRepository.findOne({
       where: { id: productId },

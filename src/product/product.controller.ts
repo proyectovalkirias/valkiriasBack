@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   Request,
   UploadedFiles,
@@ -76,7 +77,8 @@ export class ProductController {
         },
         smallPrint: {
           type: `array`,
-          items: { type: 'string', format: 'binary' },
+          nullable: true,
+          items: { type: 'string', format: 'binary', nullable: true },
         },
         largePrint: {
           type: `array`,
@@ -123,6 +125,7 @@ export class ProductController {
     const photos = files.photos;
     const smallPrint = files.smallPrint;
     const largePrint = files.largePrint;
+
     return await this.productService.createProduct(
       createProductDto,
       photos,
@@ -202,7 +205,7 @@ export class ProductController {
       { name: 'largePrint' },
     ]),
   )
-  @Post('update/:productId')
+  @Put('update/:productId')
   updateProduct(
     @Param('productId') productId: string,
     @Body() updateProductDto: UpdateProductDto,
@@ -213,9 +216,9 @@ export class ProductController {
       largePrint?: Express.Multer.File[];
     },
   ) {
-    const photos = files.photos;
-    const smallPrint = files.smallPrint;
-    const largePrint = files.largePrint;
+    const photos = files?.photos;
+    const smallPrint = files?.smallPrint;
+    const largePrint = files?.largePrint;
     return this.productService.updateProduct(
       productId,
       updateProductDto,
