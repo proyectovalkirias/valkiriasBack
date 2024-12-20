@@ -1,11 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class CreateProductDto {
   @ApiProperty({
     description: 'Product name',
-    example: 'Remera'
+    example: 'Remera',
   })
   @IsString()
   @IsNotEmpty()
@@ -14,7 +22,7 @@ export class CreateProductDto {
 
   @ApiProperty({
     description: 'Product description',
-    example: 'Remera algodón'
+    example: 'Remera algodón',
   })
   @IsNotEmpty()
   @Length(10, 150)
@@ -23,7 +31,7 @@ export class CreateProductDto {
 
   @ApiProperty({
     description: 'Product price',
-    example: 100
+    example: 100,
   })
   @IsNotEmpty()
   @IsNumber({ maxDecimalPlaces: 2 })
@@ -32,7 +40,7 @@ export class CreateProductDto {
 
   @ApiProperty({
     description: 'Product sizes',
-    example: ['S', 'M', 'L']
+    example: ['S', 'M', 'L'],
   })
   @IsString()
   @IsNotEmpty()
@@ -40,40 +48,45 @@ export class CreateProductDto {
 
   @ApiProperty({
     description: 'Product color',
-    example: ['Blanco', 'Negro']
+    example: ['Blanco', 'Negro'],
   })
   @IsNotEmpty()
   color?: string[];
 
   @ApiProperty({
     description: 'Product category',
-    example: 'Remeras'
+    example: 'Remeras',
   })
   @IsString()
   @IsNotEmpty()
-  category?: string;
+  category: string;
 
- @ApiProperty({
-    description: 'Product small print'
+  @ApiProperty({
+    description: 'Product small print',
+    required: false,
   })
   @IsArray()
+  @IsOptional()
   smallPrint?: string[];
 
   @ApiProperty({
-    description: 'Product large print'
+    description: 'Product large print',
+    required: false,
   })
   @IsArray()
+  @IsOptional()
   LargePrint?: string[];
 
   @ApiProperty({
-    description: 'Product photos'
+    description: 'Product photos',
+    required: false,
   })
   @IsArray()
-  photo?: string[];
-
+  @IsOptional()
+  photos?: string[];
 
   @ApiProperty({
-    description: 'Product stock'
+    description: 'Product stock',
   })
   @IsNumber()
   @Type(() => Number)
@@ -81,8 +94,9 @@ export class CreateProductDto {
 
   @ApiProperty({
     description: 'Product available',
+    required: false,
   })
-  @IsNotEmpty()
   @IsBoolean()
-  isAvailable?: boolean;
+  @IsOptional()
+  isAvailable: boolean;
 }

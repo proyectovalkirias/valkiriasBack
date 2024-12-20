@@ -74,7 +74,11 @@ export class ProductController {
           type: 'array',
           items: { type: 'string', format: 'binary' },
         },
-        stamped: {
+        smallPrint: {
+          type: `array`,
+          items: { type: 'string', format: 'binary' },
+        },
+        largePrint: {
           type: `array`,
           items: { type: 'string', format: 'binary' },
         },
@@ -86,35 +90,44 @@ export class ProductController {
     },
   })
   @UseInterceptors(
-    FileFieldsInterceptor([{ name: 'photos' }, { name: 'stamped' }], {
-      limits: { fileSize: 50000000 }, // Peso máximo 50MB
-      fileFilter: (req, files, res) => {
-        if (!/(jpg|jpeg|png|webp|svg)$/.test(files.mimetype)) {
-          return res(
-            new BadRequestException(
-              'El archivo pesa más de 50MB o el formato no es válido',
-            ),
-            false,
-          );
-        }
-        res(null, true);
+    FileFieldsInterceptor(
+      [{ name: 'photos' }, { name: 'smallPrint' }, { name: 'largePrint' }],
+      {
+        limits: { fileSize: 50000000 }, // Peso máximo 50MB
+        fileFilter: (req, files, res) => {
+          if (!/(jpg|jpeg|png|webp|svg)$/.test(files.mimetype)) {
+            return res(
+              new BadRequestException(
+                'El archivo pesa más de 50MB o el formato no es válido',
+              ),
+              false,
+            );
+          }
+          res(null, true);
+        },
       },
-    }),
+    ),
   )
   @Post()
   async createProduct(
     @Body() createProductDto: CreateProductDto,
     @UploadedFiles()
-    files: { photos?: Express.Multer.File[]; stamped?: Express.Multer.File[] },
+    files: {
+      photos?: Express.Multer.File[];
+      smallPrint?: Express.Multer.File[];
+      largePrint?: Express.Multer.File[];
+    },
     @Request() req,
   ) {
     const owner = req.user;
     const photos = files.photos;
-    const stamped = files.stamped;
+    const smallPrint = files.smallPrint;
+    const largePrint = files.largePrint;
     return await this.productService.createProduct(
       createProductDto,
       photos,
-      stamped,
+      smallPrint,
+      largePrint,
       owner,
     );
   }
@@ -167,7 +180,11 @@ export class ProductController {
           type: 'array',
           items: { type: `string`, format: 'binary' },
         },
-        stamped: {
+        smallPrint: {
+          type: `array`,
+          items: { type: `string`, format: `binary` },
+        },
+        largePrint: {
           type: `array`,
           items: { type: `string`, format: `binary` },
         },
@@ -178,13 +195,34 @@ export class ProductController {
       },
     },
   })
-  @UseInterceptors(FilesInterceptor(`photos`))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'photos' },
+      { name: 'smallPrint' },
+      { name: 'largePrint' },
+    ]),
+  )
   @Post('update/:productId')
   updateProduct(
     @Param('productId') productId: string,
     @Body() updateProductDto: UpdateProductDto,
+    @UploadedFiles()
+    files: {
+      photos?: Express.Multer.File[];
+      smallPrint?: Express.Multer.File[];
+      largePrint?: Express.Multer.File[];
+    },
   ) {
-    return this.productService.updateProduct(productId, updateProductDto);
+    const photos = files.photos;
+    const smallPrint = files.smallPrint;
+    const largePrint = files.largePrint;
+    return this.productService.updateProduct(
+      productId,
+      updateProductDto,
+      photos,
+      smallPrint,
+      largePrint,
+    );
   }
   @ApiOperation({ summary: 'Delete a product' })
   @Post('delete/:productId')
