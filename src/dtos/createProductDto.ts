@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -41,16 +41,22 @@ export class CreateProductDto {
   @ApiProperty({
     description: 'Product sizes',
     example: ['S', 'M', 'L'],
+    nullable: true,
+    default: null,
+    required: false,
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   sizes?: string[];
 
   @ApiProperty({
     description: 'Product color',
     example: ['Blanco', 'Negro'],
+    nullable: true,
+    default: null,
+    required: false,
   })
-  @IsNotEmpty()
+  @IsOptional()
   color?: string[];
 
   @ApiProperty({
@@ -63,19 +69,23 @@ export class CreateProductDto {
 
   @ApiProperty({
     description: 'Product small print',
+    nullable: true,
+    default: null,
     required: false,
   })
-  @IsArray()
+  /* @IsArray() */
   @IsOptional()
-  smallPrint?: string[];
+  smallPrint?: string[] | null;
 
   @ApiProperty({
     description: 'Product large print',
+    nullable: true,
+    default: null,
     required: false,
   })
-  @IsArray()
+  /* @IsArray() */
   @IsOptional()
-  LargePrint?: string[];
+  largePrint?: string[] | null;
 
   @ApiProperty({
     description: 'Product photos',
