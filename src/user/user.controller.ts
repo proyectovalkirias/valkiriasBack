@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/entities/user.entity';
 import { UserDto } from 'src/dtos/userDto';
+import { UpdateUserDto } from 'src/dtos/updateUserDto';
 
 @ApiTags('users')
 @Controller('users')
@@ -39,15 +40,16 @@ export class UserController {
     return this.userService.removeUser(id);
   }
 
-  @ApiOperation({ summary: 'Update User' })
-  @Put(':id')
-  updateUser(@Param('id') id: string, @Body() updateUser: UserDto) {
-    return this.userService.updateUser(id, updateUser);
-  }
-
+  
   @ApiOperation({ summary: 'Get User By Id' })
   @Get(':id')
   getUserById(@Param('id') id: string) {
     return this.userService.getUserById(id);
+  }
+
+  @ApiOperation({ summary: 'Update User' })
+  @Put(':id')
+  updateUser(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
+    return this.userService.updateUser(id, updateUser);
   }
 }

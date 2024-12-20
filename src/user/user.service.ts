@@ -6,6 +6,7 @@ import {
 import { UserRepository } from './user.repository';
 import { User } from 'src/entities/user.entity';
 import { UserDto } from 'src/dtos/userDto';
+import { UpdateUserDto } from 'src/dtos/updateUserDto';
 
 @Injectable()
 export class UserService {
@@ -50,7 +51,7 @@ export class UserService {
 
   async updateUser(
     userId: string,
-    updateUser: UserDto,
+    updateUser: UpdateUserDto,
   ): Promise<Partial<User>> {
     const findUser = await this.userRepository.getUserById(userId);
     if (!findUser) throw new NotFoundException('User not found');
@@ -60,6 +61,7 @@ export class UserService {
 
     return userWithoutPass;
   }
+
 
   async deactiveUser(id: string) {
     return await this.userRepository.deactivateUser(id);
