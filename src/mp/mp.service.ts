@@ -5,10 +5,10 @@ import { ProductService } from 'src/product/product.service';
 
 @Injectable()
 export class MpService {
-  private preference: Preference;
+  // private preference: Preference;
 
   constructor(private readonly productService: ProductService) {
-    this.preference = new Preference(mercadoPagoConfig);
+    // this.preference = new Preference(mercadoPagoConfig);
   }
 
   async createPaymentPreference(products: any[]) {
@@ -49,7 +49,8 @@ export class MpService {
         },
       };
 
-      const response = await this.preference.create(preferenceData)
+      const response = await new Preference(mercadoPagoConfig).create(preferenceData)
+      // const response = await this.preference.create(preferenceData)
       return {
         url: response.init_point,
       };
