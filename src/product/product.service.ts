@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Any, Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
 import { CloudinaryService } from '../config/cloudinary';
 import { CreateProductDto } from '../dtos/createProductDto';
@@ -37,6 +37,8 @@ export class ProductService {
     largePrint: Express.Multer.File[] | null | undefined,
     owner: User,
   ) {
+    console.log(typeof createProductDto.sizes);
+    console.log(createProductDto.sizes);
     const uploadedPhotos = await Promise.all(
       photos.map(
         async (photo) => await this.cloudinaryProvider.uploadImage(photo),
@@ -45,6 +47,10 @@ export class ProductService {
 
     let uploadedSmallPrint: string[] | null = null;
     let uploadedLargePrint: string[] | null = null;
+    let sizes = null;
+    let color = null;
+    let sizesArray = [];
+    let colorArray = [];
 
     if (smallPrint && smallPrint.length > 0) {
       uploadedSmallPrint = await Promise.all(
@@ -64,12 +70,15 @@ export class ProductService {
       );
     }
 
-    if (typeof createProductDto.sizes === 'string') {
-      createProductDto.sizes = [createProductDto.sizes];
+    if (sizes && typeof sizes === 'string') {
+      sizes = sizes.split(',').map((item) => item.trim());
+      sizesArray.push(sizes);
     }
-    if (typeof createProductDto.color === 'string') {
-      createProductDto.color = [createProductDto.color];
+
+    if (color && typeof color === 'string') {
+      color = color.split(',').map((item) => item.trim());
     }
+
     const product = this.productRepository.create({
       ...createProductDto,
       user: owner,
