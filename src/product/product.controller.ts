@@ -59,12 +59,12 @@ export class ProductController {
         },
         sizes: {
           type: `array`,
-          items: { type: `string`, maxLength: 1 },
+          items: { type: 'string', maxLength: 3 },
           example: [`S`],
         },
         color: {
           type: `array`,
-          items: { type: `string`, maxLength: 1 },
+          items: { type: `string` },
           example: ['Blanco'],
         },
         category: {
