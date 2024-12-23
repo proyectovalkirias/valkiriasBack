@@ -47,16 +47,9 @@ export class CreateProductDto {
     default: null,
     required: false,
   })
-  @IsArray()
   @IsString({ each: true})
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string') {
-      return value.split(',').map((item) => item.trim());
-    }
-    return value;
-  })
-  sizes?: string[];
+  sizes?: string[] | string;
 
   @ApiProperty({
     description: 'Product color',
@@ -67,16 +60,9 @@ export class CreateProductDto {
     default: null,
     required: false,
   })
-  @IsArray()
   @IsString({ each: true})
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string') {
-      return value.split(',').map((item) => item.trim()); 
-  }
-    return value;
-    })
-  color?: string[];
+  color?: string[] | string;
 
   @ApiProperty({
     description: 'Product category',
@@ -92,7 +78,6 @@ export class CreateProductDto {
     default: null,
     required: false,
   })
-  /* @IsArray() */
   @IsOptional()
   smallPrint?: string[] | null;
 

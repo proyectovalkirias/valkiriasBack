@@ -8,6 +8,7 @@ import { UpdateProductDto } from '../dtos/updateProductDto';
 import { User } from 'src/entities/user.entity';
 import { FilterDto } from 'src/dtos/filterDto';
 
+
 @Injectable()
 export class ProductService {
   constructor(
@@ -47,10 +48,24 @@ export class ProductService {
 
     let uploadedSmallPrint: string[] | null = null;
     let uploadedLargePrint: string[] | null = null;
-    let sizes = null;
-    let color = null;
-    let sizesArray = [];
-    let colorArray = [];
+
+    let sizesArray: string[] = [];
+    if (createProductDto.sizes) {
+      if (Array.isArray(createProductDto.sizes)){
+        sizesArray = createProductDto.sizes;
+      } else if (typeof createProductDto.sizes === 'string') {
+        sizesArray = createProductDto.sizes.split(',').map((item) => item.trim());
+    }
+  }
+
+  let colorArray: string[] = [];
+  if (createProductDto.color) {
+    if (Array.isArray(createProductDto.color)) {
+      colorArray = createProductDto.color;
+    } else if (typeof createProductDto.color === 'string') {
+      colorArray = createProductDto.color.split(',').map((item) => item.trim());
+    }
+  }
 
     if (smallPrint && smallPrint.length > 0) {
       uploadedSmallPrint = await Promise.all(
@@ -70,18 +85,6 @@ export class ProductService {
       );
     }
     
-    if(sizes && Array.isArray(sizes)){
-      sizesArray = sizes;
-    } else if (sizes && typeof sizes === 'string') {
-      sizesArray = sizes.split(',').map((item) => item.trim());
-    }
-
-    if(color && Array.isArray(color)) {
-      colorArray = color;
-    }else if (color && typeof color === 'string') {
-      color = color.split(',').map((item) => item.trim());
-    }
-
     const product = this.productRepository.create({
       ...createProductDto,
       sizes: sizesArray,
