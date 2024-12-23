@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ProductModule } from './product/product.module';
 import { MpModule } from './mp/mp.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { MpModule } from './mp/mp.module';
     }),
     ProductModule,
     MpModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [],
