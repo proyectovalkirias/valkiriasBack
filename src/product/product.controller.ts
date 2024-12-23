@@ -58,34 +58,34 @@ export class ProductController {
           example: 1000,
         },
         sizes: {
-          type: `array`,
-          items: { type: 'string', maxLength: 3 },
-          example: [`S`],
+          type: 'array',
+          items: { type: 'string' },
+          example: ['S', 'M', 'L'],
         },
         color: {
-          type: `array`,
+          type: 'array',
           items: { type: `string` },
           example: ['Blanco'],
         },
         category: {
-          type: `string`,
-          example: `Remeras`,
+          type: 'string',
+          example: 'Remeras',
         },
         photos: {
           type: 'array',
           items: { type: 'string', format: 'binary' },
         },
         smallPrint: {
-          type: `array`,
+          type: 'array',
           nullable: true,
           items: { type: 'string', format: 'binary', nullable: true },
         },
         largePrint: {
-          type: `array`,
+          type: 'array',
           items: { type: 'string', format: 'binary' },
         },
         stock: {
-          type: `number`,
+          type: 'number',
           example: 10,
         },
       },
@@ -125,6 +125,8 @@ export class ProductController {
     const photos = files.photos;
     const smallPrint = files.smallPrint;
     const largePrint = files.largePrint;
+
+    
 
     return await this.productService.createProduct(
       createProductDto,

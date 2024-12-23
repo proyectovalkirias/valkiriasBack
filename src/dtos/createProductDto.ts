@@ -1,5 +1,5 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -41,22 +41,41 @@ export class CreateProductDto {
   @ApiProperty({
     description: 'Product sizes',
     example: ['S', 'M', 'L'],
+    type: [String],
+    isArray:true,
     nullable: true,
     default: null,
     required: false,
   })
-  @IsString()
+  @IsArray()
+  @IsString({ each: true})
   @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.split(',').map((item) => item.trim());
+    }
+    return value;
+  })
   sizes?: string[];
 
   @ApiProperty({
     description: 'Product color',
     example: ['Blanco', 'Negro'],
+    type: [String],
+    isArray: true,
     nullable: true,
     default: null,
     required: false,
   })
+  @IsArray()
+  @IsString({ each: true})
   @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.split(',').map((item) => item.trim()); 
+  }
+    return value;
+    })
   color?: string[];
 
   @ApiProperty({
