@@ -17,7 +17,6 @@ export class UpdateProductDto {
     required: false,
   })
   @IsString()
-  @Length(4, 50)
   @IsOptional()
   name?: string;
 
@@ -27,7 +26,6 @@ export class UpdateProductDto {
     required: false,
   })
   @IsString()
-  @Length(10, 150)
   @IsOptional()
   description?: string;
 
@@ -45,21 +43,24 @@ export class UpdateProductDto {
   @ApiProperty({
     description: 'Product sizes',
     example: ['S', 'M', 'L'],
+    type: [String],
+    isArray: true,
     required: false,
   })
-  @IsString()
+  @IsString({ each: true })
   @IsOptional()
-  @IsOptional()
-  sizes?: string[];
+  sizes?: string[] | string;
 
   @ApiProperty({
     description: 'Product color',
     example: ['Blanco', 'Negro'],
+    type: [String],
+    isArray: true,
     required: false,
   })
-  @IsNotEmpty()
+  @IsString({ each: true })
   @IsOptional()
-  color?: string[];
+  color?: string[] | string;
 
   @ApiProperty({
     description: 'Product category',
@@ -74,7 +75,6 @@ export class UpdateProductDto {
     description: 'Product small print',
     required: false,
   })
-  @IsArray()
   @IsOptional()
   smallPrint?: string[];
 
@@ -82,15 +82,13 @@ export class UpdateProductDto {
     description: 'Product large print',
     required: false,
   })
-  @IsArray()
   @IsOptional()
-  LargePrint?: string[];
+  largePrint?: string[];
 
   @ApiProperty({
     description: 'Product photos',
     required: false,
   })
-  @IsArray()
   @IsOptional()
   photos?: string[];
 
@@ -107,7 +105,6 @@ export class UpdateProductDto {
     description: 'Product available',
     required: false,
   })
-  @IsNotEmpty()
   @IsBoolean()
   @IsOptional()
   isAvailable?: boolean;
