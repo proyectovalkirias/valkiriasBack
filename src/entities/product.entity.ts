@@ -40,13 +40,13 @@ export class Product {
   })
   price: number;
 
-  @Column({ type: 'varchar', array: true, nullable: true })
+  @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
     description: 'Product size',
   })
   sizes?: string[];
 
-  @Column({ type: `varchar`, array: true, nullable: true })
+  @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
     description: 'Product color',
   })

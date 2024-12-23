@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Any, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
 import { CloudinaryService } from '../config/cloudinary';
 import { CreateProductDto } from '../dtos/createProductDto';
@@ -69,18 +69,23 @@ export class ProductService {
         }),
       );
     }
-
-    if (sizes && typeof sizes === 'string') {
-      sizes = sizes.split(',').map((item) => item.trim());
-      sizesArray.push(sizes);
+    
+    if(sizes && Array.isArray(sizes)){
+      sizesArray = sizes;
+    } else if (sizes && typeof sizes === 'string') {
+      sizesArray = sizes.split(',').map((item) => item.trim());
     }
 
-    if (color && typeof color === 'string') {
+    if(color && Array.isArray(color)) {
+      colorArray = color;
+    }else if (color && typeof color === 'string') {
       color = color.split(',').map((item) => item.trim());
     }
 
     const product = this.productRepository.create({
       ...createProductDto,
+      sizes: sizesArray,
+      color: colorArray,
       user: owner,
       photos: uploadedPhotos.map((img) => img.secure_url),
       smallPrint: uploadedSmallPrint,
