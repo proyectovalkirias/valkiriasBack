@@ -126,8 +126,6 @@ export class ProductController {
     const smallPrint = files.smallPrint;
     const largePrint = files.largePrint;
 
-    
-
     return await this.productService.createProduct(
       createProductDto,
       photos,
@@ -168,13 +166,13 @@ export class ProductController {
           example: 1000,
         },
         sizes: {
-          type: `array`,
-          items: { type: `string`, maxLength: 1 },
-          example: [`S`],
+          type: 'array',
+          items: { type: 'string' },
+          example: ['S', 'M', 'L'],
         },
         color: {
-          type: `array`,
-          items: { type: `string`, maxLength: 1 },
+          type: 'array',
+          items: { type: `string` },
           example: ['Blanco'],
         },
         category: {

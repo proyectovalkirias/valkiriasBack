@@ -42,12 +42,12 @@ export class CreateProductDto {
     description: 'Product sizes',
     example: ['S', 'M', 'L'],
     type: [String],
-    isArray:true,
+    isArray: true,
     nullable: true,
     default: null,
     required: false,
   })
-  @IsString({ each: true})
+  @IsString({ each: true })
   @IsOptional()
   sizes?: string[] | string;
 
@@ -60,7 +60,7 @@ export class CreateProductDto {
     default: null,
     required: false,
   })
-  @IsString({ each: true})
+  @IsString({ each: true })
   @IsOptional()
   color?: string[] | string;
 
@@ -87,7 +87,6 @@ export class CreateProductDto {
     default: null,
     required: false,
   })
-  /* @IsArray() */
   @IsOptional()
   largePrint?: string[] | null;
 
