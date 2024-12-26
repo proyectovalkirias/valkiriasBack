@@ -63,7 +63,8 @@ export class MpService {
   async webhookMp(body: any) {
     
     try {
-      if(body.preferenceData) {
+      if(!body || !body.preferenceData) throw new BadRequestException('Invalid webhook body');
+
         const payment = await new Payment(mercadoPagoConfig).get(body.preferenceData);
         console.log('Payment received:', payment);
 
@@ -73,7 +74,7 @@ export class MpService {
 
         } else if (payment.status === 'rejected') {
           console.log('Payment rejected:', payment.id);
-        }
+        
       }
         
     } catch (error) {
