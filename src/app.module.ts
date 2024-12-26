@@ -8,9 +8,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ProductModule } from './product/product.module';
 import { MpModule } from './mp/mp.module';
+import { OrderModule } from './order/order.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeOrmConfig],
@@ -32,6 +35,7 @@ import { MpModule } from './mp/mp.module';
     }),
     ProductModule,
     MpModule,
+    OrderModule,
   ],
   controllers: [],
   providers: [],

@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
-  isNumber,
   IsNumber,
+  IsOptional,
   IsString,
   Length,
   Matches,
@@ -57,44 +57,51 @@ export class UserDto {
   @Validate(matchPassword, ['password'])
   confirmPassword: string;
 
-  @ApiProperty({ 
-    description: 'User dni'})
-  @IsNumber()
-  dni?: number;
+  // @ApiProperty({ 
+  //   description: 'User dni'})
+  // @IsNumber()
+  // @IsOptional()
+  // dni?: number;
   
-  @ApiProperty({
-    description:'User phone'})
-  @IsNumber()
-  phone?: number;
+  // @ApiProperty({
+  //   description:'User phone'})
+  // @IsNumber()
+  // @IsOptional()
+  // phone?: number;
   
-  @ApiProperty({
-    description: 'User address'
-  })
-  @IsString()
-  address?: string;
+  // @ApiProperty({
+  //   description: 'User address'
+  // })
+  // @IsString()
+  // @IsOptional()
+  // address?: string;
   
-  @ApiProperty({
-    description: 'User city'
-  })
-  @IsString()
-  city?: string;
+  // @ApiProperty({
+  //   description: 'User city'
+  // })
+  // @IsString()
+  // @IsOptional()
+  // city?: string;
   
 
-  @ApiProperty({
-    description: 'User state'
-  })
-  @IsString()
-  state?: string;
+  // @ApiProperty({
+  //   description: 'User state'
+  // })
+  // @IsString()
+  // @IsOptional()
+  // state?: string;
 
-  @ApiProperty({
-    description: 'Profile picture',
-  })
-  @IsString()
-  photo?: string;
+  // @ApiProperty({
+  //   description: 'Profile picture',
+  // })
+  // @IsString()
+  // @IsOptional()
+  // photo?: string;
   
-  @ApiProperty({
-    description: 'Google Token',
-  })
-  @IsString()
-  googleAccessToken?: string;
+  // @ApiProperty({
+  //   description: 'Google Token',
+  // })
+  // @IsString()
+  // @IsOptional()
+  // googleAccessToken?: string;
 }

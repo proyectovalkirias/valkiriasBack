@@ -1,5 +1,5 @@
-import { ApiProperty, ApiSchema } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -42,21 +42,14 @@ export class CreateProductDto {
     description: 'Product sizes',
     example: ['S', 'M', 'L'],
     type: [String],
-    isArray:true,
+    isArray: true,
     nullable: true,
     default: null,
     required: false,
   })
-  @IsArray()
-  @IsString({ each: true})
+  @IsString({ each: true })
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string') {
-      return value.split(',').map((item) => item.trim());
-    }
-    return value;
-  })
-  sizes?: string[];
+  sizes?: string[] | string;
 
   @ApiProperty({
     description: 'Product color',
@@ -67,16 +60,9 @@ export class CreateProductDto {
     default: null,
     required: false,
   })
-  @IsArray()
-  @IsString({ each: true})
+  @IsString({ each: true })
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string') {
-      return value.split(',').map((item) => item.trim()); 
-  }
-    return value;
-    })
-  color?: string[];
+  color?: string[] | string;
 
   @ApiProperty({
     description: 'Product category',
@@ -92,7 +78,6 @@ export class CreateProductDto {
     default: null,
     required: false,
   })
-  /* @IsArray() */
   @IsOptional()
   smallPrint?: string[] | null;
 
@@ -102,7 +87,6 @@ export class CreateProductDto {
     default: null,
     required: false,
   })
-  /* @IsArray() */
   @IsOptional()
   largePrint?: string[] | null;
 
