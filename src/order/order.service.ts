@@ -7,6 +7,7 @@ import { Product } from 'src/entities/product.entity';
 import { ProductService } from 'src/product/product.service';
 import { UserRepository } from 'src/user/user.repository';
 import { Repository } from 'typeorm';
+import { OrderStatus } from 'src/utils/orderStatus.enum';
 
 @Injectable()
 export class OrderService {
@@ -88,11 +89,20 @@ export class OrderService {
             }
 
             await this.orderDetailRepository.delete({order: { id }});
-            await this.orderRepository.delete(id);
-
-            return `Order with id ${id} has been delete`
         }
+        await this.orderRepository.delete(id);
+
+        return `Order with id ${id} has been delete`;
     }
 
+    async getOrderStatus(): Promise<Order[]>{
+        return this.orderRepository.find({
+            where: {status: OrderStatus.PENDING}
+        });
+    }
+
+    async updateOrderStatus(orderId: string, status: OrderStatus) {
+        await this.orderRepository.update(orderId, { status, updatedAt: new Date()})
+    }
 
 }
