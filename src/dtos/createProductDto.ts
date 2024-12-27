@@ -17,7 +17,7 @@ export class CreateProductDto {
   })
   @IsString()
   @IsNotEmpty()
-  @Length(5, 50)
+  @Length(4, 50)
   name: string;
 
   @ApiProperty({
@@ -25,7 +25,7 @@ export class CreateProductDto {
     example: 'Remera algodón',
   })
   @IsNotEmpty()
-  @Length(10, 150)
+  @Length(2, 150)
   @IsString()
   description: string;
 
