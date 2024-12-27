@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { OrderDetail } from './orderDetails.entity';
+import { OrderStatus } from 'src/utils/orderStatus.enum';
 
 @Entity({
   name: 'orders',
@@ -27,6 +28,23 @@ export class Order {
     description: 'Order date',
   })
   createdAt: Date;
+
+  @Column({
+    type: 'enum',
+    enum: OrderStatus,
+    default: OrderStatus.PENDING
+  })
+  @ApiProperty({
+    description: 'Order Status',
+    example: 'pendiente'
+  })
+  status: OrderStatus;
+
+  @Column()
+  @ApiProperty({
+    description: 'Update Order Status'
+  })
+  updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.orders, { nullable: false })
   @JoinColumn({ name: 'userId' })
