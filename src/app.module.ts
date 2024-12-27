@@ -10,6 +10,7 @@ import { ProductModule } from './product/product.module';
 import { MpModule } from './mp/mp.module';
 import { OrderModule } from './order/order.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ValkibotModule } from './valkibot/valkibot.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ProductModule,
     MpModule,
     OrderModule,
+    ValkibotModule,
   ],
   controllers: [],
   providers: [],
