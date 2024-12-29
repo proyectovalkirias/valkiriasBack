@@ -6,8 +6,9 @@ import { OrderDetail } from 'src/entities/orderDetails.entity';
 import { Product } from 'src/entities/product.entity';
 import { ProductService } from 'src/product/product.service';
 import { UserRepository } from 'src/user/user.repository';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
+import { ProductPrice } from 'src/entities/productPrice.entity';
 
 @Injectable()
 export class OrderService {
@@ -18,7 +19,10 @@ export class OrderService {
         private readonly orderDetailRepository: Repository<OrderDetail>,
         private readonly userRepository: UserRepository,
         @InjectRepository(Product)
-        private readonly productRepository:Repository<Product>
+        private readonly productRepository:Repository<Product>,
+        @InjectRepository(ProductPrice)
+        private readonly productPriceRepository: Repository<ProductPrice>
+
     ){}
 
     async createOrder(createOrder: CreateOrderDto): Promise<Order> {
@@ -30,6 +34,7 @@ export class OrderService {
 
             const order = new Order();
             order.createdAt = new Date();
+            order.updatedAt = new Date();
             order.user = user;
 
             const newOrder = await this.orderRepository.save(order);
@@ -37,9 +42,20 @@ export class OrderService {
        const productArray = await Promise.all(
         products.map(async (item) => {
             const product = await this.productRepository.findOneBy({id: item.id})
-            if(!product) throw new NotFoundException('Product not found')
+            if(!product) throw new NotFoundException('Product not found');
 
-                total += Number(product.price);
+            const productPrice = await this.productPriceRepository.findOne({
+                where: {
+                    product: { id: product.id},
+                    size: item.size,
+                }
+            });
+
+            if(!productPrice) {
+                throw new NotFoundException(`Price for size ${item.size} not found`);
+            }
+
+                total += Number(productPrice.price);
                 product.stock -= 1;
                 await this.productRepository.save(product)
                 return product;
@@ -50,6 +66,7 @@ export class OrderService {
       orderDetail.order = newOrder;
       orderDetail.product = productArray;
       orderDetail.price = Number(Number(total).toFixed(2));
+
       await this.orderDetailRepository.save(orderDetail)
 
       return await this.orderRepository.findOne({
@@ -74,26 +91,34 @@ export class OrderService {
     }
 
     async deleteOrder(id: string) {
-        const order = await this.orderRepository.findOne({
-            where: { id },
-            relations: ['orderDetail', 'orderDetail.product']
-        })
 
-        if(!order) throw new NotFoundException('Order not found');
+        return await this.productRepository.manager.transaction(
+            async (manager: EntityManager) => {
+                
+                const order = await this.orderRepository.findOne({
+                    where: { id },
+                    relations: ['orderDetail', 'orderDetail.product']
+                })
+        
+                if(!order) throw new NotFoundException('Order not found');
+        
+                const orderDetail = order.orderDetail;
+                if(orderDetail && orderDetail.product.length > 0) {
+                    for (const product of orderDetail.product) {
+                        product.stock += 1;
+                        await manager.save(product)
+                    }
+        
+                    await manager.delete(OrderDetail, {order: { id }});
 
-        const orderDetail = order.orderDetail;
-        if(orderDetail && orderDetail.product.length > 0) {
-            for (const product of orderDetail.product) {
-                product.stock += 1;
-                await this.productRepository.save(product)
-            }
+                    await manager.delete(Order, id);
+                }
 
-            await this.orderDetailRepository.delete({order: { id }});
-        }
-        await this.orderRepository.delete(id);
-
-        return `Order with id ${id} has been delete`;
+                return `Order with id ${id} has been delete`;
+            }    
+        );
     }
+
 
     async getOrderStatus(): Promise<Order[]>{
         return this.orderRepository.find({

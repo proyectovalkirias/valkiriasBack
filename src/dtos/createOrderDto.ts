@@ -13,8 +13,11 @@ export class CreateOrderDto {
 
     @ApiProperty({
         description: 'Products',
-        example: ['Product 1', 'Product 2']
+        example: [
+            { id: '550e8400-e29b-41d4-a716-446655440000', size: 'M' },
+            { id: '550e8400-e29b-41d4-a716-446655440001', size: 'L' },
+        ]
     })
     @IsArray()
-    products: Product[]
+    products: {id: string; size: string}[];
 }

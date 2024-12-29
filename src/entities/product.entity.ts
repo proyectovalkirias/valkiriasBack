@@ -4,11 +4,13 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { text } from 'body-parser';
 import { IsOptional } from 'class-validator';
+import { ProductPrice } from './productPrice.entity';
 
 @Entity('products')
 export class Product {
@@ -33,18 +35,18 @@ export class Product {
   })
   description: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  @ApiProperty({
-    description: 'Product price',
-    example: 1000.0,
-  })
-  price: number;
+  // @Column({ type: 'decimal', precision: 10, scale: 2 })
+  // @ApiProperty({
+  //   description: 'Product price',
+  //   example: 1000.0,
+  // })
+  // price: number;
 
   @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
     description: 'Product size',
   })
-  sizes?: string[];
+  size?: string[];
 
   @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
@@ -87,4 +89,7 @@ export class Product {
     description: 'Stock',
   })
   stock: number;
+
+  @OneToMany(() => ProductPrice, (productPrice) => productPrice.product)
+  prices: ProductPrice[];
 }
