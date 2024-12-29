@@ -29,6 +29,12 @@ export class OrderDetail {
   })
   price: number;
 
+  @Column({type: 'varchar', nullable: false})
+  @ApiProperty({
+    description: 'Size selected for the product'
+  })
+  size: string;
+
   @OneToOne(() => Order, (order) => order.orderDetail)
   @JoinColumn({
     name: 'orderId',

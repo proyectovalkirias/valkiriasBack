@@ -7,12 +7,15 @@ import { CreateProductDto } from '../dtos/createProductDto';
 import { UpdateProductDto } from '../dtos/updateProductDto';
 import { User } from 'src/entities/user.entity';
 import { FilterDto } from 'src/dtos/filterDto';
+import { ProductPrice } from 'src/entities/productPrice.entity';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(ProductPrice)
+    private readonly productPriceRepository: Repository<ProductPrice>,
     private readonly cloudinaryProvider: CloudinaryService,
   ) {}
 
@@ -47,11 +50,11 @@ export class ProductService {
     let uploadedLargePrint: string[] | null = null;
 
     let sizesArray: string[] = [];
-    if (createProductDto.sizes) {
-      if (Array.isArray(createProductDto.sizes)) {
-        sizesArray = createProductDto.sizes;
-      } else if (typeof createProductDto.sizes === 'string') {
-        sizesArray = createProductDto.sizes
+    if (createProductDto.size) {
+      if (Array.isArray(createProductDto.size)) {
+        sizesArray = createProductDto.size;
+      } else if (typeof createProductDto.size === 'string') {
+        sizesArray = createProductDto.size
           .split(',')
           .map((item) => item.trim());
       }
@@ -88,16 +91,29 @@ export class ProductService {
 
     const product = this.productRepository.create({
       ...createProductDto,
-      sizes: sizesArray,
+      size: sizesArray,
       color: colorArray,
       user: owner,
       photos: uploadedPhotos.map((img) => img.secure_url),
       smallPrint: uploadedSmallPrint,
-      largePrint: uploadedLargePrint,
+      largePrint: uploadedLargePrint
+    });
+    
+    const savedProduct = await this.productRepository.save(product);
+
+    const prices = createProductDto.price.map((priceItem) => {
+      const productPrice = new ProductPrice();
+      productPrice.product = savedProduct;
+      productPrice.size = priceItem.size;
+      productPrice.price = priceItem.price;
+      return productPrice;
     });
 
-    return this.productRepository.save(product);
+    await this.productPriceRepository.save(prices);
+
+    return savedProduct;
   }
+
 
   async changeStatusProduct(productId: string, isAvailable: boolean) {
     const product = await this.productRepository.findOne({
@@ -128,14 +144,14 @@ export class ProductService {
     let uploadedPhotos: string[] | null = null;
     let sizesArray: string[] = [];
 
-    if (updateProductDto.sizes) {
-      if (Array.isArray(updateProductDto.sizes)) {
-        sizesArray = updateProductDto.sizes;
-      } else if (typeof updateProductDto.sizes === 'string') {
-        sizesArray = updateProductDto.sizes
+    if (updateProductDto.size) {
+      if (Array.isArray(updateProductDto.size)) {
+        sizesArray = updateProductDto.size;
+      } else if (typeof updateProductDto.size === 'string') {
+        sizesArray = updateProductDto.size
           .split(',')
           .map((item) => item.trim());
-        updateProductDto.sizes = sizesArray;
+        updateProductDto.size = sizesArray;
       }
     }
 
