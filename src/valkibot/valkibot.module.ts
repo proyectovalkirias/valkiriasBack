@@ -4,6 +4,6 @@ import { ValkibotService } from './valkibot.service';
 
 @Module({
   controllers: [ValkibotController],
-  providers: [ValkibotService]
+  providers: [ValkibotService],
 })
 export class ValkibotModule {}

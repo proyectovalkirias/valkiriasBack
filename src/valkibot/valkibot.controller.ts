@@ -3,11 +3,11 @@ import { ValkibotService } from './valkibot.service';
 
 @Controller('valkibot')
 export class ValkibotController {
-    constructor(private readonly valkiBotService: ValkibotService) {}
+  constructor(private readonly valkiBotService: ValkibotService) {}
 
-    @Post()
-    async handleMessage(@Body('message') message: string) {
-      const { reply, options } = await this.valkiBotService.getResponse(message);
-      return { reply, options };
-    }
+  @Post()
+  async handleMessage(@Body('message') message: string) {
+    const { reply, options } = await this.valkiBotService.getResponse(message);
+    return { reply, options };
+  }
 }

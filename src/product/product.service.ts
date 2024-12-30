@@ -49,6 +49,16 @@ export class ProductService {
     let uploadedSmallPrint: string[] | null = null;
     let uploadedLargePrint: string[] | null = null;
 
+    let pricesNumber: number[] = [];
+    let pricesString: string[] = [];
+    if (typeof createProductDto.prices === 'string') {
+      pricesString = createProductDto.prices
+        .split(',')
+        .map((item) => item.trim());
+    }
+    if (Array.isArray(pricesString)) {
+      pricesNumber = pricesString.map((price) => Number(price));
+    }
     let sizesArray: string[] = [];
     if (createProductDto.size) {
       if (Array.isArray(createProductDto.size)) {
@@ -91,29 +101,19 @@ export class ProductService {
 
     const product = this.productRepository.create({
       ...createProductDto,
+      prices: pricesNumber,
       size: sizesArray,
       color: colorArray,
       user: owner,
       photos: uploadedPhotos.map((img) => img.secure_url),
       smallPrint: uploadedSmallPrint,
-      largePrint: uploadedLargePrint
+      largePrint: uploadedLargePrint,
     });
-    
+
     const savedProduct = await this.productRepository.save(product);
-
-    const prices = createProductDto.price.map((priceItem) => {
-      const productPrice = new ProductPrice();
-      productPrice.product = savedProduct;
-      productPrice.size = priceItem.size;
-      productPrice.price = priceItem.price;
-      return productPrice;
-    });
-
-    await this.productPriceRepository.save(prices);
 
     return savedProduct;
   }
-
 
   async changeStatusProduct(productId: string, isAvailable: boolean) {
     const product = await this.productRepository.findOne({

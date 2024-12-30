@@ -29,9 +29,9 @@ export class OrderDetail {
   })
   price: number;
 
-  @Column({type: 'varchar', nullable: false})
+  @Column({ type: 'varchar', nullable: false })
   @ApiProperty({
-    description: 'Size selected for the product'
+    description: 'Size selected for the product',
   })
   size: string;
 

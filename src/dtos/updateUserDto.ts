@@ -46,7 +46,7 @@ export class UpdateUserDto {
     required: false,
   })
   @IsNumber()
-  @IsOptional() 
+  @IsOptional()
   phone?: number;
 
   @ApiProperty({
@@ -70,7 +70,7 @@ export class UpdateUserDto {
     required: false,
   })
   @IsString()
-  @IsOptional() 
+  @IsOptional()
   state?: string;
 
   @ApiProperty({
@@ -78,6 +78,6 @@ export class UpdateUserDto {
     required: false,
   })
   @IsString()
-  @IsOptional() 
+  @IsOptional()
   photo?: string;
 }

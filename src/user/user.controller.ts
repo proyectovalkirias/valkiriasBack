@@ -40,7 +40,6 @@ export class UserController {
     return this.userService.removeUser(id);
   }
 
-  
   @ApiOperation({ summary: 'Get User By Id' })
   @Get(':id')
   getUserById(@Param('id') id: string) {

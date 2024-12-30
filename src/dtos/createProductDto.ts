@@ -30,25 +30,28 @@ export class CreateProductDto {
   @IsString()
   description: string;
 
-  @ApiProperty({
+  /* @ApiProperty({
     description: ' Product price',
-    type: [PriceProductDto]
+    type: [PriceProductDto],
   })
-  @IsArray()
-  price: PriceProductDto[];
+  prices: PriceProductDto[]; */
 
-  // @ApiProperty({
-  //   description: 'Product price',
-  //   example: 100,
-  // })
-  // @IsNotEmpty()
-  // @IsNumber({ maxDecimalPlaces: 2 })
-  // @Type(() => Number)
-  // price: number;
+  @ApiProperty({
+    description: 'Product price',
+    example: '100',
+    type: [String],
+    isArray: true,
+    nullable: true,
+  })
+  @IsString({ each: true })
+  /* @IsNotEmpty() */
+  /* @IsNumber({ maxDecimalPlaces: 2 }) */
+  /* @Type(() => Number) */
+  prices: string[] | string;
 
   @ApiProperty({
     description: 'Product sizes',
-    example: ['S', 'M', 'L'],
+    example: ['16', 'S', 'M', 'L'],
     type: [String],
     isArray: true,
     nullable: true,
