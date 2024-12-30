@@ -62,7 +62,6 @@ export class UserService {
     return userWithoutPass;
   }
 
-
   async deactiveUser(id: string) {
     return await this.userRepository.deactivateUser(id);
   }

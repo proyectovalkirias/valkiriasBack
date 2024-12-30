@@ -53,14 +53,15 @@ export class ProductController {
           type: `string`,
           example: `Remera básica color blanco`,
         },
-        price: {
-          type: 'decimal',
-          example: 1000,
-        },
-        sizes: {
+        prices: {
           type: 'array',
           items: { type: 'string' },
-          example: ['S', 'M', 'L'],
+          example: ['10000', '20000'],
+        },
+        size: {
+          type: 'array',
+          items: { type: 'string' },
+          example: ['16', 'S', 'M', 'L'],
         },
         color: {
           type: 'array',

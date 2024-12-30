@@ -10,11 +10,12 @@ import { UserModule } from 'src/user/user.module';
 import { ProductPrice } from 'src/entities/productPrice.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, User, Order, OrderDetail, ProductPrice]),
-UserModule,
-],
+  imports: [
+    TypeOrmModule.forFeature([Product, User, Order, OrderDetail, ProductPrice]),
+    UserModule,
+  ],
   providers: [OrderService],
   controllers: [OrderController],
-  exports:[OrderService]
+  exports: [OrderService],
 })
 export class OrderModule {}
