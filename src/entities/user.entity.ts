@@ -56,12 +56,12 @@ export class User {
   })
   dni: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   @ApiProperty({
     description: 'User phone',
-    example: 1166524785,
+    example: '1166524785',
   })
-  phone: number;
+  phone: string;
 
   @Column({ nullable: true })
   @ApiProperty({
