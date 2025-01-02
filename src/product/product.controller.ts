@@ -162,11 +162,12 @@ export class ProductController {
           type: `string`,
           example: `Remera básica color blanco`,
         },
-        price: {
-          type: 'decimal',
-          example: 1000,
+        prices: {
+          type: 'array',
+          items: { type: 'string' },
+          example: ['10000', '20000'],
         },
-        sizes: {
+        size: {
           type: 'array',
           items: { type: 'string' },
           example: ['S', 'M', 'L'],
@@ -217,6 +218,8 @@ export class ProductController {
       largePrint?: Express.Multer.File[];
     },
   ) {
+    console.log('PRICES CONTROLLER');
+    console.log(typeof updateProductDto.prices);
     const photos = files?.photos;
     const smallPrint = files?.smallPrint;
     const largePrint = files?.largePrint;
