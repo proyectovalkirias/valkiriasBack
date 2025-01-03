@@ -31,24 +31,18 @@ export class CreateProductDto {
   description: string;
 
   @ApiProperty({
-    description: ' Product price',
-    type: [PriceProductDto]
+    description: 'Product price',
+    example: '100',
+    type: [String],
+    isArray: true,
+    nullable: true,
   })
-  @IsArray()
-  price: PriceProductDto[];
-
-  // @ApiProperty({
-  //   description: 'Product price',
-  //   example: 100,
-  // })
-  // @IsNotEmpty()
-  // @IsNumber({ maxDecimalPlaces: 2 })
-  // @Type(() => Number)
-  // price: number;
+  @IsString({ each: true })
+  prices: string[] | string;
 
   @ApiProperty({
     description: 'Product sizes',
-    example: ['S', 'M', 'L'],
+    example: ['16', 'S', 'M', 'L'],
     type: [String],
     isArray: true,
     nullable: true,

@@ -49,6 +49,16 @@ export class ProductService {
     let uploadedSmallPrint: string[] | null = null;
     let uploadedLargePrint: string[] | null = null;
 
+    let pricesNumber: number[] = [];
+    let pricesString: string[] = [];
+    if (typeof createProductDto.prices === 'string') {
+      pricesString = createProductDto.prices
+        .split(',')
+        .map((item) => item.trim());
+    }
+    if (Array.isArray(pricesString)) {
+      pricesNumber = pricesString.map((price) => Number(price));
+    }
     let sizesArray: string[] = [];
     if (createProductDto.size) {
       if (Array.isArray(createProductDto.size)) {
@@ -91,29 +101,19 @@ export class ProductService {
 
     const product = this.productRepository.create({
       ...createProductDto,
+      prices: pricesNumber,
       size: sizesArray,
       color: colorArray,
       user: owner,
       photos: uploadedPhotos.map((img) => img.secure_url),
       smallPrint: uploadedSmallPrint,
-      largePrint: uploadedLargePrint
+      largePrint: uploadedLargePrint,
     });
-    
+
     const savedProduct = await this.productRepository.save(product);
-
-    const prices = createProductDto.price.map((priceItem) => {
-      const productPrice = new ProductPrice();
-      productPrice.product = savedProduct;
-      productPrice.size = priceItem.size;
-      productPrice.price = priceItem.price;
-      return productPrice;
-    });
-
-    await this.productPriceRepository.save(prices);
 
     return savedProduct;
   }
-
 
   async changeStatusProduct(productId: string, isAvailable: boolean) {
     const product = await this.productRepository.findOne({
@@ -133,6 +133,8 @@ export class ProductService {
     smallPrint?: Express.Multer.File[],
     largePrint?: Express.Multer.File[],
   ) {
+    console.log('PRICES SERVICE PRINCIPIO');
+    console.log(typeof updateProductDto.prices);
     const product = await this.productRepository.findOne({
       where: { id: productId },
     });
@@ -167,15 +169,6 @@ export class ProductService {
       }
     }
 
-    /* if (photos && photos.length > 0) {
-      const uploadedPhotos = await Promise.all(
-        photos.map((file) => this.cloudinaryProvider.uploadImage(file)),
-      );
-      updateProductDto.photos = [
-        ...updateProductDto.photos,
-        ...uploadedPhotos.map((img) => img.secure_url),
-      ];
-    } */
     if (photos && photos.length > 0) {
       uploadedPhotos = await Promise.all(
         photos.map(async (photo) => {
@@ -206,6 +199,20 @@ export class ProductService {
       updateProductDto.largePrint = uploadedLargePrint;
     }
 
+    let pricesNumber: number[] = [];
+    let pricesString: string[] = [];
+    if (updateProductDto.prices) {
+      if (typeof updateProductDto.prices === 'string') {
+        pricesString = updateProductDto.prices
+          .split(',')
+          .map((item) => item.trim());
+      }
+      if (Array.isArray(pricesString)) {
+        pricesNumber = pricesString.map((price) => Number(price));
+        updateProductDto.prices = pricesNumber.map((price) => String(price));
+      }
+    }
+
     const filteredProduct = Object.keys(updateProductDto).reduce((acc, key) => {
       const value = updateProductDto[key];
       if (value === '' || value === null || value === 0) {
@@ -216,7 +223,16 @@ export class ProductService {
       return acc;
     }, {} as Partial<UpdateProductDto>);
 
+    if (updateProductDto.prices) {
+      product.prices = pricesNumber.map((price) => Number(price));
+    }
+
+    console.log('PRICES SERVICE FINAL');
+    console.log(product);
+    console.log(filteredProduct);
+
     Object.assign(product, filteredProduct);
+
     return this.productRepository.save(product);
   }
 

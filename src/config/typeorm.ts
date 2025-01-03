@@ -5,7 +5,6 @@ dotenvConfig({ path: '.env' });
 
 const config = {
   type: 'postgres',
-  url: process.env.DB_URL,
   database: process.env.DB_NAME,
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT, 10),

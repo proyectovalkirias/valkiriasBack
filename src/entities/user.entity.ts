@@ -49,54 +49,53 @@ export class User {
   })
   password: string;
 
-  
-  @Column({nullable: true})
+  @Column({ nullable: true })
   @ApiProperty({
     description: 'User dni',
-    example: 12345678
+    example: 12345678,
   })
   dni: number;
-  
-  @Column({nullable: true})
+
+  @Column({ type: 'varchar', nullable: true })
   @ApiProperty({
     description: 'User phone',
-    example: 1166524785
+    example: '1166524785',
   })
-  phone: number;
-  
-  @Column({nullable: true})
+  phone: string;
+
+  @Column({ nullable: true })
   @ApiProperty({
     description: 'User address',
-    example: 'Calle Falsa 123'
+    example: 'Calle Falsa 123',
   })
   address: string;
-  
-  @Column({ nullable: true})
+
+  @Column({ nullable: true })
   @ApiProperty({
     description: 'User City',
-    example: 'Springfield'
+    example: 'Springfield',
   })
   city: string;
-  
-  @Column({ nullable: true})
+
+  @Column({ nullable: true })
   @ApiProperty({
     description: 'User State',
-    example: 'Buenos Aires'
+    example: 'Buenos Aires',
   })
   state: string;
-  
+
   @Column({ nullable: true })
   @ApiProperty({
     description: 'Profile picture',
   })
   photo: string;
-  
+
   @Column({ nullable: true })
   @ApiProperty({
     description: 'Google Token',
   })
   googleAccessToken: string;
-  
+
   @Column({ default: true })
   @ApiProperty()
   active: boolean;

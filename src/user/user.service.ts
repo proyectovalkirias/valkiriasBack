@@ -58,10 +58,10 @@ export class UserService {
 
     const user = Object.assign(findUser, updateUser);
     const { password, ...userWithoutPass } = user;
+    this.userRepository.userUpdate(userId, updateUser);
 
     return userWithoutPass;
   }
-
 
   async deactiveUser(id: string) {
     return await this.userRepository.deactivateUser(id);

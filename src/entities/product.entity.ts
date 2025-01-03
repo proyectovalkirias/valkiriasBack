@@ -35,12 +35,12 @@ export class Product {
   })
   description: string;
 
-  // @Column({ type: 'decimal', precision: 10, scale: 2 })
-  // @ApiProperty({
-  //   description: 'Product price',
-  //   example: 1000.0,
-  // })
-  // price: number;
+  @Column({ type: 'text', array: true, nullable: true })
+  @ApiProperty({
+    description: 'Product price',
+    example: 1000.0,
+  })
+  prices: number[];
 
   @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
@@ -90,6 +90,6 @@ export class Product {
   })
   stock: number;
 
-  @OneToMany(() => ProductPrice, (productPrice) => productPrice.product)
-  prices: ProductPrice[];
+  /* @OneToMany(() => ProductPrice, (productPrice) => productPrice.product)
+  prices: ProductPrice[]; */
 }

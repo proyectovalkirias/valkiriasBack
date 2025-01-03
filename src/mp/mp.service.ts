@@ -49,7 +49,9 @@ export class MpService {
         },
       };
 
-      const response = await new Preference(mercadoPagoConfig).create(preferenceData)
+      const response = await new Preference(mercadoPagoConfig).create(
+        preferenceData,
+      );
       // const response = await this.preference.create(preferenceData)
       return {
         url: response.init_point,
@@ -61,26 +63,23 @@ export class MpService {
   }
 
   async webhookMp(body: any) {
-    
     try {
-      if(!body || !body.preferenceData) throw new BadRequestException('Invalid webhook body');
+      if (!body || !body.preferenceData)
+        throw new BadRequestException('Invalid webhook body');
 
-        const payment = await new Payment(mercadoPagoConfig).get(body.preferenceData);
-        console.log('Payment received:', payment);
+      const payment = await new Payment(mercadoPagoConfig).get(
+        body.preferenceData,
+      );
+      console.log('Payment received:', payment);
 
-
-        if(payment.status === 'approved') {
-          console.log('Payment approved:', payment.order)
-
-        } else if (payment.status === 'rejected') {
-          console.log('Payment rejected:', payment.id);
-        
+      if (payment.status === 'approved') {
+        console.log('Payment approved:', payment.order);
+      } else if (payment.status === 'rejected') {
+        console.log('Payment rejected:', payment.id);
       }
-        
     } catch (error) {
       console.error('Error processing webhook:', error.message);
       throw new Error('Failed to process webhook');
     }
-
   }
 }
