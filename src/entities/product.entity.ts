@@ -39,15 +39,14 @@ export class Product {
   // })
   // prices: number[];
   
-  @OneToMany(() => ProductPrice, (productPrice) => productPrice.product)
-  @JoinColumn({name: 'prices'})
+  @Column("jsonb", { nullable: true })
   prices: ProductPrice[];
   
   @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
     description: 'Product size',
   })
-  size?: string[];
+  sizes?: string[];
 
   @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
