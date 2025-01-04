@@ -7,13 +7,15 @@ import { User } from 'src/entities/user.entity';
 import { Order } from 'src/entities/order.entity';
 import { OrderDetail } from 'src/entities/orderDetails.entity';
 import { UserModule } from 'src/user/user.module';
+import { ProductPrice } from 'src/entities/productPrice.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, User, Order, OrderDetail]),
-UserModule,
-],
+  imports: [
+    TypeOrmModule.forFeature([Product, User, Order, OrderDetail, ProductPrice]),
+    UserModule,
+  ],
   providers: [OrderService],
   controllers: [OrderController],
-  exports:[OrderService]
+  exports: [OrderService],
 })
 export class OrderModule {}

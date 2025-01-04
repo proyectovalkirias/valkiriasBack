@@ -32,17 +32,17 @@ export class Order {
   @Column({
     type: 'enum',
     enum: OrderStatus,
-    default: OrderStatus.PENDING
+    default: OrderStatus.PENDING,
   })
   @ApiProperty({
     description: 'Order Status',
-    example: 'pendiente'
+    example: 'pendiente',
   })
   status: OrderStatus;
 
   @Column()
   @ApiProperty({
-    description: 'Update Order Status'
+    description: 'Update Order Status',
   })
   updatedAt: Date;
 

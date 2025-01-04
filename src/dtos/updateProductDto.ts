@@ -1,14 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-  IsArray,
   IsBoolean,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  Length,
 } from 'class-validator';
+import { PriceProductDto } from './priceProductDto';
 
 export class UpdateProductDto {
   @ApiProperty({
@@ -31,14 +29,13 @@ export class UpdateProductDto {
 
   @ApiProperty({
     description: 'Product price',
-    example: 100,
+    example: '100',
+    type: [String],
+    isArray: true,
     required: false,
   })
-  @IsNotEmpty()
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Type(() => Number)
   @IsOptional()
-  price?: number;
+  prices?: string[] | string;
 
   @ApiProperty({
     description: 'Product sizes',
@@ -49,7 +46,7 @@ export class UpdateProductDto {
   })
   @IsString({ each: true })
   @IsOptional()
-  sizes?: string[] | string;
+  size?: string[] | string;
 
   @ApiProperty({
     description: 'Product color',

@@ -2,8 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
-  IsNumber,
-  IsOptional,
   IsString,
   Length,
   Matches,
@@ -56,52 +54,4 @@ export class UserDto {
   @IsNotEmpty()
   @Validate(matchPassword, ['password'])
   confirmPassword: string;
-
-  // @ApiProperty({ 
-  //   description: 'User dni'})
-  // @IsNumber()
-  // @IsOptional()
-  // dni?: number;
-  
-  // @ApiProperty({
-  //   description:'User phone'})
-  // @IsNumber()
-  // @IsOptional()
-  // phone?: number;
-  
-  // @ApiProperty({
-  //   description: 'User address'
-  // })
-  // @IsString()
-  // @IsOptional()
-  // address?: string;
-  
-  // @ApiProperty({
-  //   description: 'User city'
-  // })
-  // @IsString()
-  // @IsOptional()
-  // city?: string;
-  
-
-  // @ApiProperty({
-  //   description: 'User state'
-  // })
-  // @IsString()
-  // @IsOptional()
-  // state?: string;
-
-  // @ApiProperty({
-  //   description: 'Profile picture',
-  // })
-  // @IsString()
-  // @IsOptional()
-  // photo?: string;
-  
-  // @ApiProperty({
-  //   description: 'Google Token',
-  // })
-  // @IsString()
-  // @IsOptional()
-  // googleAccessToken?: string;
 }

@@ -7,12 +7,15 @@ import { CreateProductDto } from '../dtos/createProductDto';
 import { UpdateProductDto } from '../dtos/updateProductDto';
 import { User } from 'src/entities/user.entity';
 import { FilterDto } from 'src/dtos/filterDto';
+import { ProductPrice } from 'src/entities/productPrice.entity';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(ProductPrice)
+    private readonly productPriceRepository: Repository<ProductPrice>,
     private readonly cloudinaryProvider: CloudinaryService,
   ) {}
 
@@ -42,20 +45,61 @@ export class ProductService {
         async (photo) => await this.cloudinaryProvider.uploadImage(photo),
       ),
     );
+    console.log('1')
 
     let uploadedSmallPrint: string[] | null = null;
     let uploadedLargePrint: string[] | null = null;
 
+    // let pricesNumber: number[] = [];
+    // let pricesString: string[] = [];
+    // if (typeof createProductDto.prices === 'string') {
+    //   pricesString = createProductDto.prices
+    //     .split(',')
+    //     .map((item) => item.trim());
+    // }
+    // if (Array.isArray(pricesString)) {
+    //   pricesNumber = pricesString.map((price) => Number(price));
+    // }
+    // let sizesArray: string[] = [];
+    // if (createProductDto.size) {
+    //   if (Array.isArray(createProductDto.size)) {
+    //     sizesArray = createProductDto.size;
+    //   } else if (typeof createProductDto.size === 'string') {
+    //     sizesArray = createProductDto.size
+    //       .split(',')
+    //       .map((item) => item.trim());
+    //   }
+    // }
+
+    console.log('2')
+
     let sizesArray: string[] = [];
-    if (createProductDto.sizes) {
-      if (Array.isArray(createProductDto.sizes)) {
-        sizesArray = createProductDto.sizes;
-      } else if (typeof createProductDto.sizes === 'string') {
-        sizesArray = createProductDto.sizes
+    if (createProductDto.size) {
+      if (Array.isArray(createProductDto.size)) {
+        sizesArray = createProductDto.size;
+      } else if (typeof createProductDto.size === 'string') {
+        sizesArray = createProductDto.size
           .split(',')
           .map((item) => item.trim());
       }
     }
+
+    let pricesArray: ProductPrice[] = [];
+  if (createProductDto.prices && Array.isArray(createProductDto.prices)) {
+    console.log('Prices', createProductDto.prices);
+
+    pricesArray = createProductDto.prices.map(price => {
+
+      if(!price.size || typeof price.price !== 'number') {
+        console.error('Invalid price object:', price);
+        throw new Error('Invalid price format')
+      }
+      const productPrice = new ProductPrice();
+      productPrice.size = price.size;
+      productPrice.price = price.price; 
+      return productPrice;
+    });
+  }
 
     let colorArray: string[] = [];
     if (createProductDto.color) {
@@ -88,7 +132,8 @@ export class ProductService {
 
     const product = this.productRepository.create({
       ...createProductDto,
-      sizes: sizesArray,
+      prices: pricesArray,
+      size: sizesArray,
       color: colorArray,
       user: owner,
       photos: uploadedPhotos.map((img) => img.secure_url),
@@ -96,7 +141,9 @@ export class ProductService {
       largePrint: uploadedLargePrint,
     });
 
-    return this.productRepository.save(product);
+    const savedProduct = await this.productRepository.save(product);
+
+    return savedProduct;
   }
 
   async changeStatusProduct(productId: string, isAvailable: boolean) {
@@ -110,99 +157,115 @@ export class ProductService {
     return this.productRepository.save(product);
   }
 
-  async updateProduct(
-    productId: string,
-    updateProductDto: UpdateProductDto,
-    photos?: Express.Multer.File[],
-    smallPrint?: Express.Multer.File[],
-    largePrint?: Express.Multer.File[],
-  ) {
-    const product = await this.productRepository.findOne({
-      where: { id: productId },
-    });
-    if (!product)
-      throw new NotFoundException(`Product with ID ${productId} not found`);
+  // async updateProduct(
+  //   productId: string,
+  //   updateProductDto: UpdateProductDto,
+  //   photos?: Express.Multer.File[],
+  //   smallPrint?: Express.Multer.File[],
+  //   largePrint?: Express.Multer.File[],
+  // ) {
+  //   console.log('PRICES SERVICE PRINCIPIO');
+  //   console.log(typeof updateProductDto.prices);
+  //   const product = await this.productRepository.findOne({
+  //     where: { id: productId },
+  //   });
+  //   if (!product)
+  //     throw new NotFoundException(`Product with ID ${productId} not found`);
 
-    let uploadedSmallPrint: string[] | null = null;
-    let uploadedLargePrint: string[] | null = null;
-    let uploadedPhotos: string[] | null = null;
-    let sizesArray: string[] = [];
+  //   let uploadedSmallPrint: string[] | null = null;
+  //   let uploadedLargePrint: string[] | null = null;
+  //   let uploadedPhotos: string[] | null = null;
+  //   let sizesArray: string[] = [];
 
-    if (updateProductDto.sizes) {
-      if (Array.isArray(updateProductDto.sizes)) {
-        sizesArray = updateProductDto.sizes;
-      } else if (typeof updateProductDto.sizes === 'string') {
-        sizesArray = updateProductDto.sizes
-          .split(',')
-          .map((item) => item.trim());
-        updateProductDto.sizes = sizesArray;
-      }
-    }
+  //   if (updateProductDto.size) {
+  //     if (Array.isArray(updateProductDto.size)) {
+  //       sizesArray = updateProductDto.size;
+  //     } else if (typeof updateProductDto.size === 'string') {
+  //       sizesArray = updateProductDto.size
+  //         .split(',')
+  //         .map((item) => item.trim());
+  //       updateProductDto.size = sizesArray;
+  //     }
+  //   }
 
-    let colorArray: string[] = [];
-    if (updateProductDto.color) {
-      if (Array.isArray(updateProductDto.color)) {
-        colorArray = updateProductDto.color;
-      } else if (typeof updateProductDto.color === 'string') {
-        colorArray = updateProductDto.color
-          .split(',')
-          .map((item) => item.trim());
-        updateProductDto.color = colorArray;
-      }
-    }
+  //   let colorArray: string[] = [];
+  //   if (updateProductDto.color) {
+  //     if (Array.isArray(updateProductDto.color)) {
+  //       colorArray = updateProductDto.color;
+  //     } else if (typeof updateProductDto.color === 'string') {
+  //       colorArray = updateProductDto.color
+  //         .split(',')
+  //         .map((item) => item.trim());
+  //       updateProductDto.color = colorArray;
+  //     }
+  //   }
 
-    /* if (photos && photos.length > 0) {
-      const uploadedPhotos = await Promise.all(
-        photos.map((file) => this.cloudinaryProvider.uploadImage(file)),
-      );
-      updateProductDto.photos = [
-        ...updateProductDto.photos,
-        ...uploadedPhotos.map((img) => img.secure_url),
-      ];
-    } */
-    if (photos && photos.length > 0) {
-      uploadedPhotos = await Promise.all(
-        photos.map(async (photo) => {
-          const imgUploaded = await this.cloudinaryProvider.uploadImage(photo);
-          return imgUploaded.secure_url;
-        }),
-      );
-      updateProductDto.photos = uploadedPhotos;
-    }
+  //   if (photos && photos.length > 0) {
+  //     uploadedPhotos = await Promise.all(
+  //       photos.map(async (photo) => {
+  //         const imgUploaded = await this.cloudinaryProvider.uploadImage(photo);
+  //         return imgUploaded.secure_url;
+  //       }),
+  //     );
+  //     updateProductDto.photos = uploadedPhotos;
+  //   }
 
-    if (smallPrint && smallPrint.length > 0) {
-      uploadedSmallPrint = await Promise.all(
-        smallPrint.map(async (stamp) => {
-          const imgUploaded = await this.cloudinaryProvider.uploadImage(stamp);
-          return imgUploaded.secure_url;
-        }),
-      );
-      updateProductDto.smallPrint = uploadedSmallPrint;
-    }
+  //   if (smallPrint && smallPrint.length > 0) {
+  //     uploadedSmallPrint = await Promise.all(
+  //       smallPrint.map(async (stamp) => {
+  //         const imgUploaded = await this.cloudinaryProvider.uploadImage(stamp);
+  //         return imgUploaded.secure_url;
+  //       }),
+  //     );
+  //     updateProductDto.smallPrint = uploadedSmallPrint;
+  //   }
 
-    if (largePrint && largePrint.length > 0) {
-      uploadedLargePrint = await Promise.all(
-        largePrint.map(async (stamp) => {
-          const imgUploaded = await this.cloudinaryProvider.uploadImage(stamp);
-          return imgUploaded.secure_url;
-        }),
-      );
-      updateProductDto.largePrint = uploadedLargePrint;
-    }
+  //   if (largePrint && largePrint.length > 0) {
+  //     uploadedLargePrint = await Promise.all(
+  //       largePrint.map(async (stamp) => {
+  //         const imgUploaded = await this.cloudinaryProvider.uploadImage(stamp);
+  //         return imgUploaded.secure_url;
+  //       }),
+  //     );
+  //     updateProductDto.largePrint = uploadedLargePrint;
+  //   }
 
-    const filteredProduct = Object.keys(updateProductDto).reduce((acc, key) => {
-      const value = updateProductDto[key];
-      if (value === '' || value === null || value === 0) {
-        acc[key] = undefined;
-      } else {
-        acc[key] = value;
-      }
-      return acc;
-    }, {} as Partial<UpdateProductDto>);
+  //   let pricesNumber: number[] = [];
+  //   let pricesString: string[] = [];
+  //   if (updateProductDto.prices) {
+  //     if (typeof updateProductDto.prices === 'string') {
+  //       pricesString = updateProductDto.prices
+  //         .split(',')
+  //         .map((item) => item.trim());
+  //     }
+  //     if (Array.isArray(pricesString)) {
+  //       pricesNumber = pricesString.map((price) => Number(price));
+  //       updateProductDto.prices = pricesNumber.map((price) => String(price));
+  //     }
+  //   }
 
-    Object.assign(product, filteredProduct);
-    return this.productRepository.save(product);
-  }
+  //   const filteredProduct = Object.keys(updateProductDto).reduce((acc, key) => {
+  //     const value = updateProductDto[key];
+  //     if (value === '' || value === null || value === 0) {
+  //       acc[key] = undefined;
+  //     } else {
+  //       acc[key] = value;
+  //     }
+  //     return acc;
+  //   }, {} as Partial<UpdateProductDto>);
+
+  //   if (updateProductDto.prices) {
+  //     product.prices = pricesNumber.map((price) => Number(price));
+  //   }
+
+  //   console.log('PRICES SERVICE FINAL');
+  //   console.log(product);
+  //   console.log(filteredProduct);
+
+  //   Object.assign(product, filteredProduct);
+
+  //   return this.productRepository.save(product);
+  // }
 
   async deleteProduct(productId: string) {
     const product = await this.productRepository.findOne({

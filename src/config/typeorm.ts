@@ -1,19 +1,19 @@
 import { registerAs } from '@nestjs/config';
+import { all } from 'axios';
 import { config as dotenvConfig } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 dotenvConfig({ path: '.env' });
 
 const config = {
   type: 'postgres',
-  url: process.env.DB_URL,
   database: process.env.DB_NAME,
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT, 10),
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   synchronize: true,
-  dropSchema: false,
-  logging: true,
+  dropSchema: true,
+  logging: 'all',
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.js,.ts}'],
   extra: {

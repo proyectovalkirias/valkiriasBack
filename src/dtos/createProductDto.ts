@@ -9,6 +9,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
+import { PriceProductDto } from './priceProductDto';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -17,7 +18,7 @@ export class CreateProductDto {
   })
   @IsString()
   @IsNotEmpty()
-  @Length(5, 50)
+  @Length(4, 50)
   name: string;
 
   @ApiProperty({
@@ -25,22 +26,20 @@ export class CreateProductDto {
     example: 'Remera algodón',
   })
   @IsNotEmpty()
-  @Length(10, 150)
+  @Length(2, 150)
   @IsString()
   description: string;
 
   @ApiProperty({
     description: 'Product price',
-    example: 100,
+    nullable: true,
   })
-  @IsNotEmpty()
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Type(() => Number)
-  price: number;
+  @IsString({ each: true })
+  prices: PriceProductDto;
 
   @ApiProperty({
     description: 'Product sizes',
-    example: ['S', 'M', 'L'],
+    example: ['16', 'S', 'M', 'L'],
     type: [String],
     isArray: true,
     nullable: true,
@@ -49,7 +48,7 @@ export class CreateProductDto {
   })
   @IsString({ each: true })
   @IsOptional()
-  sizes?: string[] | string;
+  size?: string[] | string;
 
   @ApiProperty({
     description: 'Product color',
@@ -113,3 +112,4 @@ export class CreateProductDto {
   @IsOptional()
   isAvailable: boolean;
 }
+
