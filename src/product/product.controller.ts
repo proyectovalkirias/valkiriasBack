@@ -55,8 +55,17 @@ export class ProductController {
         },
         prices: {
           type: 'array',
-          items: { type: 'string' },
-          example: ['10000', '20000'],
+          items: {
+            type: 'object',
+            properties: {
+              size: { type: 'string', example: 'M' },
+              price: { type: 'number', example: 10000 },
+            },
+          },
+          example: [
+            { size: 'M', price: 10000 },
+            { size: 'L', price: 12000 },
+          ],
         },
         size: {
           type: 'array',
@@ -122,6 +131,10 @@ export class ProductController {
     },
     @Request() req,
   ) {
+
+    if (typeof createProductDto.prices === 'string') {
+      createProductDto.prices = JSON.parse(createProductDto.prices);
+    }
     console.log(createProductDto)
     const owner = req.user;
     const photos = files.photos;

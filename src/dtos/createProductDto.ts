@@ -35,7 +35,7 @@ export class CreateProductDto {
     nullable: true,
   })
   @IsString({ each: true })
-  prices: PriceProductDto;
+  prices: { size: string; price: number }[]; 
 
   @ApiProperty({
     description: 'Product sizes',
