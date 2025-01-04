@@ -8,15 +8,12 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { text } from 'body-parser';
-import { IsOptional } from 'class-validator';
 import { ProductPrice } from './productPrice.entity';
 
 @Entity('products')
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
   @ManyToOne(() => User, (user) => user.products)
   @JoinColumn({ name: 'userId' })
   @ApiProperty()
@@ -35,13 +32,17 @@ export class Product {
   })
   description: string;
 
-  @Column({ type: 'text', array: true, nullable: true })
-  @ApiProperty({
-    description: 'Product price',
-    example: 1000.0,
-  })
-  prices: number[];
-
+  // @Column({ type: 'text', array: true, nullable: true })
+  // @ApiProperty({
+  //   description: 'Product price',
+  //   example: 1000.0,
+  // })
+  // prices: number[];
+  
+  @OneToMany(() => ProductPrice, (productPrice) => productPrice.product)
+  @JoinColumn({name: 'prices'})
+  prices: ProductPrice[];
+  
   @Column({ type: 'text', array: true, nullable: true })
   @ApiProperty({
     description: 'Product size',
@@ -90,6 +91,4 @@ export class Product {
   })
   stock: number;
 
-  /* @OneToMany(() => ProductPrice, (productPrice) => productPrice.product)
-  prices: ProductPrice[]; */
 }
