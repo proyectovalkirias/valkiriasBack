@@ -6,7 +6,7 @@ export class PriceProductDto {
     description: 'Price for size',
   })
   @IsNumber()
-  price: number;
+  price: string;
 
   @ApiProperty({
     description: 'Product size',
