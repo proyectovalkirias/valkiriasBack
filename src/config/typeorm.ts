@@ -1,4 +1,5 @@
 import { registerAs } from '@nestjs/config';
+import { all } from 'axios';
 import { config as dotenvConfig } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 dotenvConfig({ path: '.env' });
@@ -12,7 +13,7 @@ const config = {
   password: process.env.DB_PASSWORD,
   synchronize: true,
   dropSchema: false,
-  logging: true,
+  logging: 'all',
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.js,.ts}'],
   extra: {

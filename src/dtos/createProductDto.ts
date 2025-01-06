@@ -32,13 +32,10 @@ export class CreateProductDto {
 
   @ApiProperty({
     description: 'Product price',
-    example: '100',
-    type: [String],
-    isArray: true,
     nullable: true,
   })
   @IsString({ each: true })
-  prices: string[] | string;
+  prices: { size: string; price: number }[]; 
 
   @ApiProperty({
     description: 'Product sizes',
@@ -115,3 +112,4 @@ export class CreateProductDto {
   @IsOptional()
   isAvailable: boolean;
 }
+
