@@ -75,31 +75,27 @@ export class ProductService {
 
     let sizesArray: string[] = [];
     if (createProductDto.size) {
-      if (Array.isArray(createProductDto.size)) {
+      if (typeof createProductDto.size === 'string') {
+        sizesArray = createProductDto.size.split(',').map((item) => item.trim());
+      } else if (Array.isArray(createProductDto.size)) {
         sizesArray = createProductDto.size;
-      } else if (typeof createProductDto.size === 'string') {
-        sizesArray = createProductDto.size
-          .split(',')
-          .map((item) => item.trim());
       }
     }
 
     let pricesArray: ProductPrice[] = [];
-  if (createProductDto.prices && Array.isArray(createProductDto.prices)) {
-    console.log('Prices', createProductDto.prices);
-
-    pricesArray = createProductDto.prices.map(price => {
-
-      if(!price.size || typeof price.price !== 'number') {
-        console.error('Invalid price object:', price);
-        throw new Error('Invalid price format')
-      }
-      const productPrice = new ProductPrice();
-      productPrice.size = price.size;
-      productPrice.price = price.price; 
-      return productPrice;
-    });
-  }
+    if (createProductDto.prices && Array.isArray(createProductDto.prices)) {
+      pricesArray = createProductDto.prices.map(price => {
+        if (!price.size || typeof price.price !== 'number') {
+          console.error('Invalid price object:', price);
+          throw new Error('Invalid price format');
+        }
+        const productPrice = new ProductPrice();
+        productPrice.size = price.size;
+        productPrice.price = price.price;
+        console.log("product prices:", productPrice);
+        return productPrice;
+      });
+    }
 
     let colorArray: string[] = [];
     if (createProductDto.color) {
@@ -133,7 +129,7 @@ export class ProductService {
     const product = this.productRepository.create({
       ...createProductDto,
       prices: pricesArray,
-      size: sizesArray,
+      sizes: sizesArray,
       color: colorArray,
       user: owner,
       photos: uploadedPhotos.map((img) => img.secure_url),

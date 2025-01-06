@@ -44,7 +44,7 @@ export class OrderService {
         if (!product) throw new NotFoundException('Product not found');
 
         let productPrice = null;
-        product.size.map((size) => {
+        product.sizes.map((size) => {
           if (
             size === '4' ||
             size === '6' ||
