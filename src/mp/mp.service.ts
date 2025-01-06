@@ -6,7 +6,6 @@ import { ProductService } from 'src/product/product.service';
 @Injectable()
 export class MpService {
   // private preference: Preference;
-
   constructor(private readonly productService: ProductService) {
     // this.preference = new Preference(mercadoPagoConfig);
   }
