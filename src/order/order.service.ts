@@ -9,6 +9,7 @@ import { UserRepository } from 'src/user/user.repository';
 import { EntityManager, Repository } from 'typeorm';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { ProductPrice } from 'src/entities/productPrice.entity';
+import { MpService } from 'src/mp/mp.service';
 
 @Injectable()
 export class OrderService {
@@ -20,9 +21,10 @@ export class OrderService {
     private readonly userRepository: UserRepository,
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    private readonly mercadoPagoService: MpService,
   ) {}
 
-  async createOrder(createOrder: CreateOrderDto): Promise<Order> {
+  async createOrder(createOrder: CreateOrderDto): Promise<{url: string}> {
     let total = 0;
     const { userId, products } = createOrder;
 
@@ -86,10 +88,16 @@ export class OrderService {
 
     await this.orderDetailRepository.save(orderDetail);
 
-    return await this.orderRepository.findOne({
-      where: { id: newOrder.id },
-      relations: { orderDetail: { product: true } },
-    });
+    const preference = await this.mercadoPagoService.createPaymentPreference(products);
+
+    return {
+      url: preference.url,
+    }
+
+    // return await this.orderRepository.findOne({
+    //   where: { id: newOrder.id },
+    //   relations: { orderDetail: { product: true } },
+    // });
   }
 
   getOrder(id: string) {
