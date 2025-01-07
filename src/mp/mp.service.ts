@@ -40,9 +40,9 @@ export class MpService {
         body: {
           items,
           back_urls: {
-            success: 'https://localhost:3001/Mp/success',
-            failure: 'https://localhost:3001/Mp/failure',
-            pending: 'https://localhost:3001/Mp/pending',
+            success: 'valkiriasfront.onrender.com/Mp/success',
+            failure: 'valkiriasfront.onrender.com/Mp/failure',
+            pending: 'valkiriasfront.onrender.com/Mp/pending',
           },
           auto_return: 'approved',
         },
