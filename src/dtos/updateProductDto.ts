@@ -35,7 +35,7 @@ export class UpdateProductDto {
     required: false,
   })
   @IsOptional()
-  prices?: string[] | string;
+  prices?: { size: string; price: number }[];
 
   @ApiProperty({
     description: 'Product sizes',
