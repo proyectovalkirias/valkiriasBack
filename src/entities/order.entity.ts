@@ -50,6 +50,9 @@ export class Order {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @OneToOne(() => OrderDetail, (orderDetail) => orderDetail.order)
+  @OneToOne(() => OrderDetail, (orderDetail) => orderDetail.order, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   orderDetail: OrderDetail;
 }

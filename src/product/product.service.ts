@@ -45,7 +45,7 @@ export class ProductService {
         async (photo) => await this.cloudinaryProvider.uploadImage(photo),
       ),
     );
-    console.log('1')
+    console.log('1');
 
     let uploadedSmallPrint: string[] | null = null;
     let uploadedLargePrint: string[] | null = null;
@@ -71,12 +71,14 @@ export class ProductService {
     //   }
     // }
 
-    console.log('2')
+    console.log('2');
 
     let sizesArray: string[] = [];
     if (createProductDto.size) {
       if (typeof createProductDto.size === 'string') {
-        sizesArray = createProductDto.size.split(',').map((item) => item.trim());
+        sizesArray = createProductDto.size
+          .split(',')
+          .map((item) => item.trim());
       } else if (Array.isArray(createProductDto.size)) {
         sizesArray = createProductDto.size;
       }
@@ -84,7 +86,7 @@ export class ProductService {
 
     let pricesArray: ProductPrice[] = [];
     if (createProductDto.prices && Array.isArray(createProductDto.prices)) {
-      pricesArray = createProductDto.prices.map(price => {
+      pricesArray = createProductDto.prices.map((price) => {
         if (!price.size || typeof price.price !== 'number') {
           console.error('Invalid price object:', price);
           throw new Error('Invalid price format');
@@ -92,7 +94,7 @@ export class ProductService {
         const productPrice = new ProductPrice();
         productPrice.size = price.size;
         productPrice.price = price.price;
-        console.log("product prices:", productPrice);
+        console.log('product prices:', productPrice);
         return productPrice;
       });
     }
@@ -279,7 +281,8 @@ export class ProductService {
       );
     }
 
-    return this.productRepository.remove(product);
+    await this.productRepository.remove(product);
+    return `Product deleted successfully.`;
   }
 
   private extractPublicId(url: string): string {

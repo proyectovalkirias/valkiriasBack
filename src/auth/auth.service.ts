@@ -12,7 +12,7 @@ import { transporter } from 'src/config/mailer';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
-import { registerMail } from 'src/mails/registerMail';
+import { registerMail } from 'src/mails/registerMail/registerMail';
 
 @Injectable()
 export class AuthService {
