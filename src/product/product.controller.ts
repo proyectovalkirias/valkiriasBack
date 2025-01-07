@@ -3,6 +3,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -131,11 +132,10 @@ export class ProductController {
     },
     @Request() req,
   ) {
-
     if (typeof createProductDto.prices === 'string') {
       createProductDto.prices = JSON.parse(createProductDto.prices);
     }
-    console.log(createProductDto)
+    console.log(createProductDto);
     const owner = req.user;
     const photos = files.photos;
     const smallPrint = files.smallPrint;
@@ -163,97 +163,98 @@ export class ProductController {
     return this.productService.changeStatusProduct(productId, isAvailable);
   }
 
-  // @ApiOperation({ summary: 'Update a product' })
-  // @ApiConsumes('multipart/form-data')
-  // // @UseGuards(AuthGuard)
-  // @ApiBearerAuth()
-  // @ApiBody({
-  //   description: 'Pon los datos a actualizar del producto:',
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       name: {
-  //         type: `string`,
-  //         example: `Remera`,
-  //       },
-  //       description: {
-  //         type: `string`,
-  //         example: `Remera básica color blanco`,
-  //       },
-  //       prices: {
-  //         type: 'array',
-  //         items: { type: 'string' },
-  //         example: ['10000', '20000'],
-  //       },
-  //       size: {
-  //         type: 'array',
-  //         items: { type: 'string' },
-  //         example: ['S', 'M', 'L'],
-  //       },
-  //       color: {
-  //         type: 'array',
-  //         items: { type: `string` },
-  //         example: ['Blanco'],
-  //       },
-  //       category: {
-  //         type: `string`,
-  //         example: `Remeras`,
-  //       },
-  //       photos: {
-  //         type: 'array',
-  //         items: { type: `string`, format: 'binary' },
-  //       },
-  //       smallPrint: {
-  //         type: `array`,
-  //         items: { type: `string`, format: `binary` },
-  //       },
-  //       largePrint: {
-  //         type: `array`,
-  //         items: { type: `string`, format: `binary` },
-  //       },
-  //       stock: {
-  //         type: `number`,
-  //         example: 10,
-  //       },
-  //     },
-  //   },
-  // })
-  // @UseInterceptors(
-  //   FileFieldsInterceptor([
-  //     { name: 'photos' },
-  //     { name: 'smallPrint' },
-  //     { name: 'largePrint' },
-  //   ]),
-  // )
-  // @Put('update/:productId')
-  // updateProduct(
-  //   @Param('productId') productId: string,
-  //   @Body() updateProductDto: UpdateProductDto,
-  //   @UploadedFiles()
-  //   files: {
-  //     photos?: Express.Multer.File[];
-  //     smallPrint?: Express.Multer.File[];
-  //     largePrint?: Express.Multer.File[];
-  //   },
-  // ) {
-  //   console.log('PRICES CONTROLLER');
-  //   console.log(typeof updateProductDto.prices);
-  //   const photos = files?.photos;
-  //   const smallPrint = files?.smallPrint;
-  //   const largePrint = files?.largePrint;
-  //   return this.productService.updateProduct(
-  //     productId,
-  //     updateProductDto,
-  //     photos,
-  //     smallPrint,
-  //     largePrint,
-  //   );
-  // }
-  // @ApiOperation({ summary: 'Delete a product' })
-  // @Post('delete/:productId')
-  // deleteProduct(@Param('productId') productId: string) {
-  //   return this.productService.deleteProduct(productId);
-  // }
+  @ApiOperation({ summary: 'Update a product' })
+  @ApiConsumes('multipart/form-data')
+  // @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiBody({
+    description: 'Pon los datos a actualizar del producto:',
+    schema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: `string`,
+          example: `Remera`,
+        },
+        description: {
+          type: `string`,
+          example: `Remera básica color blanco`,
+        },
+        prices: {
+          type: 'array',
+          items: { type: 'string' },
+          example: ['10000', '20000'],
+        },
+        size: {
+          type: 'array',
+          items: { type: 'string' },
+          example: ['S', 'M', 'L'],
+        },
+        color: {
+          type: 'array',
+          items: { type: `string` },
+          example: ['Blanco'],
+        },
+        category: {
+          type: `string`,
+          example: `Remeras`,
+        },
+        photos: {
+          type: 'array',
+          items: { type: `string`, format: 'binary' },
+        },
+        smallPrint: {
+          type: `array`,
+          items: { type: `string`, format: `binary` },
+        },
+        largePrint: {
+          type: `array`,
+          items: { type: `string`, format: `binary` },
+        },
+        stock: {
+          type: `number`,
+          example: 10,
+        },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'photos' },
+      { name: 'smallPrint' },
+      { name: 'largePrint' },
+    ]),
+  )
+  @Put('update/:productId')
+  updateProduct(
+    @Param('productId') productId: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @UploadedFiles()
+    files: {
+      photos?: Express.Multer.File[];
+      smallPrint?: Express.Multer.File[];
+      largePrint?: Express.Multer.File[];
+    },
+  ) {
+    console.log('PRICES CONTROLLER');
+    console.log(typeof updateProductDto.prices);
+    const photos = files?.photos;
+    const smallPrint = files?.smallPrint;
+    const largePrint = files?.largePrint;
+    return this.productService.updateProduct(
+      productId,
+      updateProductDto,
+      photos,
+      smallPrint,
+      largePrint,
+    );
+  }
+
+  @ApiOperation({ summary: 'Delete a product' })
+  @Delete('delete/:productId')
+  deleteProduct(@Param('productId') productId: string) {
+    return this.productService.deleteProduct(productId);
+  }
 
   @ApiOperation({ summary: 'Get all products' })
   @Get()
