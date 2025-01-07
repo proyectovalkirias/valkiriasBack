@@ -3,6 +3,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -131,11 +132,10 @@ export class ProductController {
     },
     @Request() req,
   ) {
-
     if (typeof createProductDto.prices === 'string') {
       createProductDto.prices = JSON.parse(createProductDto.prices);
     }
-    console.log(createProductDto)
+    console.log(createProductDto);
     const owner = req.user;
     const photos = files.photos;
     const smallPrint = files.smallPrint;
@@ -249,11 +249,12 @@ export class ProductController {
   //     largePrint,
   //   );
   // }
-  // @ApiOperation({ summary: 'Delete a product' })
-  // @Post('delete/:productId')
-  // deleteProduct(@Param('productId') productId: string) {
-  //   return this.productService.deleteProduct(productId);
-  // }
+
+  @ApiOperation({ summary: 'Delete a product' })
+  @Delete('delete/:productId')
+  deleteProduct(@Param('productId') productId: string) {
+    return this.productService.deleteProduct(productId);
+  }
 
   @ApiOperation({ summary: 'Get all products' })
   @Get()

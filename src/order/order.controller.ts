@@ -9,7 +9,7 @@ export class OrderController {
 
   @ApiOperation({ summary: 'New Order' })
   @Post()
-  newOrder(@Body() createOrderDto: CreateOrderDto) {
+  newOrder(@Body() createOrderDto: CreateOrderDto): Promise<{url: string}> {
     return this.orderService.createOrder(createOrderDto);
   }
 

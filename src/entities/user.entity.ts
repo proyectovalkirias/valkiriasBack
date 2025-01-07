@@ -104,7 +104,10 @@ export class User {
   @ApiProperty()
   isAdmin: boolean;
 
-  @OneToMany(() => Order, (orders) => orders.user)
+  @OneToMany(() => Order, (orders) => orders.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'orderId' })
   orders: Order[];
 
