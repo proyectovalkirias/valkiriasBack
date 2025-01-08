@@ -30,4 +30,10 @@ export class OrderController {
   deleteOrder(@Param('id') id: string) {
     return this.orderService.deleteOrder(id);
   }
+
+  @ApiOperation({ summary: 'Get Order By User'})
+  @Get('user/:id')
+  getOrderByUser(@Param('userId') userId: string){
+    return this.orderService.getOrderUserId(userId)
+  }
 }
