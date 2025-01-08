@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
@@ -56,6 +57,9 @@ export class AuthService {
     const user = await this.userRepository.getUserByEmail(email);
 
     if (!user) throw new NotFoundException('Invalid Credentials');
+    if(user.active === false) {
+      throw new UnauthorizedException('User is not active')
+    }
 
     const passwordValidation = await bcrypt.compare(password, user.password);
     if (!passwordValidation)
@@ -74,7 +78,7 @@ export class AuthService {
       subject: 'Inicio de sesión exitoso',
       html: `
           <b>Has iniciado sesión en la página de Valkirias con éxito, para poder reservar solo debes completar todos los datos de tu perfil.</b>
-          <b>Toca aquí para dirigirte directamente al Home de Valkirias: <a href="http://localhost:3001">Ir al Home</a></b>
+          <b>Toca aquí para dirigirte directamente al Home de Valkirias: <a href="https://valkiriasfront.onrender.com">Ir al Home</a></b>
           `, // Se debe cambiar al link de render o donde despleguemos a la hora de presentar.
     });
 
@@ -96,7 +100,7 @@ export class AuthService {
       subject: 'Cambiar contraseña',
       html: `
           <b>Has olvidado tu contraseña?</b>
-          <b>Toca aquí para poder cambiar tu contraseña: <a href="http://localhost:3001/ChangePassword">Cambiar contraseña</a></b>
+          <b>Toca aquí para poder cambiar tu contraseña: <a href="https://valkiriasfront.onrender.com/ChangePassword">Cambiar contraseña</a></b>
           `, // Se debe cambiar al link de render o donde despleguemos a la hora de presentar.
     });
     return `Te enviamos un gmail para cambiar tu contraseña, por favor verificalo`;
