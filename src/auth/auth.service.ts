@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
@@ -56,6 +57,9 @@ export class AuthService {
     const user = await this.userRepository.getUserByEmail(email);
 
     if (!user) throw new NotFoundException('Invalid Credentials');
+    if(user.active === false) {
+      throw new UnauthorizedException('User is not active')
+    }
 
     const passwordValidation = await bcrypt.compare(password, user.password);
     if (!passwordValidation)
