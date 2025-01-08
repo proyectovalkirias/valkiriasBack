@@ -100,6 +100,19 @@ export class OrderService {
     // });
   }
 
+  async getOrderUserId(userId: string) {
+     const orders = await this.orderRepository.find({
+      where: { user: {id: userId } },
+      relations: ['orderDetail', 'orderDetail.product'],
+     })
+
+     if(!orders || orders.length === 0) {
+      throw new NotFoundException('No orders found for this user')
+     }
+
+     return orders;
+  }
+
   getOrder(id: string) {
     const order = this.orderRepository.findOne({
       where: { id },
