@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDto } from 'src/dtos/userDto';
 import { LoginDto } from 'src/dtos/loginDto';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -30,6 +31,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: `Change Password` })
+  @UseGuards(AuthGuard)
   @Put(`change-password`)
   changePassword(
     @Query(`email`) email: string,
