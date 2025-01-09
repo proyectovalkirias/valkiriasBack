@@ -13,4 +13,8 @@ import { ProductPrice } from 'src/entities/productPrice.entity';
   providers: [ProductService, CloudinaryService, CloudinaryConfig],
   exports: [ProductService],
 })
-export class ProductModule {}
+export class ProductModule {
+  constructor() {
+    console.log('Product module cargado.');
+  }
+}

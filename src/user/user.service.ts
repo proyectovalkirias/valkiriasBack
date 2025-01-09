@@ -7,15 +7,15 @@ import { UserRepository } from './user.repository';
 import { User } from 'src/entities/user.entity';
 import { UserDto } from 'src/dtos/userDto';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
-import { transporter } from 'src/config/mailer';
-import { registerMail } from 'src/mails/registerMail';
 import { GeocodingService } from 'src/geocoding/geocoding.service';
 import { Address } from 'src/entities/address.entity';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository,
-              private readonly geoCodingService: GeocodingService){}
+              private readonly geoCodingService: GeocodingService){
+                console.log('GeoServiceUser:', GeocodingService)
+              }
 
   async getAllUser() {
     const users = await this.userRepository.getAllUser();

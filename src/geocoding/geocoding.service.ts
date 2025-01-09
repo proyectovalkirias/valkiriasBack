@@ -4,7 +4,8 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class GeocodingService {
-    constructor(private readonly httpService: HttpService) {}
+    constructor(private readonly httpService: HttpService) {
+    }
 
 
     async getCoordinates(

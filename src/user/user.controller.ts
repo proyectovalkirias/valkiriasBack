@@ -3,11 +3,8 @@ import {
   Body,
   Controller,
   Delete,
-  FileTypeValidator,
   Get,
-  MaxFileSizeValidator,
   Param,
-  ParseFilePipe,
   Put,
   UploadedFile,
   UseInterceptors,
@@ -18,12 +15,8 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
-  ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from 'src/entities/user.entity';
-import { UserDto } from 'src/dtos/userDto';
-import { UpdateUserDto } from 'src/dtos/updateUserDto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 
@@ -94,10 +87,10 @@ export class UserController {
     return this.userService.getUserById(id);
   }
 
-  @ApiOperation({ summary: 'Update User' })
-  @ApiBody({ type: UpdateUserDto, description: 'Datos para actualizar el usuario' })
-  @Put(':id')
-  updateUser(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
-    return this.userService.updateUser(id, updateUser);
-  }
+  // @ApiOperation({ summary: 'Update User' })
+  // @ApiBody({ type: UpdateUserDto, description: 'Datos para actualizar el usuario' })
+  // @Put(':id')
+  // updateUser(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
+  //   return this.userService.updateUser(id, updateUser);
+  // }
 }
