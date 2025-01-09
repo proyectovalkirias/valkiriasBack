@@ -15,7 +15,6 @@ export class ProductService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     @InjectRepository(ProductPrice)
-    private readonly productPriceRepository: Repository<ProductPrice>,
     private readonly cloudinaryProvider: CloudinaryService,
   ) {}
 

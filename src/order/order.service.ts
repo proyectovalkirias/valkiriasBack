@@ -4,13 +4,11 @@ import { CreateOrderDto } from 'src/dtos/createOrderDto';
 import { Order } from 'src/entities/order.entity';
 import { OrderDetail } from 'src/entities/orderDetails.entity';
 import { Product } from 'src/entities/product.entity';
-import { ProductService } from 'src/product/product.service';
 import { UserRepository } from 'src/user/user.repository';
 import { EntityManager, Repository } from 'typeorm';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
-import { ProductPrice } from 'src/entities/productPrice.entity';
 import { MpService } from 'src/mp/mp.service';
-import { OrderController } from './order.controller';
+
 
 @Injectable()
 export class OrderService {
@@ -23,7 +21,9 @@ export class OrderService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     private readonly mercadoPagoService: MpService,
-  ) {}
+  ) {
+
+  }
 
   async createOrder(createOrder: CreateOrderDto): Promise<{url: string}> {
     let total = 0;
