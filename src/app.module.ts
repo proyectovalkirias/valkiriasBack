@@ -11,6 +11,7 @@ import { MpModule } from './mp/mp.module';
 import { OrderModule } from './order/order.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ValkibotModule } from './valkibot/valkibot.module';
+import { GeocodingModule } from './geocoding/geocoding.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ValkibotModule } from './valkibot/valkibot.module';
     MpModule,
     OrderModule,
     ValkibotModule,
+    GeocodingModule,
   ],
   controllers: [],
   providers: [],
