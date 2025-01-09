@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Product } from './product.entity';
 import { Order } from './order.entity';
+import { Address } from './address.entity';
 
 @Entity({
   name: 'users',
@@ -63,26 +64,9 @@ export class User {
   })
   phone: string;
 
-  @Column({ nullable: true })
-  @ApiProperty({
-    description: 'User address',
-    example: 'Calle Falsa 123',
-  })
-  address: string;
 
-  @Column({ nullable: true })
-  @ApiProperty({
-    description: 'User City',
-    example: 'Springfield',
-  })
-  city: string;
-
-  @Column({ nullable: true })
-  @ApiProperty({
-    description: 'User State',
-    example: 'Buenos Aires',
-  })
-  state: string;
+  @Column({ type: 'jsonb', nullable: true })
+  addresses?: Address[]
 
   @Column({ nullable: true })
   @ApiProperty({

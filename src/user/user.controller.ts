@@ -86,6 +86,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Update User' })
+  @ApiBody({ type: UpdateUserDto, description: 'Datos para actualizar el usuario' })
   @Put(':id')
   updateUser(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
     return this.userService.updateUser(id, updateUser);
