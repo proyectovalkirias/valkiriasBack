@@ -7,6 +7,8 @@ import { UserRepository } from './user.repository';
 import { User } from 'src/entities/user.entity';
 import { UserDto } from 'src/dtos/userDto';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
+import { transporter } from 'src/config/mailer';
+import { registerMail } from 'src/mails/registerMail';
 
 @Injectable()
 export class UserService {
@@ -61,6 +63,11 @@ export class UserService {
     this.userRepository.userUpdate(userId, updateUser);
 
     return userWithoutPass;
+  }
+
+  async updateProfileImg(id: string, photo: Express.Multer.File) {
+    const userUpdated = await this.userRepository.updateProfileImg(id, photo);
+    return userUpdated;
   }
 
   async deactiveUser(id: string) {

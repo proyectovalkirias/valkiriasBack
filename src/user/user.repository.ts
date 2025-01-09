@@ -3,12 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { CloudinaryService } from 'src/config/cloudinary';
 
 @Injectable()
 export class UserRepository {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly cloudinaryProvider: CloudinaryService,
   ) {}
 
   getAllUser(): Promise<User[]> {
@@ -33,6 +35,17 @@ export class UserRepository {
       updateUser.password = await bcrypt.hash(updateUser.password, 10);
     }
     return await this.userRepository.update(id, updateUser);
+  }
+
+  async updateProfileImg(id: string, photo: Express.Multer.File) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const uploadImg = await this.cloudinaryProvider.uploadImage(photo);
+    user.photo = uploadImg.secure_url;
+    await this.userRepository.save(user);
+    return 'Profile image updated succesfully';
   }
 
   async deactivateUser(id: string) {
