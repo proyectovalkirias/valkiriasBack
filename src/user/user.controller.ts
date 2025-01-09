@@ -1,9 +1,28 @@
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  FileTypeValidator,
+  Get,
+  MaxFileSizeValidator,
+  Param,
+  ParseFilePipe,
+  Put,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiProperty,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from 'src/entities/user.entity';
 import { UserDto } from 'src/dtos/userDto';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('users')
 @Controller('users')
@@ -32,6 +51,26 @@ export class UserController {
   @Put(':id/activate')
   activateUser(@Param('id') id: string) {
     return this.userService.activeUser(id);
+  }
+
+  @ApiOperation({ summary: `Update Profile Image` })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Carga tu foto de perfil:',
+    schema: {
+      type: 'object',
+      properties: { photo: { type: 'string', format: 'binary' } },
+    },
+  })
+  @UseInterceptors(FileInterceptor('photo'))
+  @Put(`updateProfileImg/:id`)
+  updateProfileImg(
+    @Param(`id`) id: string,
+    @UploadedFile()
+    photo: Express.Multer.File,
+  ) {
+    const userUpdated = this.userService.updateProfileImg(id, photo);
+    return userUpdated;
   }
 
   @ApiOperation({ summary: 'Remove User' })

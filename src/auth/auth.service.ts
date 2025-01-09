@@ -13,7 +13,7 @@ import { transporter } from 'src/config/mailer';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
-import { registerMail } from 'src/mails/registerMail/registerMail';
+import { registerMail } from 'src/mails/registerMail';
 
 @Injectable()
 export class AuthService {
@@ -57,8 +57,8 @@ export class AuthService {
     const user = await this.userRepository.getUserByEmail(email);
 
     if (!user) throw new NotFoundException('Invalid Credentials');
-    if(user.active === false) {
-      throw new UnauthorizedException('User is not active')
+    if (user.active === false) {
+      throw new UnauthorizedException('User is not active');
     }
 
     const passwordValidation = await bcrypt.compare(password, user.password);
