@@ -5,7 +5,8 @@ import { GeocodingService } from './geocoding.service';
 @Controller('geocoding')
 @ApiTags('Coordinates')
 export class GeocodingController {
-    constructor( private readonly geoCodingService: GeocodingService) {}
+    constructor( private readonly geoCodingService: GeocodingService) {
+    }
 
 
 

@@ -1,15 +1,16 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { OrderService } from './order.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { CreateOrderDto } from 'src/dtos/createOrderDto';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { GoogleAuthGuard } from 'src/guards/google-auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
+import { OrderService } from './order.service';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) {
+  }
 
   @ApiOperation({ summary: 'New Order' })
   @UseGuards(AuthGuard, GoogleAuthGuard)
@@ -19,8 +20,7 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Get all Orders' })
-  @UseGuards(
-   AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   @Get('orders')
   getAllOrders() {
     return this.orderService.getAllOrders();
@@ -57,6 +57,6 @@ export class OrderController {
      if(!Object.values(OrderStatus).includes(newStatus)) {
       throw new Error('Invalid status');
      }
-     return this.orderService.updateOrderStatus(orderId, newStatus);
+     return this.orderService.updateOrderStatusManual(orderId, newStatus);
    }
 }
