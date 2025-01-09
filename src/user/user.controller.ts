@@ -1,3 +1,4 @@
+
 import {
   Body,
   Controller,
@@ -10,6 +11,7 @@ import {
   Put,
   UploadedFile,
   UseInterceptors,
+  UseGuards
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
@@ -22,6 +24,9 @@ import {
 import { User } from 'src/entities/user.entity';
 import { UserDto } from 'src/dtos/userDto';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { RoleGuard } from 'src/guards/role.guard';
+
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('users')
@@ -30,6 +35,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: 'Get All Users' })
+  @UseGuards(AuthGuard, RoleGuard)
   @Get()
   getAllUser() {
     return this.userService.getAllUser();
@@ -42,12 +48,14 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Deactivate User' })
+  @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/deactivate')
   deactivateUser(@Param('id') id: string) {
     return this.userService.deactiveUser(id);
   }
 
   @ApiOperation({ summary: 'Activate User' })
+  @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/activate')
   activateUser(@Param('id') id: string) {
     return this.userService.activeUser(id);
@@ -74,6 +82,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Remove User' })
+  @UseGuards(AuthGuard, RoleGuard)
   @Delete(':id/delete')
   removeUser(@Param('id') id: string) {
     return this.userService.removeUser(id);
@@ -86,6 +95,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Update User' })
+  @ApiBody({ type: UpdateUserDto, description: 'Datos para actualizar el usuario' })
   @Put(':id')
   updateUser(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
     return this.userService.updateUser(id, updateUser);

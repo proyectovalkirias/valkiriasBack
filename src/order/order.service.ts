@@ -10,6 +10,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { ProductPrice } from 'src/entities/productPrice.entity';
 import { MpService } from 'src/mp/mp.service';
+import { OrderController } from './order.controller';
 
 @Injectable()
 export class OrderService {
@@ -159,6 +160,32 @@ export class OrderService {
     return this.orderRepository.find({
       where: { status: OrderStatus.PENDING },
     });
+  }
+
+  async validStatus(currentStatus: OrderStatus, newStatus: OrderStatus) {
+    const statusFlow: Record<OrderStatus, OrderStatus[]> = {
+      [OrderStatus.PENDING]: [OrderStatus.IN_PREPARATION],
+      [OrderStatus.IN_PREPARATION]: [OrderStatus.ON_THE_WAY],
+      [OrderStatus.ON_THE_WAY]: [OrderStatus.DELIVERED],
+      [OrderStatus.DELIVERED]: [],
+    };
+    return statusFlow[currentStatus]?.includes(newStatus) || false;
+  }
+
+  async updateOrderStatusManual(orderId: string, newStatus: OrderStatus): Promise <Order>{
+
+    const order =  await this.orderRepository.findOne({
+      where: { id: orderId } });
+      if(!order) {
+        throw new Error('Order not found')
+      }
+
+      if(!this.validStatus(order.status as OrderStatus, newStatus)) {
+        throw new Error('Invalid status transition');
+      }
+
+      order.status = newStatus;
+      return this.orderRepository.save( order);
   }
 
   async updateOrderStatus(orderId: string, status: OrderStatus) {

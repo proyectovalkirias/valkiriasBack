@@ -9,10 +9,13 @@ import { UserDto } from 'src/dtos/userDto';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
 import { transporter } from 'src/config/mailer';
 import { registerMail } from 'src/mails/registerMail';
+import { GeocodingService } from 'src/geocoding/geocoding.service';
+import { Address } from 'src/entities/address.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly userRepository: UserRepository,
+              private readonly geoCodingService: GeocodingService){}
 
   async getAllUser() {
     const users = await this.userRepository.getAllUser();
@@ -57,11 +60,52 @@ export class UserService {
   ): Promise<Partial<User>> {
     const findUser = await this.userRepository.getUserById(userId);
     if (!findUser) throw new NotFoundException('User not found');
-
-    const user = Object.assign(findUser, updateUser);
+  
+    
+    let addressesArray: Address[] = [];
+    if (updateUser.addresses && Array.isArray(updateUser.addresses)) {
+      addressesArray = await Promise.all(
+        updateUser.addresses.map(async (address) => {
+          
+          const coordinates = await this.geoCodingService.getCoordinates(
+            address.street,
+            address.number,
+            address.city,
+            address.state,
+            address.postalCode,
+          );
+  
+          if (!coordinates) {
+            throw new NotFoundException(
+              `Coordinates not found for address: ${JSON.stringify(address)}`,
+            );
+          }
+  
+          
+          const addressObject = new Address();
+          addressObject.street = address.street;
+          addressObject.number = address.number;
+          addressObject.postalCode = address.postalCode;
+          addressObject.city = address.city;
+          addressObject.state = address.state;
+          addressObject.latitude = coordinates.latitude;
+          addressObject.longitude = coordinates.longitude;
+  
+          return addressObject;
+        }),
+      );
+    }
+  
+    
+    const user = Object.assign(findUser, updateUser, {
+      addresses: addressesArray,
+    });
+  
     const { password, ...userWithoutPass } = user;
-    this.userRepository.userUpdate(userId, updateUser);
-
+  
+    
+    await this.userRepository.userUpdate(userId, user);
+  
     return userWithoutPass;
   }
 
