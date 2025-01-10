@@ -60,6 +60,12 @@ export class Product {
   })
   isAvailable: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  @ApiProperty({
+    description: 'Customization Available',
+  })
+  isCustomizable: boolean;
+
   @Column({ type: 'varchar', length: 100 })
   @ApiProperty({
     description: 'Product Category',
