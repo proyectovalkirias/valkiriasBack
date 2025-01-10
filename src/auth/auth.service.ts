@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
 import { registerMail } from 'src/mails/registerMail';
+import { Role } from 'src/utils/Role/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -68,6 +69,7 @@ export class AuthService {
     const payload = {
       id: user.id,
       email: user.email,
+      role: user.isAdmin ? Role.Admin : Role.User,
     };
 
     const token = this.jwtService.sign(payload);
