@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Order } from './order.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Sender } from './sender.entity';
@@ -8,7 +14,7 @@ import { Recipient } from './recipient.entity';
 export class OrderTrack {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
-    description: 'Order id',
+    description: 'Order track id',
     format: 'uuid',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
@@ -20,13 +26,19 @@ export class OrderTrack {
   })
   order: Order;
 
-  @OneToOne(() => Sender, (sender) => sender.orderTrack)
+  @OneToOne(() => Sender, (sender) => sender.orderTrack, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({
     name: 'senderId',
   })
   sender: Sender;
 
-  @OneToOne(() => Recipient, (recipient) => recipient.orderTrack)
+  @OneToOne(() => Recipient, (recipient) => recipient.orderTrack, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({
     name: 'recipientId',
   })

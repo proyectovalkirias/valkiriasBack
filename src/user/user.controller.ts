@@ -31,8 +31,9 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: 'Get All Users' })
-  @Roles(Role.Admin)
+  /* @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth() */
   @Get()
   getAllUser() {
     return this.userService.getAllUser();
@@ -45,16 +46,16 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Deactivate User' })
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard)
+  /* @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RoleGuard) */
   @Put(':id/deactivate')
   deactivateUser(@Param('id') id: string) {
     return this.userService.deactiveUser(id);
   }
 
   @ApiOperation({ summary: 'Activate User' })
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard)
+  /* @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RoleGuard) */
   @Put(':id/activate')
   activateUser(@Param('id') id: string) {
     return this.userService.activeUser(id);
@@ -81,16 +82,16 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Update User To Admin' })
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard)
+  /* @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RoleGuard) */
   @Put('changeIsAdmin/:id')
   changeIsAdmin(@Param('id') id: string) {
     return this.userService.changeIsAdmin(id);
   }
 
   @ApiOperation({ summary: 'Remove User' })
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard)
+  /* @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RoleGuard) */
   @Delete(':id/delete')
   removeUser(@Param('id') id: string) {
     return this.userService.removeUser(id);
@@ -103,7 +104,10 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Update User' })
-  @ApiBody({ type: UpdateUserDto, description: 'Datos para actualizar el usuario' })
+  @ApiBody({
+    type: UpdateUserDto,
+    description: 'Datos para actualizar el usuario',
+  })
   @Put(':id')
   updateUser(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
     return this.userService.updateUser(id, updateUser);

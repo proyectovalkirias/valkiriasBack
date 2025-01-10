@@ -17,6 +17,7 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     const token = request.headers.authorization?.split(' ')[1];
+    console.log(token);
     if (!token) throw new ForbiddenException('Debes iniciar sesión');
     try {
       const secret = process.env.JWT_KEY_SECRET;
