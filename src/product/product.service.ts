@@ -14,7 +14,6 @@ export class ProductService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
-    @InjectRepository(ProductPrice)
     private readonly cloudinaryProvider: CloudinaryService,
   ) {}
 
@@ -39,10 +38,14 @@ export class ProductService {
     largePrint: Express.Multer.File[] | null | undefined,
     owner: User,
   ) {
+    console.log(createProductDto);
+    console.log(photos);
+    console.log(typeof photos);
     const uploadedPhotos = await Promise.all(
-      photos.map(
-        async (photo) => await this.cloudinaryProvider.uploadImage(photo),
-      ),
+      photos.map(async (photo) => {
+        const imgUploaded = await this.cloudinaryProvider.uploadImage(photo);
+        return imgUploaded.secure_url;
+      }),
     );
     console.log('1');
 
@@ -112,7 +115,7 @@ export class ProductService {
       sizes: sizesArray,
       color: colorArray,
       user: owner,
-      photos: uploadedPhotos.map((img) => img.secure_url),
+      photos: uploadedPhotos,
       smallPrint: uploadedSmallPrint,
       largePrint: uploadedLargePrint,
     });
@@ -145,32 +148,33 @@ export class ProductService {
     });
     if (!product)
       throw new NotFoundException(`Product with ID ${productId} not found`);
-  
+
     let updatedPhotos: string[] = product.photos || [];
     let updatedSmallPrint: string[] | null = product.smallPrint || null;
     let updatedLargePrint: string[] | null = product.largePrint || null;
-  
-   
+
     let sizesArray: string[] = [];
     if (updateProductDto.size) {
       if (typeof updateProductDto.size === 'string') {
-        sizesArray = updateProductDto.size.split(',').map((item) => item.trim());
+        sizesArray = updateProductDto.size
+          .split(',')
+          .map((item) => item.trim());
       } else if (Array.isArray(updateProductDto.size)) {
         sizesArray = updateProductDto.size;
       }
     }
-  
-    
+
     let colorArray: string[] = [];
     if (updateProductDto.color) {
       if (typeof updateProductDto.color === 'string') {
-        colorArray = updateProductDto.color.split(',').map((item) => item.trim());
+        colorArray = updateProductDto.color
+          .split(',')
+          .map((item) => item.trim());
       } else if (Array.isArray(updateProductDto.color)) {
         colorArray = updateProductDto.color;
       }
     }
-  
-    
+
     if (photos && photos.length > 0) {
       const uploadedPhotos = await Promise.all(
         photos.map(async (photo) => {
@@ -180,8 +184,7 @@ export class ProductService {
       );
       updatedPhotos = [...updatedPhotos, ...uploadedPhotos];
     }
-  
-   
+
     if (smallPrint && smallPrint.length > 0) {
       const uploadedSmallPrint = await Promise.all(
         smallPrint.map(async (stamp) => {
@@ -191,8 +194,7 @@ export class ProductService {
       );
       updatedSmallPrint = [...(updatedSmallPrint || []), ...uploadedSmallPrint];
     }
-  
-    
+
     if (largePrint && largePrint.length > 0) {
       const uploadedLargePrint = await Promise.all(
         largePrint.map(async (stamp) => {
@@ -202,7 +204,7 @@ export class ProductService {
       );
       updatedLargePrint = [...(updatedLargePrint || []), ...uploadedLargePrint];
     }
-  
+
     let pricesArray: ProductPrice[] = [];
     if (updateProductDto.prices && Array.isArray(updateProductDto.prices)) {
       pricesArray = updateProductDto.prices.map((price) => {
@@ -216,7 +218,6 @@ export class ProductService {
         return productPrice;
       });
     }
-  
 
     Object.assign(product, {
       ...updateProductDto,
@@ -227,11 +228,10 @@ export class ProductService {
       smallPrint: updatedSmallPrint,
       largePrint: updatedLargePrint,
     });
-  
+
     const updatedProduct = await this.productRepository.save(product);
     return updatedProduct;
   }
-  
 
   async deleteProduct(productId: string) {
     const product = await this.productRepository.findOne({

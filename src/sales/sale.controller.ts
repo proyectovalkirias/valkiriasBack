@@ -8,21 +8,21 @@ import { RoleGuard } from 'src/guards/role.guard';
 
 @Controller('sale')
 export class SaleController {
-    constructor(private readonly saleService: SaleService) {}
+  constructor(private readonly saleService: SaleService) {}
 
-    @ApiOperation({ summary: 'Total Sale By Month'})
-    @Roles(Role.Admin)
-    @UseGuards(AuthGuard, RoleGuard)
-    @Get('by-month')
-    async getTotalByMonth(){
-        return await this.saleService.getTotalByMonth()
-    }
+  @ApiOperation({ summary: 'Total Sale By Month' })
+  /* @Roles(Role.Admin)
+    @UseGuards(AuthGuard, RoleGuard) */
+  @Get('by-month')
+  async getTotalByMonth() {
+    return await this.saleService.getTotalByMonth();
+  }
 
-    @ApiOperation({ summary: 'Total Sale'})
-    @Roles(Role.Admin)
-    @UseGuards(AuthGuard, RoleGuard)
-    @Get('total')
-    async getTotal(){
-            return await this.saleService.getTotal()
-    }
+  @ApiOperation({ summary: 'Total Sale' })
+  /* @Roles(Role.Admin)
+    @UseGuards(AuthGuard, RoleGuard) */
+  @Get('total')
+  async getTotal() {
+    return await this.saleService.getTotal();
+  }
 }

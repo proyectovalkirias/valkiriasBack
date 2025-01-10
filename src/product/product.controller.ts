@@ -41,8 +41,8 @@ export class ProductController {
 
   @ApiOperation({ summary: 'Create a new product' })
   @ApiConsumes('multipart/form-data')
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard)
+  /* @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RoleGuard) */
   @ApiBearerAuth()
   @ApiBody({
     description: 'Pon los datos del producto y sube imagenes:',
@@ -102,6 +102,10 @@ export class ProductController {
           type: 'number',
           example: 10,
         },
+        isCostumizable: {
+          type: 'boolean',
+          example: false,
+        },
       },
     },
   })
@@ -138,15 +142,10 @@ export class ProductController {
     if (typeof createProductDto.prices === 'string') {
       createProductDto.prices = JSON.parse(createProductDto.prices);
     }
-    console.log(createProductDto);
     const owner = req.user;
     const photos = files.photos;
     const smallPrint = files.smallPrint;
     const largePrint = files.largePrint;
-
-    console.log(smallPrint);
-    console.log(largePrint);
-    console.log(photos);
 
     return await this.productService.createProduct(
       createProductDto,
@@ -158,8 +157,8 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Change the status of a product' })
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard)
+  /* @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RoleGuard) */
   @Post('change-status/:productId')
   changeStatusProduct(
     @Param('productId') productId: string,
@@ -170,8 +169,8 @@ export class ProductController {
 
   @ApiOperation({ summary: 'Update a product' })
   @ApiConsumes('multipart/form-data')
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard)
+  /* @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RoleGuard) */
   @ApiBearerAuth()
   @ApiBody({
     description: 'Pon los datos a actualizar del producto:',
@@ -257,8 +256,8 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Delete a product' })
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard)
+  /* @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RoleGuard) */
   @Delete('delete/:productId')
   deleteProduct(@Param('productId') productId: string) {
     return this.productService.deleteProduct(productId);
