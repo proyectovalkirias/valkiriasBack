@@ -21,6 +21,9 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from 'src/utils/Role/role.decorator';
+import { Role } from 'src/utils/Role/role.enum';
+import { UpdateUserDto } from 'src/dtos/updateUserDto';
 
 @ApiTags('users')
 @Controller('users')
@@ -28,6 +31,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: 'Get All Users' })
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @Get()
   getAllUser() {
@@ -41,6 +45,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Deactivate User' })
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/deactivate')
   deactivateUser(@Param('id') id: string) {
@@ -48,6 +53,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Activate User' })
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/activate')
   activateUser(@Param('id') id: string) {
@@ -75,14 +81,15 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Update User To Admin' })
-  /* @UseGuards(AuthGuard, RoleGuard)
-  @ApiBearerAuth() */
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RoleGuard)
   @Put('changeIsAdmin/:id')
   changeIsAdmin(@Param('id') id: string) {
     return this.userService.changeIsAdmin(id);
   }
 
   @ApiOperation({ summary: 'Remove User' })
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @Delete(':id/delete')
   removeUser(@Param('id') id: string) {
@@ -95,10 +102,10 @@ export class UserController {
     return this.userService.getUserById(id);
   }
 
-  // @ApiOperation({ summary: 'Update User' })
-  // @ApiBody({ type: UpdateUserDto, description: 'Datos para actualizar el usuario' })
-  // @Put(':id')
-  // updateUser(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
-  //   return this.userService.updateUser(id, updateUser);
-  // }
+  @ApiOperation({ summary: 'Update User' })
+  @ApiBody({ type: UpdateUserDto, description: 'Datos para actualizar el usuario' })
+  @Put(':id')
+  updateUser(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
+    return this.userService.updateUser(id, updateUser);
+  }
 }

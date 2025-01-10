@@ -15,6 +15,8 @@ import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { GoogleAuthGuard } from 'src/guards/google-auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/utils/Role/role.decorator';
+import { Role } from 'src/utils/Role/role.enum';
 
 @Controller('order')
 export class OrderController {
@@ -28,6 +30,7 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Get all Orders' })
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @Get('orders')
   getAllOrders() {
@@ -35,6 +38,7 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Get Order By Id' })
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @Get(':id')
   getOrderById(@Param('id') id: string) {
@@ -42,6 +46,7 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Delete Order' })
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @Delete(':id')
   deleteOrder(@Param('id') id: string) {
@@ -56,6 +61,7 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Order Status' })
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/status')
   async updateStatus(

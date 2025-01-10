@@ -31,6 +31,8 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { FilterDto } from 'src/dtos/filterDto';
 import { Product } from 'src/entities/product.entity';
 import { RoleGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/utils/Role/role.decorator';
+import { Role } from 'src/utils/Role/role.enum';
 
 @ApiTags('products')
 @Controller('products')
@@ -39,6 +41,7 @@ export class ProductController {
 
   @ApiOperation({ summary: 'Create a new product' })
   @ApiConsumes('multipart/form-data')
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @ApiBearerAuth()
   @ApiBody({
@@ -155,6 +158,7 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Change the status of a product' })
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @Post('change-status/:productId')
   changeStatusProduct(
@@ -166,6 +170,7 @@ export class ProductController {
 
   @ApiOperation({ summary: 'Update a product' })
   @ApiConsumes('multipart/form-data')
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @ApiBearerAuth()
   @ApiBody({
@@ -252,6 +257,7 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Delete a product' })
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
   @Delete('delete/:productId')
   deleteProduct(@Param('productId') productId: string) {
