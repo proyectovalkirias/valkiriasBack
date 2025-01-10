@@ -21,8 +21,6 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Roles } from 'src/utils/Role/role.decorator';
-import { Role } from 'src/utils/Role/role.enum';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
 
 @ApiTags('users')
@@ -31,9 +29,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: 'Get All Users' })
-  /* @Roles(Role.Admin)
   @UseGuards(AuthGuard, RoleGuard)
-  @ApiBearerAuth() */
+  @ApiBearerAuth()
   @Get()
   getAllUser() {
     return this.userService.getAllUser();
