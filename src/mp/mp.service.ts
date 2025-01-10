@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { mercadoPagoConfig } from '../config/mpConfig';
 import { Payment, Preference } from 'mercadopago';
 import { ProductService } from 'src/product/product.service';
+import { transporter } from 'src/config/mailer';
 
 @Injectable()
 export class MpService {
@@ -73,8 +74,18 @@ export class MpService {
 
       if (payment.status === 'approved') {
         console.log('Payment approved:', payment.order);
+        /* await transporter.sendMail({
+          from: '"Valkirias" <proyecto.valkirias@gmail.com>',
+          subject: 'Pago realizado con éxito',
+          html: `Acabas de realizar el pago con éxito`,
+        }); */
       } else if (payment.status === 'rejected') {
         console.log('Payment rejected:', payment.id);
+        /* await transporter.sendMail({
+          from: '"Valkirias" <proyecto.valkirias@gmail.com>',
+          subject: 'Pago rechazado',
+          html: `Tu pago ha sido rechazado, por favor, verifica si tienes saldo o si se trata de otro problema, contáctanos por este mismo mail.`,
+        }); */
       }
     } catch (error) {
       console.error('Error processing webhook:', error.message);
