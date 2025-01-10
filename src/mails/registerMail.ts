@@ -655,7 +655,7 @@ export const registerMail = `<!DOCTYPE html
                                                                     <span
                                                                         class="es-button-border es-il"
                                                                         style="border-style:solid;border-color:#7b548b;background:#b093bf;border-width:0px 0px 2px 0px;display:inline-block;border-radius:30px;width:auto;border-top-width:2px;border-right-width:2px;border-left-width:2px"><a
-                                                                            href="http://localhost:3001/Login"
+                                                                            href="https://valkiriasfront.onrender.com//Login"
                                                                             target="_blank"
                                                                             class="es-button"
                                                                             style="mso-style-priority:100 !important;text-decoration:none !important;mso-line-height-rule:exactly;color:#FFFFFF;font-size:18px;padding:10px 20px 10px 20px;display:inline-block;background:#b093bf;border-radius:30px;font-family:'times new roman', times, baskerville, georgia, serif;font-weight:bold;font-style:normal;line-height:21.6px;width:auto;text-align:center;letter-spacing:0;mso-padding-alt:0;mso-border-alt:10px solid #b093bf">INICIAR

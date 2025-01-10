@@ -111,5 +111,9 @@ export class CreateProductDto {
   @IsBoolean()
   @IsOptional()
   isAvailable: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  isCustomizable: boolean;
 }
 

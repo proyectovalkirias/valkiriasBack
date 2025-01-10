@@ -48,29 +48,27 @@ export class UpdateUserDto {
   @IsOptional()
   phone?: string;
 
-  @ApiProperty({
-    description: 'User address',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  address?: string;
 
   @ApiProperty({
-    description: 'User city',
-    required: false,
+    example: [
+      {
+        street: 'Juan Bautista Alberdi',
+        number: 111,
+        postalCode: '1688',
+        city: 'Buenos Aires',
+        state: 'Buenos Aires',
+      },
+    ],
+    description: 'User Addresses',
+    type: [Object],
   })
-  @IsString()
-  @IsOptional()
-  city?: string;
-
-  @ApiProperty({
-    description: 'User state',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  state?: string;
+  addresses?: {
+    street: string;
+    number: number;
+    postalCode: string;
+    city: string;
+    state: string;
+  }[];
 
   @ApiProperty({
     description: 'Profile picture',

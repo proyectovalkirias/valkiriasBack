@@ -9,6 +9,7 @@ import {
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { ProductPrice } from './productPrice.entity';
+import { Sale } from './sale.entity';
 
 @Entity('products')
 export class Product {
@@ -60,6 +61,12 @@ export class Product {
   })
   isAvailable: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  @ApiProperty({
+    description: 'Customization Available',
+  })
+  isCustomizable: boolean;
+
   @Column({ type: 'varchar', length: 100 })
   @ApiProperty({
     description: 'Product Category',
@@ -89,5 +96,8 @@ export class Product {
     description: 'Stock',
   })
   stock: number;
+
+  @OneToMany(() => Sale, (sale) => sale.product)
+  sales: Sale[];
 
 }

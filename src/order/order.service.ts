@@ -4,12 +4,11 @@ import { CreateOrderDto } from 'src/dtos/createOrderDto';
 import { Order } from 'src/entities/order.entity';
 import { OrderDetail } from 'src/entities/orderDetails.entity';
 import { Product } from 'src/entities/product.entity';
-import { ProductService } from 'src/product/product.service';
 import { UserRepository } from 'src/user/user.repository';
 import { EntityManager, Repository } from 'typeorm';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
-import { ProductPrice } from 'src/entities/productPrice.entity';
 import { MpService } from 'src/mp/mp.service';
+
 
 @Injectable()
 export class OrderService {
@@ -22,9 +21,11 @@ export class OrderService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     private readonly mercadoPagoService: MpService,
-  ) {}
+  ) {
 
-  async createOrder(createOrder: CreateOrderDto): Promise<{url: string}> {
+  }
+
+  async createOrder(createOrder: CreateOrderDto): Promise<{ url: string }> {
     let total = 0;
     const { userId, products } = createOrder;
 
@@ -88,11 +89,11 @@ export class OrderService {
 
     await this.orderDetailRepository.save(orderDetail);
 
-    const preference = await this.mercadoPagoService.createPaymentPreference(products);
-
+    const preference =
+      await this.mercadoPagoService.createPaymentPreference(products);
     return {
       url: preference.url,
-    }
+    };
 
     // return await this.orderRepository.findOne({
     //   where: { id: newOrder.id },
@@ -101,16 +102,16 @@ export class OrderService {
   }
 
   async getOrderUserId(userId: string) {
-     const orders = await this.orderRepository.find({
-      where: { user: {id: userId } },
+    const orders = await this.orderRepository.find({
+      where: { user: { id: userId } },
       relations: ['orderDetail', 'orderDetail.product'],
-     })
+    });
 
-     if(!orders || orders.length === 0) {
-      throw new NotFoundException('No orders found for this user')
-     }
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException('No orders found for this user');
+    }
 
-     return orders;
+    return orders;
   }
 
   getOrder(id: string) {
@@ -159,6 +160,35 @@ export class OrderService {
     return this.orderRepository.find({
       where: { status: OrderStatus.PENDING },
     });
+  }
+
+  async validStatus(currentStatus: OrderStatus, newStatus: OrderStatus) {
+    const statusFlow: Record<OrderStatus, OrderStatus[]> = {
+      [OrderStatus.PENDING]: [OrderStatus.IN_PREPARATION],
+      [OrderStatus.IN_PREPARATION]: [OrderStatus.ON_THE_WAY],
+      [OrderStatus.ON_THE_WAY]: [OrderStatus.DELIVERED],
+      [OrderStatus.DELIVERED]: [],
+    };
+    return statusFlow[currentStatus]?.includes(newStatus) || false;
+  }
+
+  async updateOrderStatusManual(
+    orderId: string,
+    newStatus: OrderStatus,
+  ): Promise<Order> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+    });
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    if (!this.validStatus(order.status as OrderStatus, newStatus)) {
+      throw new Error('Invalid status transition');
+    }
+
+    order.status = newStatus;
+    return this.orderRepository.save(order);
   }
 
   async updateOrderStatus(orderId: string, status: OrderStatus) {

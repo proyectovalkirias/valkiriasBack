@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Body,
-  ConflictException,
   Controller,
   Delete,
   Get,
@@ -31,6 +30,7 @@ import {
 import { AuthGuard } from 'src/guards/auth.guard';
 import { FilterDto } from 'src/dtos/filterDto';
 import { Product } from 'src/entities/product.entity';
+import { RoleGuard } from 'src/guards/role.guard';
 
 @ApiTags('products')
 @Controller('products')
@@ -39,7 +39,7 @@ export class ProductController {
 
   @ApiOperation({ summary: 'Create a new product' })
   @ApiConsumes('multipart/form-data')
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   @ApiBearerAuth()
   @ApiBody({
     description: 'Pon los datos del producto y sube imagenes:',
@@ -155,6 +155,7 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Change the status of a product' })
+  @UseGuards(AuthGuard, RoleGuard)
   @Post('change-status/:productId')
   changeStatusProduct(
     @Param('productId') productId: string,
@@ -165,7 +166,7 @@ export class ProductController {
 
   @ApiOperation({ summary: 'Update a product' })
   @ApiConsumes('multipart/form-data')
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   @ApiBearerAuth()
   @ApiBody({
     description: 'Pon los datos a actualizar del producto:',
@@ -251,6 +252,7 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Delete a product' })
+  @UseGuards(AuthGuard, RoleGuard)
   @Delete('delete/:productId')
   deleteProduct(@Param('productId') productId: string) {
     return this.productService.deleteProduct(productId);
