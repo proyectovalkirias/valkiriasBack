@@ -40,7 +40,7 @@ export class MpController {
   async webhookMp(@Body() body: any) {
     try {
       if (!body || !body.preferenceData) {
-        throw new BadRequestException('Invalid wenhook body');
+        throw new BadRequestException('Invalid webhook body');
       }
 
       await this.mercadoPagoService.webhookMp(body);

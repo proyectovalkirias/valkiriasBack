@@ -25,7 +25,7 @@ export class OrderService {
 
   }
 
-  async createOrder(createOrder: CreateOrderDto): Promise<{url: string}> {
+  async createOrder(createOrder: CreateOrderDto): Promise<{ url: string }> {
     let total = 0;
     const { userId, products } = createOrder;
 
@@ -89,11 +89,11 @@ export class OrderService {
 
     await this.orderDetailRepository.save(orderDetail);
 
-    const preference = await this.mercadoPagoService.createPaymentPreference(products);
-
+    const preference =
+      await this.mercadoPagoService.createPaymentPreference(products);
     return {
       url: preference.url,
-    }
+    };
 
     // return await this.orderRepository.findOne({
     //   where: { id: newOrder.id },
@@ -102,16 +102,16 @@ export class OrderService {
   }
 
   async getOrderUserId(userId: string) {
-     const orders = await this.orderRepository.find({
-      where: { user: {id: userId } },
+    const orders = await this.orderRepository.find({
+      where: { user: { id: userId } },
       relations: ['orderDetail', 'orderDetail.product'],
-     })
+    });
 
-     if(!orders || orders.length === 0) {
-      throw new NotFoundException('No orders found for this user')
-     }
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException('No orders found for this user');
+    }
 
-     return orders;
+    return orders;
   }
 
   getOrder(id: string) {
@@ -172,20 +172,23 @@ export class OrderService {
     return statusFlow[currentStatus]?.includes(newStatus) || false;
   }
 
-  async updateOrderStatusManual(orderId: string, newStatus: OrderStatus): Promise <Order>{
+  async updateOrderStatusManual(
+    orderId: string,
+    newStatus: OrderStatus,
+  ): Promise<Order> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+    });
+    if (!order) {
+      throw new Error('Order not found');
+    }
 
-    const order =  await this.orderRepository.findOne({
-      where: { id: orderId } });
-      if(!order) {
-        throw new Error('Order not found')
-      }
+    if (!this.validStatus(order.status as OrderStatus, newStatus)) {
+      throw new Error('Invalid status transition');
+    }
 
-      if(!this.validStatus(order.status as OrderStatus, newStatus)) {
-        throw new Error('Invalid status transition');
-      }
-
-      order.status = newStatus;
-      return this.orderRepository.save( order);
+    order.status = newStatus;
+    return this.orderRepository.save(order);
   }
 
   async updateOrderStatus(orderId: string, status: OrderStatus) {

@@ -45,7 +45,7 @@ export class AuthService {
       from: '"Valkirias" <proyecto.valkirias@gmail.com>',
       to: user.email,
       subject: 'Registro existoso',
-      html: registerMail, // Se debe cambiar al link de render o donde despleguemos a la hora de presentar.
+      html: registerMail,
     });
 
     return 'User created successfully';
@@ -72,16 +72,6 @@ export class AuthService {
 
     const token = this.jwtService.sign(payload);
 
-    await transporter.sendMail({
-      from: '"Iniciaste Sesión en Valkirias 👌" <proyecto.valkirias@gmail.com>',
-      to: user.email,
-      subject: 'Inicio de sesión exitoso',
-      html: `
-          <b>Has iniciado sesión en la página de Valkirias con éxito, para poder reservar solo debes completar todos los datos de tu perfil.</b>
-          <b>Toca aquí para dirigirte directamente al Home de Valkirias: <a href="https://valkiriasfront.onrender.com">Ir al Home</a></b>
-          `, // Se debe cambiar al link de render o donde despleguemos a la hora de presentar.
-    });
-
     return {
       message: 'Loggin Succefully',
       token,
@@ -101,7 +91,7 @@ export class AuthService {
       html: `
           <b>Has olvidado tu contraseña?</b>
           <b>Toca aquí para poder cambiar tu contraseña: <a href="https://valkiriasfront.onrender.com/ChangePassword">Cambiar contraseña</a></b>
-          `, // Se debe cambiar al link de render o donde despleguemos a la hora de presentar.
+          `,
     });
     return `Te enviamos un gmail para cambiar tu contraseña, por favor verificalo`;
   }
