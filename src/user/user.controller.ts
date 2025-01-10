@@ -1,4 +1,3 @@
-
 import {
   Body,
   Controller,
@@ -8,10 +7,11 @@ import {
   Put,
   UploadedFile,
   UseInterceptors,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiOperation,
@@ -72,6 +72,14 @@ export class UserController {
   ) {
     const userUpdated = this.userService.updateProfileImg(id, photo);
     return userUpdated;
+  }
+
+  @ApiOperation({ summary: 'Update User To Admin' })
+  /* @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth() */
+  @Put('changeIsAdmin/:id')
+  changeIsAdmin(@Param('id') id: string) {
+    return this.userService.changeIsAdmin(id);
   }
 
   @ApiOperation({ summary: 'Remove User' })

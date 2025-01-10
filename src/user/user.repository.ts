@@ -4,6 +4,7 @@ import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CloudinaryService } from 'src/config/cloudinary';
+import { transporter } from 'src/config/mailer';
 
 @Injectable()
 export class UserRepository {
@@ -58,21 +59,63 @@ export class UserRepository {
 
     user.active = false;
     await this.userRepository.save(user);
+    await transporter.sendMail({
+      from: '"Valkirias" <proyecto.valkirias@gmail.com>',
+      to: user.email,
+      subject: 'Usuario desactivado',
+      html: `Su usuario incumplió alguna norma o condición en la página de Valkirias, si se trata de una confusión, por favor, responda a este mismo mail y aguarde a que le respondamos.`,
+    });
 
     return 'Disabled User';
   }
 
   async activeUser(id: string) {
     const user = await this.userRepository.findOneBy({ id });
-    if (!user) throw new NotFoundException('User bnot found');
+    if (!user) throw new NotFoundException('User not found');
 
     user.active = true;
     await this.userRepository.save(user);
 
+    await transporter.sendMail({
+      from: '"Valkirias" <proyecto.valkirias@gmail.com>',
+      to: user.email,
+      subject: 'Usuario Activado',
+      html: `Su usuario a sido activado en la página de Valkirias.`,
+    });
+
     return 'Active User';
   }
 
-  removeUser(id: string) {
-    return this.userRepository.delete({ id: id });
+  async removeUser(id: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const deletedUser = this.userRepository.delete({ id: id });
+    await transporter.sendMail({
+      from: '"Valkirias" <proyecto.valkirias@gmail.com>',
+      to: user.email,
+      subject: 'Usuario eliminado',
+      html: `Su usuario ha sido eliminado de la página de Valkirias, si fue una confusión, por favor, responda a este mismo email y aguarde a que le respondamos.`,
+    });
+    return deletedUser;
+  }
+
+  async changeIsAdmin(id: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (user.isAdmin === true) {
+      user.isAdmin = false;
+    } else {
+      user.isAdmin = true;
+    }
+    await this.userRepository.save(user);
+    if (user.isAdmin === true) {
+      return 'User changed to admin';
+    } else {
+      return 'Admin changed to user';
+    }
   }
 }

@@ -4,12 +4,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { OrderDetail } from './orderDetails.entity';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
+import { OrderTrack } from './orderTrack.entity';
 
 @Entity({
   name: 'orders',
@@ -55,4 +57,10 @@ export class Order {
     onDelete: 'CASCADE',
   })
   orderDetail: OrderDetail;
+
+  @OneToOne(() => OrderTrack, (orderTrack) => orderTrack.order, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  orderTrack: OrderTrack;
 }

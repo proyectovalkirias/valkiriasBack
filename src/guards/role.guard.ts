@@ -17,6 +17,8 @@ export class RoleGuard implements CanActivate {
     if (!user) {
       throw new UnauthorizedException('User not authenticated');
     }
+    console.log(user);
+    console.log(user.isAdmin);
 
     if (user.isAdmin === true) {
       return true;

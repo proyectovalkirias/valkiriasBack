@@ -12,10 +12,12 @@ import { Address } from 'src/entities/address.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository,
-              private readonly geoCodingService: GeocodingService){
-                console.log('GeoServiceUser:', GeocodingService)
-              }
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly geoCodingService: GeocodingService,
+  ) {
+    console.log('GeoServiceUser:', GeocodingService);
+  }
 
   async getAllUser() {
     const users = await this.userRepository.getAllUser();
@@ -60,13 +62,11 @@ export class UserService {
   ): Promise<Partial<User>> {
     const findUser = await this.userRepository.getUserById(userId);
     if (!findUser) throw new NotFoundException('User not found');
-  
-    
+
     let addressesArray: Address[] = [];
     if (updateUser.addresses && Array.isArray(updateUser.addresses)) {
       addressesArray = await Promise.all(
         updateUser.addresses.map(async (address) => {
-          
           const coordinates = await this.geoCodingService.getCoordinates(
             address.street,
             address.number,
@@ -74,14 +74,13 @@ export class UserService {
             address.state,
             address.postalCode,
           );
-  
+
           if (!coordinates) {
             throw new NotFoundException(
               `Coordinates not found for address: ${JSON.stringify(address)}`,
             );
           }
-  
-          
+
           const addressObject = new Address();
           addressObject.street = address.street;
           addressObject.number = address.number;
@@ -90,22 +89,20 @@ export class UserService {
           addressObject.state = address.state;
           addressObject.latitude = coordinates.latitude;
           addressObject.longitude = coordinates.longitude;
-  
+
           return addressObject;
         }),
       );
     }
-  
-    
+
     const user = Object.assign(findUser, updateUser, {
       addresses: addressesArray,
     });
-  
+
     const { password, ...userWithoutPass } = user;
-  
-    
+
     await this.userRepository.userUpdate(userId, user);
-  
+
     return userWithoutPass;
   }
 
@@ -128,5 +125,9 @@ export class UserService {
 
     await this.userRepository.removeUser(id);
     return 'User removed successfully';
+  }
+
+  async changeIsAdmin(id: string) {
+    return await this.userRepository.changeIsAdmin(id);
   }
 }
