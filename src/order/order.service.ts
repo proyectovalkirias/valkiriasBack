@@ -108,7 +108,7 @@ export class OrderService {
     });
 
     if (!orders || orders.length === 0) {
-      throw new NotFoundException('No orders found for this user');
+      throw new NotFoundException('No existen ordenes para este usuario');
     }
 
     return orders;
@@ -120,7 +120,7 @@ export class OrderService {
       relations: { orderDetail: { product: true } },
     });
 
-    if (!order) throw new NotFoundException('Order not found');
+    if (!order) throw new NotFoundException('Orden no encontrada');
     return order;
   }
 
@@ -180,11 +180,11 @@ export class OrderService {
       where: { id: orderId },
     });
     if (!order) {
-      throw new Error('Order not found');
+      throw new Error('Orden no encontrada');
     }
 
     if (!this.validStatus(order.status as OrderStatus, newStatus)) {
-      throw new Error('Invalid status transition');
+      throw new Error('Cambio de estado inválido');
     }
 
     order.status = newStatus;

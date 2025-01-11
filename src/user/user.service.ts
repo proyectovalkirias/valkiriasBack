@@ -29,7 +29,7 @@ export class UserService {
 
   async getUserById(id: string) {
     const user = await this.userRepository.getUserById(id);
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException('Usuario no encontrado');
 
     const { password, ...userWithoutPass } = user;
 
@@ -38,7 +38,7 @@ export class UserService {
 
   async getUserByEmail(email: string): Promise<Partial<User>> {
     const user = await this.userRepository.getUserByEmail(email);
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException('Usuario no encontrado');
 
     const { password, ...userWithoutPass } = user;
 
@@ -52,7 +52,7 @@ export class UserService {
 
       return userWithoutPass;
     } catch (error) {
-      throw new BadRequestException('Error creating user');
+      throw new BadRequestException('Error al crear usuario');
     }
   }
 
@@ -61,7 +61,7 @@ export class UserService {
     updateUser: UpdateUserDto,
   ): Promise<Partial<User>> {
     const findUser = await this.userRepository.getUserById(userId);
-    if (!findUser) throw new NotFoundException('User not found');
+    if (!findUser) throw new NotFoundException('Usuario no encontrado');
 
     let addressesArray: Address[] = [];
     if (updateUser.addresses && Array.isArray(updateUser.addresses)) {
@@ -77,7 +77,7 @@ export class UserService {
 
           if (!coordinates) {
             throw new NotFoundException(
-              `Coordinates not found for address: ${JSON.stringify(address)}`,
+              `Coordenadas no encontradas: ${JSON.stringify(address)}`,
             );
           }
 
@@ -121,10 +121,10 @@ export class UserService {
 
   async removeUser(id: string) {
     const user = await this.userRepository.getUserById(id);
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException('Usuario no encontrado');
 
     await this.userRepository.removeUser(id);
-    return 'User removed successfully';
+    return 'Usuario eliminado con exito';
   }
 
   async changeIsAdmin(id: string) {

@@ -9,8 +9,6 @@ export class SaleService {
     constructor(
         @InjectRepository(Sale)
         private readonly saleRepository: Repository<Sale>,
-        @InjectRepository(Product)
-        private readonly productRepository: Repository<Product>,
     ) {}
 
     async getTotalByMonth() {

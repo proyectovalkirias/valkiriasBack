@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDto } from 'src/dtos/userDto';
 import { LoginDto } from 'src/dtos/loginDto';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
@@ -40,7 +40,8 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: `Change Password` })
-  /* @UseGuards(AuthGuard) */
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @Put(`change-password`)
   changePassword(
     @Query(`email`) email: string,
