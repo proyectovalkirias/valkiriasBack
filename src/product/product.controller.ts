@@ -25,7 +25,6 @@ import { CreateProductDto } from 'src/dtos/createProductDto';
 import { UpdateProductDto } from 'src/dtos/updateProductDto';
 import {
   FileFieldsInterceptor,
-  FilesInterceptor,
 } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { FilterDto } from 'src/dtos/filterDto';
@@ -99,6 +98,10 @@ export class ProductController {
           type: 'number',
           example: 10,
         },
+        isCostumizable: {
+          type: 'boolean',
+          example: false,
+        },
       },
     },
   })
@@ -135,15 +138,10 @@ export class ProductController {
     if (typeof createProductDto.prices === 'string') {
       createProductDto.prices = JSON.parse(createProductDto.prices);
     }
-    console.log(createProductDto);
     const owner = req.user;
     const photos = files.photos;
     const smallPrint = files.smallPrint;
     const largePrint = files.largePrint;
-
-    console.log(smallPrint);
-    console.log(largePrint);
-    console.log(photos);
 
     return await this.productService.createProduct(
       createProductDto,
@@ -155,6 +153,7 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Change the status of a product' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RoleGuard)
   @Post('change-status/:productId')
   changeStatusProduct(
@@ -166,6 +165,7 @@ export class ProductController {
 
   @ApiOperation({ summary: 'Update a product' })
   @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RoleGuard)
   @ApiBearerAuth()
   @ApiBody({
@@ -252,6 +252,7 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Delete a product' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RoleGuard)
   @Delete('delete/:productId')
   deleteProduct(@Param('productId') productId: string) {
@@ -267,7 +268,7 @@ export class ProductController {
   @Get('filter')
   async filterProducts(@Query() filters: FilterDto): Promise<Product[]> {
     if (Object.keys(filters).length === 0) {
-      throw new BadRequestException('Necesito un Valkifiltro, Valkisalame.');
+      throw new BadRequestException('Necesito un Valkifiltro.');
     }
 
     return this.productService.filterProducts(filters);

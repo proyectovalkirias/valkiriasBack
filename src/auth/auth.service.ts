@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
 import { registerMail } from 'src/mails/registerMail';
+import { Role } from 'src/utils/Role/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -25,14 +26,14 @@ export class AuthService {
 
   async signUp(user: Partial<User>) {
     const { email, password } = user;
-    if (!email || !password) throw new BadRequestException('Required');
+    if (!email || !password) throw new BadRequestException('Email y Contraseña son requeridos');
 
     const foundUser = await this.userRepository.getUserByEmail(user.email);
-    if (foundUser) throw new BadRequestException('Email already registered');
+    if (foundUser) throw new BadRequestException('El email ya se encuentra registrado');
 
     const hashedPassword = await bcrypt.hash(user.password, 10);
     if (!hashedPassword)
-      throw new BadRequestException('Password could nor hashed');
+      throw new BadRequestException('Error al encriptar contraseña');
 
     console.log(hashedPassword);
 
@@ -48,32 +49,32 @@ export class AuthService {
       html: registerMail,
     });
 
-    return 'User created successfully';
+    return 'Usuario creado';
   }
 
   async login(email: string, password: string) {
-    if (!email || !password) throw new BadRequestException('Required');
+    if (!email || !password) throw new BadRequestException('Email y contraseña requeridos');
 
     const user = await this.userRepository.getUserByEmail(email);
-
-    if (!user) throw new NotFoundException('Invalid Credentials');
+    if (!user) throw new NotFoundException('Credenciales invalidas');
     if (user.active === false) {
-      throw new UnauthorizedException('User is not active');
+      throw new UnauthorizedException('Usuario inactivo');
     }
 
     const passwordValidation = await bcrypt.compare(password, user.password);
     if (!passwordValidation)
-      throw new BadRequestException('Invalid Credentials');
+      throw new BadRequestException('Credenciales invalidas');
 
     const payload = {
       id: user.id,
       email: user.email,
+      role: user.isAdmin ? Role.Admin : Role.User,
     };
 
     const token = this.jwtService.sign(payload);
 
     return {
-      message: 'Loggin Succefully',
+      message: '¡Login exitoso!',
       token,
       user,
     };

@@ -103,19 +103,23 @@ export class UserRepository {
 
   async changeIsAdmin(id: string) {
     const user = await this.userRepository.findOne({ where: { id } });
+    console.log('User en changeAddmin:', user)
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    if (user.isAdmin === true) {
-      user.isAdmin = false;
-    } else {
-      user.isAdmin = true;
-    }
+    // if (user.isAdmin === true) {
+    //   user.isAdmin = false;
+    // } else {
+    //   user.isAdmin = true;
+    // }
+    user.isAdmin = !user.isAdmin;
+
     await this.userRepository.save(user);
-    if (user.isAdmin === true) {
-      return 'User changed to admin';
-    } else {
-      return 'Admin changed to user';
-    }
+    return 'Se modifico isAdmin en el usuario';
+    // if (user.isAdmin === true) {
+    //   return 'User changed to admin';
+    // } else {
+    //   return 'Admin changed to user';
+    // }
   }
 }

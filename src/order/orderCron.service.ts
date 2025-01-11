@@ -11,13 +11,13 @@ export class OrderCronService {
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   async handleOrderStatus() {
-    this.logger.log(' Order status update...');
+    this.logger.log('Estado de orden actualizando...');
 
     const orders = await this.orderService.getOrderStatus();
     for (const order of orders) {
       const nextSatus = this.getNextStatus(order.status);
       if (nextSatus) {
-        this.logger.log(`Updating order ${order.id} to status ${nextSatus}`);
+        this.logger.log(`Actualización de orden ${order.id} al estado ${nextSatus}`);
         await this.orderService.updateOrderStatus(order.id, nextSatus);
       }
     }

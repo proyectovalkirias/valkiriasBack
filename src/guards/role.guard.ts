@@ -13,17 +13,13 @@ export class RoleGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-
-    if (!user) {
-      throw new UnauthorizedException('User not authenticated');
-    }
+    console.log('REQUEST USER');
     console.log(user);
-    console.log(user.isAdmin);
 
-    if (user.isAdmin === true) {
+    if (user.role === 'admin') {
       return true;
     }
 
-    throw new UnauthorizedException('Access not authorized');
+    throw new UnauthorizedException('Access do not authorized');
   }
 }

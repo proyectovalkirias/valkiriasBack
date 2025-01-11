@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CreateOrderDto } from 'src/dtos/createOrderDto';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -21,6 +21,7 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @ApiOperation({ summary: 'New Order' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, GoogleAuthGuard)
   @Post()
   newOrder(@Body() createOrderDto: CreateOrderDto): Promise<{ url: string }> {
@@ -28,6 +29,7 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Get all Orders' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RoleGuard)
   @Get('orders')
   getAllOrders() {
@@ -35,6 +37,7 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Get Order By Id' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RoleGuard)
   @Get(':id')
   getOrderById(@Param('id') id: string) {
@@ -42,6 +45,7 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Delete Order' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RoleGuard)
   @Delete(':id')
   deleteOrder(@Param('id') id: string) {
@@ -49,6 +53,7 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Get Order By User' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, GoogleAuthGuard)
   @Get('user/:id')
   getOrderByUser(@Param('userId') userId: string) {
@@ -56,6 +61,7 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Order Status' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/status')
   async updateStatus(
@@ -63,7 +69,7 @@ export class OrderController {
     @Body() newStatus: OrderStatus,
   ) {
     if (!Object.values(OrderStatus).includes(newStatus)) {
-      throw new Error('Invalid status');
+      throw new Error('Estado inválido');
     }
     return this.orderService.updateOrderStatusManual(orderId, newStatus);
   }

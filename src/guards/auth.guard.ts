@@ -6,17 +6,17 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  constructor(
+    private readonly jwtService: JwtService,
+  ) {}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
     const token = request.headers.authorization?.split(' ')[1];
+    console.log('Token en Guard:', token);
     if (!token) throw new ForbiddenException('Debes iniciar sesión');
     try {
       const secret = process.env.JWT_KEY_SECRET;
@@ -27,10 +27,12 @@ export class AuthGuard implements CanActivate {
 
       payload.user = {
         ...payload,
-        roles: payload.roles,
+        role: payload.role,
       };
+      console.log('PAYLOAD');
+      console.log(payload);
 
-      request.user = payload;
+      request.user = payload.user;
 
       return true;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
