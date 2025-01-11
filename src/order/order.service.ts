@@ -124,8 +124,12 @@ export class OrderService {
     return order;
   }
 
-  getAllOrders() {
-    const orders = this.orderRepository.find();
+  async getAllOrders() {
+    const orders = await this.orderRepository.find();
+    if (orders.length === 0) {
+      throw new NotFoundException('No hay órdenes disponibles.');
+    }
+    
     return orders;
   }
 

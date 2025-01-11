@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
       console.log('PAYLOAD');
       console.log(payload);
 
-      request.user = payload.user;
+      request.user = payload;
 
       return true;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
