@@ -26,7 +26,7 @@ export class ProductService {
       where: { id: productId },
     });
     if (!product)
-      throw new NotFoundException(`Product with ID ${productId} not found`);
+      throw new NotFoundException(`Productc con ID ${productId} no encontrado`);
 
     return product;
   }
@@ -70,7 +70,7 @@ export class ProductService {
       pricesArray = createProductDto.prices.map((price) => {
         if (!price.size || typeof price.price !== 'number') {
           console.error('Invalid price object:', price);
-          throw new Error('Invalid price format');
+          throw new Error('Formato de precio inválido');
         }
         const productPrice = new ProductPrice();
         productPrice.size = price.size;
@@ -130,7 +130,7 @@ export class ProductService {
       where: { id: productId },
     });
     if (!product)
-      throw new NotFoundException(`Product with ID ${productId} not found`);
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
 
     product.isAvailable = isAvailable;
     return this.productRepository.save(product);
@@ -147,7 +147,7 @@ export class ProductService {
       where: { id: productId },
     });
     if (!product)
-      throw new NotFoundException(`Product with ID ${productId} not found`);
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
 
     let updatedPhotos: string[] = product.photos || [];
     let updatedSmallPrint: string[] | null = product.smallPrint || null;
@@ -210,7 +210,7 @@ export class ProductService {
       pricesArray = updateProductDto.prices.map((price) => {
         if (!price.size || typeof price.price !== 'number') {
           console.error('Invalid price object:', price);
-          throw new Error('Invalid price format');
+          throw new Error('Formato de precio inválido');
         }
         const productPrice = new ProductPrice();
         productPrice.size = price.size;
@@ -238,7 +238,7 @@ export class ProductService {
       where: { id: productId },
     });
     if (!product)
-      throw new NotFoundException(`Product with ID ${productId} not found`);
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
 
     if (product.photos && product.photos.length > 0) {
       await Promise.all(
@@ -250,7 +250,7 @@ export class ProductService {
     }
 
     await this.productRepository.remove(product);
-    return `Product deleted successfully.`;
+    return `Producto eliminado.`;
   }
 
   private extractPublicId(url: string): string {

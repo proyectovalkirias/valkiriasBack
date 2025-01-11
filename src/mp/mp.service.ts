@@ -19,12 +19,12 @@ export class MpService {
           product.id,
         );
         if (!findProduct) {
-          throw new BadRequestException('Product not found');
+          throw new BadRequestException('Producto no encontrado');
         }
 
         if (product.quantity > findProduct.stock) {
           throw new BadRequestException(
-            'Product quantity is greated than stock',
+            'La cantidad seleccionada supera el stock',
           );
         }
 
@@ -58,14 +58,14 @@ export class MpService {
       };
     } catch (error) {
       console.error('Failed to create payment preference:', error);
-      throw new Error('Failed to create payment preference');
+      throw new Error('Fallo en la creación de preferencia de pago');
     }
   }
 
   async webhookMp(body: any) {
     try {
       if (!body || !body.preferenceData)
-        throw new BadRequestException('Invalid webhook body');
+        throw new BadRequestException('Webhook invalido');
 
       const payment = await new Payment(mercadoPagoConfig).get(
         body.preferenceData,
@@ -89,7 +89,7 @@ export class MpService {
       }
     } catch (error) {
       console.error('Error processing webhook:', error.message);
-      throw new Error('Failed to process webhook');
+      throw new Error('Fallo al procesar webhoook');
     }
   }
 }

@@ -3,23 +3,20 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserRepository } from 'src/user/user.repository';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userRepository: UserRepository,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
     const token = request.headers.authorization?.split(' ')[1];
-    console.log(token);
+    console.log('Token en Guard:', token);
     if (!token) throw new ForbiddenException('Debes iniciar sesión');
     try {
       const secret = process.env.JWT_KEY_SECRET;

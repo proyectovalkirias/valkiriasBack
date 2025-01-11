@@ -19,7 +19,6 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
-
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
 
@@ -43,16 +42,16 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Deactivate User' })
-  /* @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard) */
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/deactivate')
   deactivateUser(@Param('id') id: string) {
     return this.userService.deactiveUser(id);
   }
 
   @ApiOperation({ summary: 'Activate User' })
-  /* @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard) */
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/activate')
   activateUser(@Param('id') id: string) {
     return this.userService.activeUser(id);
@@ -67,6 +66,8 @@ export class UserController {
       properties: { photo: { type: 'string', format: 'binary' } },
     },
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('photo'))
   @Put(`updateProfileImg/:id`)
   updateProfileImg(
@@ -79,16 +80,16 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Update User To Admin' })
-  /* @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard) */
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Put('changeIsAdmin/:id')
   changeIsAdmin(@Param('id') id: string) {
     return this.userService.changeIsAdmin(id);
   }
 
   @ApiOperation({ summary: 'Remove User' })
-  /* @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RoleGuard) */
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Delete(':id/delete')
   removeUser(@Param('id') id: string) {
     return this.userService.removeUser(id);

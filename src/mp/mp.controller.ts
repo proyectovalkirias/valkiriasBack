@@ -6,8 +6,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { MpService } from './mp.service';
-import { url } from 'inspector';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { GoogleAuthGuard } from 'src/guards/google-auth.guard';
 
@@ -17,7 +16,8 @@ export class MpController {
   constructor(private readonly mercadoPagoService: MpService) {}
 
   @ApiOperation({ summary: 'Create a payment with Mercado Pago.' })
-  /* @UseGuards(AuthGuard, GoogleAuthGuard) */
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, GoogleAuthGuard)
   @Post('create')
   async creaPayment(@Body() products: any[]) {
     console.log('Request body:', products);
