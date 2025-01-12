@@ -15,7 +15,8 @@ export class SaleService {
         try {
         return await this.saleRepository
         .createQueryBuilder('sale')
-        .select("TO_CHAR(sale.createAt, 'YYYY-MM'), AS month")
+        .select("TO_CHAR(sale.createAt, 'YYYY-MM')")
+        .addSelect("TO_CHAR(sale.createAt, 'YYYY-MM')", "month")
         .addSelect('COUNT(*)', 'totalSales')
         .groupBy("TO_CHAR(sale.createAt, 'YYYY-MM')")
         .orderBy('month', 'ASC')
