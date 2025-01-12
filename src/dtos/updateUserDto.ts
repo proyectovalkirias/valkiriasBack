@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, Matches, IsOptional } from 'class-validator';
+import { IsNumber, IsString, Matches, IsOptional, IsArray, ValidateNested } from 'class-validator';
+import { AddressDto } from './addressDto';
+import { Type } from 'class-transformer';
 
 export class UpdateUserDto {
   @ApiProperty({
@@ -49,26 +51,11 @@ export class UpdateUserDto {
   phone?: string;
 
 
-  @ApiProperty({
-    example: [
-      {
-        street: 'Juan Bautista Alberdi',
-        number: 111,
-        postalCode: '1688',
-        city: 'Buenos Aires',
-        state: 'Buenos Aires',
-      },
-    ],
-    description: 'User Addresses',
-    type: [Object],
-  })
-  addresses?: {
-    street: string;
-    number: number;
-    postalCode: string;
-    city: string;
-    state: string;
-  }[];
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AddressDto)
+  addresses?: AddressDto[]
 
   @ApiProperty({
     description: 'Profile picture',
