@@ -4,42 +4,18 @@ import { IsOptional, IsString } from "class-validator";
 
 
 export class AddressDto {
-      @ApiProperty({
-        description: 'Calle',
-        required: false,
-      })
-      @IsString()
-      @IsOptional()
-      street?: string;
-    
-      @ApiProperty({
-        description: 'Número',
-        required: false,
-      })
-      @IsOptional()
-      number?: number;
-    
-      @ApiProperty({
-        description: 'Codigo Postal',
-        required: false,
-      })
-      @IsOptional()
-      postalCode?: string;
-    
-    
-      @ApiProperty({
-        description: 'User city',
-        required: false,
-      })
-      @IsString()
-      @IsOptional()
-      city?: string;
-    
-      @ApiProperty({
-        description: 'User state',
-        required: false,
-      })
-      @IsString()
-      @IsOptional()
-      state?: string;
+  @ApiProperty({ example: '123 Main Street' })
+  street: string;
+
+  @ApiProperty({ example: '456' })
+  number: number;
+
+  @ApiProperty({ example: 'Buenos Aires' })
+  city: string;
+
+  @ApiProperty({ example: 'Buenos Aires' })
+  state: string;
+
+  @ApiProperty({ example: '1000' })
+  postalCode: string;
 }
