@@ -1,14 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "./user.entity";
 
 
 @Entity({ name: 'addresses'}) 
     export class Address {
 
         @PrimaryGeneratedColumn('uuid')
-
         id: string;
-
+        
         @Column({ nullable: true })
          @ApiProperty({
             description: 'Calle',
@@ -45,20 +45,24 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
           })
           state: string;
         
-          @Column({ nullable: true })
+          @Column({ 
+            type: 'float' ,
+            nullable: true })
           @ApiProperty({
             description: 'Coordenada Longitud'
           })
           longitude: number;
         
-          @Column({ nullable: true })
+          @Column({
+            type: 'float',
+            nullable: true })
           @ApiProperty({
             description: 'Coordenada Latitud'
           })
           latitude: number;
 
-          // @ManyToOne(() => User, (user) => user.addresses)
-          // user: User;
+          @ManyToOne(() => User, (user) => user.addresses)
+           user: User;
 
     }
     
