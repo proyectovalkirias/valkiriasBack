@@ -75,6 +75,13 @@ export class ValkibotService {
       return { reply: this.options[lowerMessage] };
     }
 
+    if (lowerMessage === 'chatService') {
+      return {
+        reply:
+          'Conéctate al chat en vivo con uno de nuestros operadores humanos. 🦊✨ Utiliza el botón para iniciar la conversación.',
+      };
+    }
+
     return {
       reply:
         'Escribí "hola" o "inicio" para ver las opciones disponibles o contáctanos por WhatsApp. 🦊✨',

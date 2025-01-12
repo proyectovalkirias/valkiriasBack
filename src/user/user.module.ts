@@ -6,9 +6,10 @@ import { User } from 'src/entities/user.entity';
 import { UserRepository } from './user.repository';
 import { CloudinaryConfig, CloudinaryService } from 'src/config/cloudinary';
 import { GeocodingModule } from 'src/geocoding/geocoding.module';
+import { Address } from 'src/entities/address.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), GeocodingModule],
+  imports: [TypeOrmModule.forFeature([User, Address]), GeocodingModule],
   controllers: [UserController],
   providers: [UserService, UserRepository, CloudinaryService, CloudinaryConfig],
   exports: [UserService, UserRepository],

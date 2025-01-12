@@ -117,12 +117,5 @@ export class CreateProductDto {
   @Transform(({ value }) => value === 'true') 
   isCustomizable: boolean;
 
-  // @IsString()
-  // @IsOptional()
-  // imagePrint?: string | null;
-  
-  // @IsString()
-  // @IsOptional()
-  // ideas?: string | null;
 }
 

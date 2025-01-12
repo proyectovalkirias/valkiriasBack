@@ -9,10 +9,17 @@ import { UserDto } from 'src/dtos/userDto';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
 import { GeocodingService } from 'src/geocoding/geocoding.service';
 import { Address } from 'src/entities/address.entity';
+import { AddressDto } from 'src/dtos/addressDto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
   constructor(
+    @InjectRepository(Address)
+    private readonly addressRepository: Repository<Address>,
+    @InjectRepository(User)
+    private readonly userDBRepository: Repository<User>,
     private readonly userRepository: UserRepository,
     private readonly geoCodingService: GeocodingService,
   ) {
@@ -56,55 +63,109 @@ export class UserService {
     }
   }
 
+  
+  
+  
+  
+  async updateAddress(userId: string, addresses: AddressDto[]): Promise<Address[]> {
+    const user = await this.userDBRepository.findOne({
+      where: { id: userId },
+      relations: ['addresses'],  
+    });
+    
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    
+    const updatedAddresses = [];
+    
+    for (const addressDto of addresses) {
+      let address = user.addresses.find(
+        (existingAddress) =>
+          existingAddress.street === addressDto.street &&
+        existingAddress.number === addressDto.number &&
+        existingAddress.postalCode === addressDto.postalCode
+      );
+      
+      if (!address) {
+        
+        const coordinates = await this.geoCodingService.getCoordinates(
+          addressDto.street,
+          addressDto.number,
+          addressDto.city,
+          addressDto.state,
+          addressDto.postalCode,
+        );
+        
+        if (!coordinates) {
+          throw new NotFoundException('No se pudieron obtener las coordenadas');
+        }
+        
+        address = new Address();
+        address.street = addressDto.street;
+        address.number = addressDto.number;
+        address.postalCode = addressDto.postalCode;
+        address.city = addressDto.city;
+        address.state = addressDto.state;
+        address.latitude = coordinates.latitude;
+        address.longitude = coordinates.longitude;
+        address.user = user;  
+        
+        await this.addressRepository.save(address);
+      } else {
+        
+        address.street = addressDto.street;
+        address.number = addressDto.number;
+        address.postalCode = addressDto.postalCode;
+        address.city = addressDto.city;
+        address.state = addressDto.state;
+        
+        const coordinates = await this.geoCodingService.getCoordinates(
+          addressDto.street,
+          addressDto.number,
+          addressDto.city,
+          addressDto.state,
+          addressDto.postalCode,
+        );
+        
+        if (coordinates) {
+          address.latitude = coordinates.latitude;
+          address.longitude = coordinates.longitude;
+        }
+        
+        await this.addressRepository.save(address);
+      }
+      
+      updatedAddresses.push(address);
+    }
+    
+    return updatedAddresses;
+  }
+
   async updateUser(
     userId: string,
     updateUser: UpdateUserDto,
   ): Promise<Partial<User>> {
     const findUser = await this.userRepository.getUserById(userId);
     if (!findUser) throw new NotFoundException('Usuario no encontrado');
-
-    let addressesArray: Address[] = [];
-    if (updateUser.addresses && Array.isArray(updateUser.addresses)) {
-      addressesArray = await Promise.all(
-        updateUser.addresses.map(async (address) => {
-          const coordinates = await this.geoCodingService.getCoordinates(
-            address.street,
-            address.number,
-            address.city,
-            address.state,
-            address.postalCode,
-          );
-
-          if (!coordinates) {
-            throw new NotFoundException(
-              `Coordenadas no encontradas: ${JSON.stringify(address)}`,
-            );
-          }
-
-          const addressObject = new Address();
-          addressObject.street = address.street;
-          addressObject.number = address.number;
-          addressObject.postalCode = address.postalCode;
-          addressObject.city = address.city;
-          addressObject.state = address.state;
-          addressObject.latitude = coordinates.latitude;
-          addressObject.longitude = coordinates.longitude;
-
-          return addressObject;
-        }),
-      );
+  
+    const user = Object.assign(findUser, updateUser);
+  
+    
+    const { addresses, password, ...userWithoutPass } = user;
+  
+   
+    await this.userRepository.userUpdate(userId, userWithoutPass);
+  
+    
+    if (addresses) {
+      await this.updateAddress(userId, addresses);  
     }
-
-    const user = Object.assign(findUser, updateUser, {
-      addresses: addressesArray,
-    });
-
-    const { password, ...userWithoutPass } = user;
-
-    await this.userRepository.userUpdate(userId, user);
-
+    console.log('Updated address', addresses)
+  
     return userWithoutPass;
   }
+  
 
   async updateProfileImg(id: string, photo: Express.Multer.File) {
     const userUpdated = await this.userRepository.updateProfileImg(id, photo);
