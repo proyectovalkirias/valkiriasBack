@@ -127,4 +127,10 @@ export class UserController {
   
     return updatedUser;
   }
+
+
+  @Get('address')
+  async getAddress(userId: string){
+    return this.userService.getAddresses(userId);
+  }
 }

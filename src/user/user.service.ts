@@ -191,4 +191,17 @@ export class UserService {
   async changeIsAdmin(id: string) {
     return await this.userRepository.changeIsAdmin(id);
   }
+
+  async getAddresses(userId: string) {
+    const user = await this.userDBRepository.findOne({
+      where: {id: userId},
+      relations: ['addresses'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return user.addresses;
+  }
 }
