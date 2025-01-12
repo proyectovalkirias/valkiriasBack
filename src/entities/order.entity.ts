@@ -12,6 +12,7 @@ import { User } from './user.entity';
 import { OrderDetail } from './orderDetails.entity';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { OrderTrack } from './orderTrack.entity';
+import { Address } from './address.entity';
 
 @Entity({
   name: 'orders',
@@ -51,6 +52,9 @@ export class Order {
   @ManyToOne(() => User, (user) => user.orders, { nullable: false })
   @JoinColumn({ name: 'userId' })
   user: User;
+
+  @ManyToOne(() => Address, { nullable: true })
+  userAddress: Address;
 
   @OneToOne(() => OrderDetail, (orderDetail) => orderDetail.order, {
     cascade: true,

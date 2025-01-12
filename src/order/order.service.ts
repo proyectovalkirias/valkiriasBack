@@ -100,6 +100,9 @@ export class OrderService {
     orderTrack.order = newOrder;
     orderTrack.sender = new Sender();
     orderTrack.recipient = new Recipient();
+    // orderTrack.status = status as OrderStatus;;
+    // orderTrack.changeDate = new Date();  
+    // orderTrack.userAddress = order.userAddress;
     await this.orderTrackRepository.save(orderTrack);
 
     const preference =

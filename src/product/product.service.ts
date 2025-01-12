@@ -120,9 +120,16 @@ export class ProductService {
       largePrint: uploadedLargePrint,
     });
 
-    const savedProduct = await this.productRepository.save(product);
+    console.log('Producto a guardar:', product);
 
-    return savedProduct;
+    try {
+      const savedProduct = await this.productRepository.save(product);
+      console.log("Producto guardado:", savedProduct);
+      return savedProduct;
+    } catch (error) {
+      console.error("Error al guardar el producto:", error);
+      throw new Error('Error al guardar el producto');
+    }
   }
 
   async changeStatusProduct(productId: string, isAvailable: boolean) {
