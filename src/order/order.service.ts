@@ -1,13 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateOrderDto } from 'src/dtos/createOrderDto';
 import { Order } from 'src/entities/order.entity';
 import { OrderDetail } from 'src/entities/orderDetails.entity';
 import { Product } from 'src/entities/product.entity';
 import { UserRepository } from 'src/user/user.repository';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository} from 'typeorm';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { MpService } from 'src/mp/mp.service';
+import { OrderTrack } from 'src/entities/orderTrack.entity';
+import { Sender } from 'src/entities/sender.entity';
+import { Recipient } from 'src/entities/recipient.entity';
 
 
 @Injectable()
@@ -20,7 +23,10 @@ export class OrderService {
     private readonly userRepository: UserRepository,
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @Inject(forwardRef(() => MpService))
     private readonly mercadoPagoService: MpService,
+    @InjectRepository(OrderTrack)
+    private readonly orderTrackRepository: Repository<OrderTrack>
   ) {
 
   }
@@ -36,6 +42,7 @@ export class OrderService {
     order.createdAt = new Date();
     order.updatedAt = new Date();
     order.user = user;
+    order.status = OrderStatus.PENDING;
 
     const newOrder = await this.orderRepository.save(order);
 
@@ -89,8 +96,21 @@ export class OrderService {
 
     await this.orderDetailRepository.save(orderDetail);
 
+    const orderTrack = new OrderTrack();
+    orderTrack.order = newOrder;
+    orderTrack.sender = new Sender();
+    orderTrack.recipient = new Recipient();
+    // orderTrack.status = status as OrderStatus;;
+    // orderTrack.changeDate = new Date();  
+    // orderTrack.userAddress = order.userAddress;
+    await this.orderTrackRepository.save(orderTrack);
+
     const preference =
-      await this.mercadoPagoService.createPaymentPreference(products);
+      await this.mercadoPagoService.createPaymentPreference(
+        products,
+        newOrder.id,
+      );
+ 
     return {
       url: preference.url,
     };
@@ -117,7 +137,7 @@ export class OrderService {
   getOrder(id: string) {
     const order = this.orderRepository.findOne({
       where: { id },
-      relations: { orderDetail: { product: true } },
+      relations: [ 'orderDetail', 'orderDetail.product', 'orderTrack'],
     });
 
     if (!order) throw new NotFoundException('Orden no encontrada');
