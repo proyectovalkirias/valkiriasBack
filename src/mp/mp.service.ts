@@ -1,17 +1,30 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { mercadoPagoConfig } from '../config/mpConfig';
 import { Payment, Preference } from 'mercadopago';
 import { ProductService } from 'src/product/product.service';
 import { transporter } from 'src/config/mailer';
+import { OrderService } from 'src/order/order.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Order } from 'src/entities/order.entity';
+import { Repository } from 'typeorm';
+import { OrderStatus } from 'src/utils/orderStatus.enum';
+
+
 
 @Injectable()
 export class MpService {
   // private preference: Preference;
-  constructor(private readonly productService: ProductService) {
+  constructor(
+    private readonly productService: ProductService,
+    @Inject(forwardRef(() => OrderService))
+    private readonly orderService: OrderService,
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
+  ) {
     // this.preference = new Preference(mercadoPagoConfig);
   }
 
-  async createPaymentPreference(products: any[]) {
+  async createPaymentPreference(products: any[], orderId: string) {
     try {
       const items = [];
       for (const product of products) {
@@ -46,6 +59,7 @@ export class MpService {
             pending: 'valkiriasfront.onrender.com/Mp/pending',
           },
           auto_return: 'approved',
+          external_reference: orderId,
         },
       };
 
@@ -72,8 +86,18 @@ export class MpService {
       );
       console.log('Payment received:', payment);
 
+      const orderId = body.preferenceData.external_reference;
+      const order = await this.orderRepository.findOne({
+        where: { id: orderId },
+      });
+
+      if(!order) {
+        throw new NotFoundException('Order not found');
+      }
+
       if (payment.status === 'approved') {
         console.log('Payment approved:', payment.order);
+      await this.orderService.updateOrderStatus(orderId, OrderStatus.IN_PREPARATION);  
         /* await transporter.sendMail({
           from: '"Valkirias" <proyecto.valkirias@gmail.com>',
           subject: 'Pago realizado con éxito',
@@ -81,6 +105,7 @@ export class MpService {
         }); */
       } else if (payment.status === 'rejected') {
         console.log('Payment rejected:', payment.id);
+        await this.orderService.updateOrderStatus(orderId, OrderStatus.PENDING);
         /* await transporter.sendMail({
           from: '"Valkirias" <proyecto.valkirias@gmail.com>',
           subject: 'Pago rechazado',

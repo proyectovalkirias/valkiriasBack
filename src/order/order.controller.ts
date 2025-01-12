@@ -21,48 +21,48 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @ApiOperation({ summary: 'New Order' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, GoogleAuthGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, GoogleAuthGuard)
   @Post()
   newOrder(@Body() createOrderDto: CreateOrderDto): Promise<{ url: string }> {
     return this.orderService.createOrder(createOrderDto);
   }
 
   @ApiOperation({ summary: 'Get all Orders' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, RoleGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, RoleGuard)
   @Get('orders')
   getAllOrders() {
     return this.orderService.getAllOrders();
   }
 
   @ApiOperation({ summary: 'Get Order By Id' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, RoleGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, RoleGuard)
   @Get(':id')
   getOrderById(@Param('id') id: string) {
     return this.orderService.getOrder(id);
   }
 
   @ApiOperation({ summary: 'Delete Order' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, RoleGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, RoleGuard)
   @Delete(':id')
   deleteOrder(@Param('id') id: string) {
     return this.orderService.deleteOrder(id);
   }
 
   @ApiOperation({ summary: 'Get Order By User' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, GoogleAuthGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, GoogleAuthGuard)
   @Get('user/:id')
   getOrderByUser(@Param('userId') userId: string) {
     return this.orderService.getOrderUserId(userId);
   }
 
   @ApiOperation({ summary: 'Order Status' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, RoleGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/status')
   async updateStatus(
     @Param('id') orderId: string,

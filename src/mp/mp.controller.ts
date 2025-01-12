@@ -16,10 +16,10 @@ export class MpController {
   constructor(private readonly mercadoPagoService: MpService) {}
 
   @ApiOperation({ summary: 'Create a payment with Mercado Pago.' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, GoogleAuthGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, GoogleAuthGuard)
   @Post('create')
-  async creaPayment(@Body() products: any[]) {
+  async creaPayment(@Body() products: any[], orderId: string) {
     console.log('Request body:', products);
     if (!products || !Array.isArray(products)) {
       throw new BadRequestException('Invalid or empty products list');
@@ -27,7 +27,7 @@ export class MpController {
     try {
       console.log('Received products:', products);
       const preference =
-        await this.mercadoPagoService.createPaymentPreference(products);
+        await this.mercadoPagoService.createPaymentPreference(products, orderId);
 
       return {
         message: 'Payment preference created',
