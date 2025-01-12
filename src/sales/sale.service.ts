@@ -12,14 +12,19 @@ export class SaleService {
     ) {}
 
     async getTotalByMonth() {
+        try {
         return await this.saleRepository
         .createQueryBuilder('sale')
-        .select("TO_CHAR(sale.createAt, 'YYYY-MM)", 'month')
+        .select("TO_CHAR(sale.createAt, 'YYYY-MM'), AS month")
         .addSelect('COUNT(*)', 'totalSales')
         .groupBy("TO_CHAR(sale.createAt, 'YYYY-MM')")
         .orderBy('month', 'ASC')
         .getRawMany();
+    } catch(error) {
+        console.error("Error al obtener el total de ventas:", error);
+        throw new Error('Error en la consulta');
     }
+} 
 
     async getTotal() {
         return await this.saleRepository
