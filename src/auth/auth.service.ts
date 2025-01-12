@@ -32,10 +32,10 @@ export class AuthService {
     if (foundUser) throw new BadRequestException('El email ya se encuentra registrado');
 
     const hashedPassword = await bcrypt.hash(user.password, 10);
+    console.log('Encriptado pass:', hashedPassword);
     if (!hashedPassword)
       throw new BadRequestException('Error al encriptar contraseña');
 
-    console.log(hashedPassword);
 
     await this.userRepository.createUser({
       ...user,
@@ -56,12 +56,14 @@ export class AuthService {
     if (!email || !password) throw new BadRequestException('Email y contraseña requeridos');
 
     const user = await this.userRepository.getUserByEmail(email);
+    console.log('USER en login:', user);
     if (!user) throw new NotFoundException('Credenciales invalidas');
     if (user.active === false) {
       throw new UnauthorizedException('Usuario inactivo');
     }
 
     const passwordValidation = await bcrypt.compare(password, user.password);
+    console.log('Pass User Login:', passwordValidation)
     if (!passwordValidation)
       throw new BadRequestException('Credenciales invalidas');
 
