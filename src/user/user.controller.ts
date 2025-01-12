@@ -21,6 +21,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
+import { Address } from 'src/entities/address.entity';
 
 @ApiTags('users')
 @Controller('users')
@@ -129,8 +130,8 @@ export class UserController {
   }
 
 
-  @Get('address')
-  async getAddress(userId: string){
-    return this.userService.getAddresses(userId);
+  @Get('address/:id')
+  async getAddress(@Param('id') id: string) {
+    return this.userService.getAddresses(id);
   }
 }
