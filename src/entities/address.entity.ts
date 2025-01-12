@@ -57,6 +57,9 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
           })
           latitude: number;
 
+          // @ManyToOne(() => User, (user) => user.addresses)
+          // user: User;
+
     }
     
 

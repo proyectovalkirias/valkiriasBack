@@ -115,5 +115,11 @@ export class CreateProductDto {
   @IsBoolean()
   @IsOptional()
   isCustomizable: boolean;
+
+  @IsString()
+  imagePrint?: string | null;
+  
+  @IsString()
+  ideas?: string | null;
 }
 
