@@ -38,21 +38,17 @@ export class ProductService {
     largePrint: Express.Multer.File[] | null | undefined,
     owner: User,
   ) {
-    console.log(createProductDto);
-    console.log(photos);
-    console.log(typeof photos);
+
     const uploadedPhotos = await Promise.all(
       photos.map(async (photo) => {
         const imgUploaded = await this.cloudinaryProvider.uploadImage(photo);
         return imgUploaded.secure_url;
       }),
     );
-    console.log('1');
 
     let uploadedSmallPrint: string[] | null = null;
     let uploadedLargePrint: string[] | null = null;
 
-    console.log('2');
 
     let sizesArray: string[] = [];
     if (createProductDto.size) {

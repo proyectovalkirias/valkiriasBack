@@ -14,9 +14,9 @@ export class SaleService {
     async getTotalByMonth() {
         return await this.saleRepository
         .createQueryBuilder('sale')
-        .select("TO_CHAR(sale.date, 'YYYY-MM)", 'month')
+        .select("TO_CHAR(sale.createAt, 'YYYY-MM)", 'month')
         .addSelect('COUNT(*)', 'totalSales')
-        .groupBy("TO_CHAR(sale.date, 'YYYY-MM')")
+        .groupBy("TO_CHAR(sale.createAt, 'YYYY-MM')")
         .orderBy('month', 'ASC')
         .getRawMany();
     }
