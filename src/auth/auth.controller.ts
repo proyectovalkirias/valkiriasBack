@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -59,14 +60,17 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(GoogleAuthGuard)
   @Post('google-login')
-  async googleLogin(@Body() body: { email: string; firstname: string; lastname: string; photo: string }) {
-    const { email, firstname, lastname, photo } = body;
+  async googleLogin(@Body() body: { email: string; firstname: string; lastname: string; photo: string, accessToken: string }) {
+    const { email, firstname, lastname, photo, accessToken } = body;
 
     if (!email) {
       throw new BadRequestException('El email es obligatorio');
     }
 
     let user = await this.userService.getUserByEmail(email);
+    if(!user) {
+      throw new NotFoundException('Usuario no encontrado en la base de datos')
+    }
 
     
     if (!user) {
@@ -75,7 +79,7 @@ export class AuthController {
         firstname,
         lastname,
         photo,
-        googleAccessToken: 'Token manejado desde el Frontend', 
+        accessToken, 
         active: true,
       };
 
@@ -90,8 +94,8 @@ export class AuthController {
 
     return {
       message: '¡Login con Google exitoso!',
-      token,
       user,
+      token
     };
   }
 }
