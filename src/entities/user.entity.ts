@@ -104,4 +104,7 @@ export class User {
   })
   @JoinColumn()
   products: Product[];
+
+  @Column({ nullable: true})
+  accessGoogle?: string;
 }

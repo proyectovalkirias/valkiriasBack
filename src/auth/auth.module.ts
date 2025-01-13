@@ -7,9 +7,12 @@ import { User } from 'src/entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { CloudinaryConfig, CloudinaryService } from 'src/config/cloudinary';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]),
+UserModule,
+],
   providers: [AuthService, UserRepository, CloudinaryService, CloudinaryConfig],
   controllers: [AuthController],
 })
