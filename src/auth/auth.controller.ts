@@ -14,6 +14,7 @@ import { UserDto } from 'src/dtos/userDto';
 import { LoginDto } from 'src/dtos/loginDto';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { GoogleAuthGuard } from 'src/guards/google-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -27,6 +28,8 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Login' })
+  @ApiBearerAuth()
+  @UseGuards(GoogleAuthGuard)
   @Post('login')
   login(@Body() login: LoginDto) {
     const { email, password } = login;
