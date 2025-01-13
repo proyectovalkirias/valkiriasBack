@@ -62,10 +62,6 @@ export class UserService {
       throw new BadRequestException('Error al crear usuario');
     }
   }
-
-  
-  
-  
   
   async updateAddress(userId: string, addresses: AddressDto[]): Promise<Address[]> {
     const user = await this.userDBRepository.findOne({
@@ -192,6 +188,27 @@ export class UserService {
     return await this.userRepository.changeIsAdmin(id);
   }
 
+
+  async removeAddress(userId: string, addressId: string) {
+    const user = await this.userDBRepository.findOne({ 
+      where: {id: userId},
+      relations: ['addresses']
+    })
+
+  if(!user) {
+    throw new NotFoundException('Usuario no encontrado')
+  }
+  const address = user.addresses.find((addr) => addr.id === addressId);
+  if(!address) {
+    throw new NotFoundException('Dirreción no encontrada')
+  }
+
+  await this.addressRepository.delete(address);
+
+  return 'Dirección eliminada correctamente' 
+  }
+
+
   async getAddresses(userId: string) {
     const user = await this.userDBRepository.findOne({
       where: {id: userId},
@@ -204,4 +221,5 @@ export class UserService {
 
     return user.addresses;
   }
+
 }
