@@ -207,4 +207,18 @@ export class UserService {
   return 'Dirección eliminada correctamente' 
   }
 
+
+  async getAddresses(userId: string) {
+    const user = await this.userDBRepository.findOne({
+      where: {id: userId},
+      relations: ['addresses'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return user.addresses;
+  }
+
 }

@@ -135,4 +135,9 @@ export class UserController {
   ){
    return await this.userService.removeAddress(userId, addressId);
   }
+
+  @Get('address/:id')
+  async getAddress(@Param('id') id: string) {
+    return this.userService.getAddresses(id);
+  }
 }
