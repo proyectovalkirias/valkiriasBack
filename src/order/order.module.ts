@@ -9,7 +9,6 @@ import { OrderDetail } from 'src/entities/orderDetails.entity';
 import { UserModule } from 'src/user/user.module';
 import { ProductPrice } from 'src/entities/productPrice.entity';
 import { MpModule } from 'src/mp/mp.module';
-import { OrderTrack } from 'src/entities/orderTrack.entity';
 
 @Module({
   imports: [
@@ -19,8 +18,7 @@ import { OrderTrack } from 'src/entities/orderTrack.entity';
       User, 
       Order, 
       OrderDetail, 
-      ProductPrice, 
-      OrderTrack]),
+      ProductPrice]),
     UserModule,
   ],
   providers: [OrderService],

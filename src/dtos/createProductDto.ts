@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -114,12 +114,8 @@ export class CreateProductDto {
 
   @IsBoolean()
   @IsOptional()
+  @Transform(({ value }) => value === 'true') 
   isCustomizable: boolean;
 
-  @IsString()
-  imagePrint?: string | null;
-  
-  @IsString()
-  ideas?: string | null;
 }
 

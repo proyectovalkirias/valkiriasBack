@@ -17,7 +17,7 @@ export class MpController {
 
   @ApiOperation({ summary: 'Create a payment with Mercado Pago.' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, GoogleAuthGuard)
+  @UseGuards(AuthGuard || GoogleAuthGuard)
   @Post('create')
   async creaPayment(@Body() products: any[], orderId: string) {
     console.log('Request body:', products);

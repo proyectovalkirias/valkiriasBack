@@ -22,7 +22,7 @@ export class OrderController {
 
   @ApiOperation({ summary: 'New Order' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, GoogleAuthGuard)
+  @UseGuards(AuthGuard || GoogleAuthGuard)
   @Post()
   newOrder(@Body() createOrderDto: CreateOrderDto): Promise<{ url: string }> {
     return this.orderService.createOrder(createOrderDto);
@@ -54,7 +54,7 @@ export class OrderController {
 
   @ApiOperation({ summary: 'Get Order By User' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, GoogleAuthGuard)
+  @UseGuards(AuthGuard || GoogleAuthGuard)
   @Get('user/:id')
   getOrderByUser(@Param('userId') userId: string) {
     return this.orderService.getOrderUserId(userId);

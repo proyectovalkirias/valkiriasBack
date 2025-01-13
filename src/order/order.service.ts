@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateOrderDto } from 'src/dtos/createOrderDto';
 import { Order } from 'src/entities/order.entity';
@@ -8,9 +8,7 @@ import { UserRepository } from 'src/user/user.repository';
 import { EntityManager, Repository} from 'typeorm';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { MpService } from 'src/mp/mp.service';
-import { OrderTrack } from 'src/entities/orderTrack.entity';
-import { Sender } from 'src/entities/sender.entity';
-import { Recipient } from 'src/entities/recipient.entity';
+import { validate as isUUID } from 'uuid';
 
 
 @Injectable()
@@ -25,8 +23,6 @@ export class OrderService {
     private readonly productRepository: Repository<Product>,
     @Inject(forwardRef(() => MpService))
     private readonly mercadoPagoService: MpService,
-    @InjectRepository(OrderTrack)
-    private readonly orderTrackRepository: Repository<OrderTrack>
   ) {
 
   }
@@ -34,6 +30,10 @@ export class OrderService {
   async createOrder(createOrder: CreateOrderDto): Promise<{ url: string }> {
     let total = 0;
     const { userId, products } = createOrder;
+
+    if(!isUUID(userId)) {
+      throw new BadRequestException(`Invalid user Id: ${userId}`);
+    }
 
     const user = await this.userRepository.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
@@ -48,43 +48,31 @@ export class OrderService {
 
     const productArray = await Promise.all(
       products.map(async (item) => {
+        console.log('Product ID:', item.id);
         const product = await this.productRepository.findOneBy({ id: item.id });
-        if (!product) throw new NotFoundException('Product not found');
+        if (!product) throw new NotFoundException(`Product ${item.id} not found`);
 
-        let productPrice = null;
-        product.sizes.map((size) => {
-          if (
-            size === '4' ||
-            size === '6' ||
-            size === '8' ||
-            size === '10' ||
-            size === '12' ||
-            size === '14' ||
-            size === '16'
-          ) {
-            productPrice = product.prices[0];
-          }
-          if (
-            size === 'S' ||
-            size === 'M' ||
-            size === 'L' ||
-            size === 'XL' ||
-            size === 'XXL'
-          ) {
-            if (product.prices[1]) {
-              productPrice = product.prices[1];
-            } else {
-              productPrice = product.prices[0];
-            }
-          }
-        });
-        if (!productPrice) {
-          throw new NotFoundException(`Price for size ${item.size} not found`);
+        // total += Number(productPrice);
+        const productPrice = product.prices.find(
+          (price) => price.size === item.size,
+        );
+
+        if(!productPrice) {
+          throw new BadRequestException(`Price not found for size ${item.size} of product ${item.id}`);
         }
 
-        total += Number(productPrice);
-        product.stock -= 1;
+        if(!productPrice || isNaN(productPrice.price)) {
+          throw new BadRequestException(`Invalid price for product ${productPrice.price}`)
+        }
+
+        total += productPrice.price;
+        if(product.stock < item.quantity) {
+          throw new BadRequestException('Stock insuficiente')
+        }
+
+        product.stock -= item.quantity;
         await this.productRepository.save(product);
+
         return product;
       }),
     );
@@ -92,18 +80,22 @@ export class OrderService {
     const orderDetail = new OrderDetail();
     orderDetail.order = newOrder;
     orderDetail.product = productArray;
-    orderDetail.price = Number(Number(total).toFixed(2));
+    orderDetail.price = Number(total.toFixed(2));
+    orderDetail.size = products[0].size;
+    orderDetail.quantity = products.reduce((sum, item) => sum + item.quantity, 0);
+    // orderDetail.price = Number(Number(total).toFixed(2));
 
     await this.orderDetailRepository.save(orderDetail);
 
-    const orderTrack = new OrderTrack();
-    orderTrack.order = newOrder;
-    orderTrack.sender = new Sender();
-    orderTrack.recipient = new Recipient();
-    // orderTrack.status = status as OrderStatus;;
-    // orderTrack.changeDate = new Date();  
-    // orderTrack.userAddress = order.userAddress;
-    await this.orderTrackRepository.save(orderTrack);
+    // const orderTrack = new OrderTrack();
+    // orderTrack.order = newOrder;
+    // orderTrack.sender = new Sender();
+    // orderTrack.mailAddress = new MailAddress();
+    // orderTrack.recipient = new Recipient();
+    // orderTrack.status = OrderStatus.PENDING;
+    // orderTrack.changeDate = new Date();
+
+    // await this.orderTrackRepository.save(orderTrack);
 
     const preference =
       await this.mercadoPagoService.createPaymentPreference(
@@ -115,10 +107,6 @@ export class OrderService {
       url: preference.url,
     };
 
-    // return await this.orderRepository.findOne({
-    //   where: { id: newOrder.id },
-    //   relations: { orderDetail: { product: true } },
-    // });
   }
 
   async getOrderUserId(userId: string) {

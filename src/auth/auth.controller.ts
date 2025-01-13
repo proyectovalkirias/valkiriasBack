@@ -40,8 +40,6 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: `Change Password` })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @Put(`change-password`)
   changePassword(
     @Query(`email`) email: string,
