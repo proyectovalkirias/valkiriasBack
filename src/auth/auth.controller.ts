@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -15,11 +16,15 @@ import { LoginDto } from 'src/dtos/loginDto';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { GoogleAuthGuard } from 'src/guards/google-auth.guard';
+import { UserService } from 'src/user/user.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @ApiOperation({ summary: 'SignUp' })
   @Post('signup')
@@ -47,5 +52,46 @@ export class AuthController {
     @Body() newPassword: forgotPasswordDto,
   ) {
     return this.authService.changePassword(email, newPassword);
+  }
+
+
+  @ApiOperation({ summary: 'Login Google'})
+  @ApiBearerAuth()
+  @UseGuards(GoogleAuthGuard)
+  @Post('google-login')
+  async googleLogin(@Body() body: { email: string; firstname: string; lastname: string; photo: string }) {
+    const { email, firstname, lastname, photo } = body;
+
+    if (!email) {
+      throw new BadRequestException('El email es obligatorio');
+    }
+
+    let user = await this.userService.getUserByEmail(email);
+
+    
+    if (!user) {
+      const userData = {
+        email,
+        firstname,
+        lastname,
+        photo,
+        googleAccessToken: 'Token manejado desde el Frontend', 
+        active: true,
+      };
+
+      user = await this.userService.createUser(userData);
+    }
+
+    const token = this.authService.generateToken({
+      id: user.id,
+      email: user.email,
+      role: user.isAdmin ? 'admin' : 'user',
+    });
+
+    return {
+      message: '¡Login con Google exitoso!',
+      token,
+      user,
+    };
   }
 }
