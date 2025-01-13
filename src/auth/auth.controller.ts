@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -67,30 +68,32 @@ export class AuthController {
     }
 
     let user = await this.userService.getUserByEmail(email);
-
-    
-    if (!user) {
-      const userData = {
-        email,
-        firstname,
-        lastname,
-        photo,
-        googleAccessToken: 'Token manejado desde el Frontend', 
-        active: true,
-      };
-
-      user = await this.userService.createUser(userData);
+    if(!user) {
+      throw new NotFoundException('Usuario no encontrado en la base de datos')
     }
 
-    const token = this.authService.generateToken({
-      id: user.id,
-      email: user.email,
-      role: user.isAdmin ? 'admin' : 'user',
-    });
+    
+    // if (!user) {
+    //   const userData = {
+    //     email,
+    //     firstname,
+    //     lastname,
+    //     photo,
+    //     googleAccessToken: 'Token manejado desde el Frontend', 
+    //     active: true,
+    //   };
+
+    //   user = await this.userService.createUser(userData);
+    // }
+
+    // const token = this.authService.generateToken({
+    //   id: user.id,
+    //   email: user.email,
+    //   role: user.isAdmin ? 'admin' : 'user',
+    // });
 
     return {
       message: '¡Login con Google exitoso!',
-      token,
       user,
     };
   }
