@@ -28,8 +28,6 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Login' })
-  @ApiBearerAuth()
-  @UseGuards(GoogleAuthGuard)
   @Post('login')
   login(@Body() login: LoginDto) {
     const { email, password } = login;
