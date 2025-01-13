@@ -57,8 +57,8 @@ export class AuthController {
 
 
   @ApiOperation({ summary: 'Login Google'})
-  // @ApiBearerAuth()
-  // @UseGuards(GoogleAuthGuard)
+  @ApiBearerAuth()
+  @UseGuards(GoogleAuthGuard)
   @Post('google-login')
   async googleLogin(@Body() body: { email: string; firstname: string; lastname: string; photo: string, accessToken: string }) {
     const { email, firstname, lastname, photo, accessToken } = body;
@@ -68,11 +68,10 @@ export class AuthController {
     }
 
     let user = await this.userService.getUserByEmail(email);
-    if(!user) {
-      throw new NotFoundException('Usuario no encontrado en la base de datos')
-    }
+    // if(!user) {
+    //   throw new NotFoundException('Usuario no encontrado en la base de datos')
+    // }
 
-    
     if (!user) {
       const userData = {
         email,
