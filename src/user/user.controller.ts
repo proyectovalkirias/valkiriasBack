@@ -123,12 +123,20 @@ export class UserController {
     }
 
     const updatedUser = await this.userService.updateUser(id, updateUser);
-  
-    
-  
     return updatedUser;
   }
 
+
+  @ApiOperation({ summary: 'Delete Addresse'})
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Delete(':id/deleteAddress/:addressId')
+  async deleteAddress(
+    @Param('id') userId: string,
+    @Param('addressId') addressId: string
+  ){
+   return await this.userService.removeAddress(userId, addressId);
+      
 
   @Get('address/:id')
   async getAddress(@Param('id') id: string) {
