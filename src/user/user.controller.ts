@@ -21,6 +21,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
+import { Address } from 'src/entities/address.entity';
 
 @ApiTags('users')
 @Controller('users')

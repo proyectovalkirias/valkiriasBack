@@ -33,7 +33,7 @@ import { SaleModule } from './sales/sale.module';
       global: true,
       secret: process.env.JWT_KEY_SECRET,
       signOptions: {
-        expiresIn: '1h',
+        expiresIn: '365d',
       },
     }),
     ProductModule,
