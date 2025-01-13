@@ -106,5 +106,5 @@ export class User {
   products: Product[];
 
   @Column({ nullable: true})
-  accessGoogle?: string;
+  accessToken?: string;
 }

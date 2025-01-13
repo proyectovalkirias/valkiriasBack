@@ -60,8 +60,8 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(GoogleAuthGuard)
   @Post('google-login')
-  async googleLogin(@Body() body: { email: string; firstname: string; lastname: string; photo: string }) {
-    const { email, firstname, lastname, photo } = body;
+  async googleLogin(@Body() body: { email: string; firstname: string; lastname: string; photo: string, accessToken: string }) {
+    const { email, firstname, lastname, photo, accessToken } = body;
 
     if (!email) {
       throw new BadRequestException('El email es obligatorio');
@@ -73,28 +73,29 @@ export class AuthController {
     }
 
     
-    // if (!user) {
-    //   const userData = {
-    //     email,
-    //     firstname,
-    //     lastname,
-    //     photo,
-    //     googleAccessToken: 'Token manejado desde el Frontend', 
-    //     active: true,
-    //   };
+    if (!user) {
+      const userData = {
+        email,
+        firstname,
+        lastname,
+        photo,
+        accessToken, 
+        active: true,
+      };
 
-    //   user = await this.userService.createUser(userData);
-    // }
+      user = await this.userService.createUser(userData);
+    }
 
-    // const token = this.authService.generateToken({
-    //   id: user.id,
-    //   email: user.email,
-    //   role: user.isAdmin ? 'admin' : 'user',
-    // });
+    const token = this.authService.generateToken({
+      id: user.id,
+      email: user.email,
+      role: user.isAdmin ? 'admin' : 'user',
+    });
 
     return {
       message: '¡Login con Google exitoso!',
       user,
+      token
     };
   }
 }

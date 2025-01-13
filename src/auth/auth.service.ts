@@ -128,7 +128,7 @@ export class AuthService {
     return `La contraseña se cambió correctamente.`;
   }
 
-  // generateToken(payload: any): string {
-  //   return this.jwtService.sign(payload);
-  // }
+  generateToken(payload: any): string {
+    return this.jwtService.sign(payload);
+  }
 }
