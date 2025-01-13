@@ -18,6 +18,9 @@ import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { GoogleAuthGuard } from 'src/guards/google-auth.guard';
 import { UserService } from 'src/user/user.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from 'src/entities/user.entity';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -25,6 +28,8 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
   ) {}
 
   @ApiOperation({ summary: 'SignUp' })
@@ -67,7 +72,7 @@ export class AuthController {
       throw new BadRequestException('El email es obligatorio');
     }
 
-    let user = await this.userService.getUserByEmail(email);
+    let user = await this.userRepository.findOne({where: {email}});
     // if(!user) {
     //   throw new NotFoundException('Usuario no encontrado en la base de datos')
     // }
@@ -82,7 +87,8 @@ export class AuthController {
         active: true,
       };
 
-      user = await this.userService.createUser(userData);
+      user = await this.userRepository.create(userData);
+      console.log('Usuario guardado en la Db')
     }
 
     const token = this.authService.generateToken({
