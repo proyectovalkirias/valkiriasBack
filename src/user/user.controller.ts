@@ -136,7 +136,7 @@ export class UserController {
     @Param('addressId') addressId: string
   ){
    return await this.userService.removeAddress(userId, addressId);
-      
+  }
 
   @Get('address/:id')
   async getAddress(@Param('id') id: string) {
