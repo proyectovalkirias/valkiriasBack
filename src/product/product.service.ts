@@ -279,6 +279,13 @@ export class ProductService {
       query.andWhere(':sizes = ANY(product.sizes)', {
         sizes: filters.sizes,
       });
+
+      if(filters.isCustomizable) {
+        query.andWhere('product.isCustomizable = :isCustomizable', {
+          isCustomizable: filters.isCustomizable,
+        }
+        )
+      }
     }
 
     const products = await query.getMany();

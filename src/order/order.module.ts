@@ -9,6 +9,7 @@ import { OrderDetail } from 'src/entities/orderDetails.entity';
 import { UserModule } from 'src/user/user.module';
 import { ProductPrice } from 'src/entities/productPrice.entity';
 import { MpModule } from 'src/mp/mp.module';
+import { Address } from 'src/entities/address.entity';
 
 @Module({
   imports: [
@@ -18,7 +19,9 @@ import { MpModule } from 'src/mp/mp.module';
       User, 
       Order, 
       OrderDetail, 
-      ProductPrice]),
+      ProductPrice,
+      Address,
+    ]),
     UserModule,
   ],
   providers: [OrderService],
