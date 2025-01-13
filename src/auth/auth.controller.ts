@@ -57,8 +57,8 @@ export class AuthController {
 
 
   @ApiOperation({ summary: 'Login Google'})
-  @ApiBearerAuth()
-  @UseGuards(GoogleAuthGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(GoogleAuthGuard)
   @Post('google-login')
   async googleLogin(@Body() body: { email: string; firstname: string; lastname: string; photo: string, accessToken: string }) {
     const { email, firstname, lastname, photo, accessToken } = body;
