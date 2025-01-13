@@ -41,11 +41,19 @@ export class MpService {
           );
         }
 
+        const productPrice = findProduct.prices.find(
+          (price) => price.size === product.size,
+        );
+  
+        if (!productPrice) {
+          throw new BadRequestException('Precio no encontrado para el talle seleccionado');
+        }
+
         items.push({
           id: product.id,
           title: product.name,
           quantity: product.quantity,
-          unit_price: product.price,
+          unit_price: productPrice.price,
           currency_id: 'ARS',
         });
       }

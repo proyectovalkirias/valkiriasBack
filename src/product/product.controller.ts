@@ -38,8 +38,8 @@ export class ProductController {
 
   @ApiOperation({ summary: 'Create a new product' })
   @ApiConsumes('multipart/form-data')
-  // @UseGuards(AuthGuard, RoleGuard)
   @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @ApiBody({
     description: 'Pon los datos del producto y sube imagenes:',
     schema: {
@@ -153,8 +153,8 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Change the status of a product' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Post('change-status/:productId')
   changeStatusProduct(
     @Param('productId') productId: string,
@@ -165,8 +165,8 @@ export class ProductController {
 
   @ApiOperation({ summary: 'Update a product' })
   @ApiConsumes('multipart/form-data')
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @ApiBearerAuth()
   @ApiBody({
     description: 'Pon los datos a actualizar del producto:',
@@ -252,8 +252,8 @@ export class ProductController {
   }
 
   @ApiOperation({ summary: 'Delete a product' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Delete('delete/:productId')
   deleteProduct(@Param('productId') productId: string) {
     return this.productService.deleteProduct(productId);

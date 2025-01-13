@@ -35,6 +35,12 @@ export class OrderDetail {
   })
   size: string;
 
+  @Column({ type: 'int', nullable: false })
+  @ApiProperty({
+    description: 'Quantity of product',
+  })
+  quantity: number;
+
   @OneToOne(() => Order, (order) => order.orderDetail)
   @JoinColumn({
     name: 'orderId',
