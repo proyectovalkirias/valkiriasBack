@@ -43,7 +43,7 @@ export class UserService {
     return userWithoutPass;
   }
 
-  async getUserByEmail(email: string): Promise<Partial<User>> {
+  async getUserByEmail(email: string): Promise<Partial<User> | null>{
     const user = await this.userRepository.getUserByEmail(email);
 
     const { password, ...userWithoutPass } = user;
