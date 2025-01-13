@@ -45,11 +45,10 @@ export class UserService {
 
   async getUserByEmail(email: string): Promise<Partial<User>> {
     const user = await this.userRepository.getUserByEmail(email);
-    if (!user) throw new NotFoundException('Usuario no encontrado');
 
     const { password, ...userWithoutPass } = user;
 
-    return userWithoutPass;
+    return userWithoutPass || null;
   }
 
   async createUser(userData: UserDto) {
