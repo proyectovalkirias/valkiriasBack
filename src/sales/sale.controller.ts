@@ -9,16 +9,16 @@ export class SaleController {
   constructor(private readonly saleService: SaleService) {}
 
   @ApiOperation({ summary: 'Total Sale By Month' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Get('by-month')
   async getTotalByMonth() {
     return await this.saleService.getTotalByMonth();
   }
 
   @ApiOperation({ summary: 'Total Sale' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Get('total')
   async getTotal() {
     return await this.saleService.getTotal();

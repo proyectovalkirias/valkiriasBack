@@ -65,9 +65,6 @@ export class User {
   phone: string;
 
 
-  // @Column({ type: 'jsonb', nullable: true })
-  // addresses?: Address[]
-
   @OneToMany(() => Address, (address) => address.user, {
     cascade: true,
     onDelete: 'CASCADE',

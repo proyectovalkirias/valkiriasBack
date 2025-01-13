@@ -29,8 +29,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: 'Get All Users' })
-  // @UseGuards(AuthGuard, RoleGuard)
-  // @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
   @Get()
   getAllUser() {
     return this.userService.getAllUser();
@@ -43,16 +43,16 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Deactivate User' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/deactivate')
   deactivateUser(@Param('id') id: string) {
     return this.userService.deactiveUser(id);
   }
 
   @ApiOperation({ summary: 'Activate User' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/activate')
   activateUser(@Param('id') id: string) {
     return this.userService.activeUser(id);
@@ -67,8 +67,8 @@ export class UserController {
       properties: { photo: { type: 'string', format: 'binary' } },
     },
   })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('photo'))
   @Put(`updateProfileImg/:id`)
   updateProfileImg(
@@ -81,16 +81,16 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Update User To Admin' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Put('changeIsAdmin/:id')
   changeIsAdmin(@Param('id') id: string) {
     return this.userService.changeIsAdmin(id);
   }
 
   @ApiOperation({ summary: 'Remove User' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Delete(':id/delete')
   removeUser(@Param('id') id: string) {
     return this.userService.removeUser(id);

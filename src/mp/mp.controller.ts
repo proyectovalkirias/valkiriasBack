@@ -16,8 +16,8 @@ export class MpController {
   constructor(private readonly mercadoPagoService: MpService) {}
 
   @ApiOperation({ summary: 'Create a payment with Mercado Pago.' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, GoogleAuthGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard || GoogleAuthGuard)
   @Post('create')
   async creaPayment(@Body() products: any[], orderId: string) {
     console.log('Request body:', products);
