@@ -19,5 +19,5 @@ export class CreateOrderDto {
     ],
   })
   @IsArray()
-  products: { id: string; size: string }[];
+  products: { id: string; size: string, quantity: number }[];
 }
