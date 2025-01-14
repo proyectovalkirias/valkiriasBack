@@ -10,6 +10,7 @@ import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { MpService } from 'src/mp/mp.service';
 import { validate as isUUID } from 'uuid';
 import { Address } from 'src/entities/address.entity';
+import { ORDER_CHECKPOINTS } from 'src/utils/checkpoints.mock';
 
 
 @Injectable()
@@ -28,6 +29,22 @@ export class OrderService {
     private readonly addressRepository: Repository<Address>
   ) {
 
+  }
+
+
+  private getCoordinatesForStatus(status: OrderStatus, address?: { latitude: number; longitude: number }) {
+    if (status === OrderStatus.DELIVERED && address) {
+      return {
+        latitude: address.latitude,
+        longitude: address.longitude,
+        description: 'Pedido entregado en la dirección del cliente',
+      };
+    }
+
+    const checkpoint = ORDER_CHECKPOINTS[status];
+    return checkpoint
+      ? { ...checkpoint.location, description: checkpoint.description }
+      : { latitude: 0, longitude: 0, description: 'Estado desconocido' };
   }
 
   async createOrder(createOrder: CreateOrderDto): Promise<{ url: string }> {
@@ -114,14 +131,23 @@ export class OrderService {
   async getOrderUserId(userId: string) {
     const orders = await this.orderRepository.find({
       where: { user: { id: userId } },
-      relations: ['orderDetail', 'orderDetail.product'],
+      relations: ['orderDetail', 'orderDetail.product', 'userAddress'],
     });
 
     if (!orders || orders.length === 0) {
       throw new NotFoundException('No existen ordenes para este usuario');
     }
 
-    return orders;
+    const ordersWithCoordinates = orders.map((order) => {
+      const coordinates = this.getCoordinatesForStatus(order.status, order.userAddress);
+      return {
+        ...order,
+        coordinates,
+      };
+    });
+  
+    return ordersWithCoordinates;
+  
   }
 
   getOrder(id: string) {
@@ -131,7 +157,11 @@ export class OrderService {
     });
 
     if (!order) throw new NotFoundException('Orden no encontrada');
+
+    
     return order;
+
+
   }
 
   async getAllOrders() {
