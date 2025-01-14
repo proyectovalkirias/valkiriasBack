@@ -9,6 +9,8 @@ import { EntityManager, Repository} from 'typeorm';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { MpService } from 'src/mp/mp.service';
 import { validate as isUUID } from 'uuid';
+import { Address } from 'src/entities/address.entity';
+import { UserService } from 'src/user/user.service';
 
 
 @Injectable()
@@ -23,13 +25,16 @@ export class OrderService {
     private readonly productRepository: Repository<Product>,
     @Inject(forwardRef(() => MpService))
     private readonly mercadoPagoService: MpService,
+    @InjectRepository(Address)
+    private readonly addressRepository: Repository<Address>,
+    private readonly userService: UserService,
   ) {
 
   }
 
   async createOrder(createOrder: CreateOrderDto): Promise<{ url: string }> {
     let total = 0;
-    const { userId, products } = createOrder;
+    const { userId, addressId, products } = createOrder;
 
     if(!isUUID(userId)) {
       throw new BadRequestException(`Invalid user Id: ${userId}`);
@@ -38,10 +43,16 @@ export class OrderService {
     const user = await this.userRepository.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
 
+    const address = await this.userService.getAddressById(addressId)
+    if(!address) {
+      throw new NotFoundException('Dirección para envio de pedido no encontrada')
+    }
+
     const order = new Order();
     order.createdAt = new Date();
     order.updatedAt = new Date();
     order.user = user;
+    order.userAddress = address;
     order.status = OrderStatus.PENDING;
 
     const newOrder = await this.orderRepository.save(order);
@@ -86,16 +97,6 @@ export class OrderService {
     // orderDetail.price = Number(Number(total).toFixed(2));
 
     await this.orderDetailRepository.save(orderDetail);
-
-    // const orderTrack = new OrderTrack();
-    // orderTrack.order = newOrder;
-    // orderTrack.sender = new Sender();
-    // orderTrack.mailAddress = new MailAddress();
-    // orderTrack.recipient = new Recipient();
-    // orderTrack.status = OrderStatus.PENDING;
-    // orderTrack.changeDate = new Date();
-
-    // await this.orderTrackRepository.save(orderTrack);
 
     const preference =
       await this.mercadoPagoService.createPaymentPreference(
@@ -190,9 +191,14 @@ export class OrderService {
   ): Promise<Order> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
+      relations: [' userAddress']
     });
     if (!order) {
       throw new Error('Orden no encontrada');
+    }
+
+    if(!order.userAddress) {
+      throw new NotFoundException('Este pedido no tiene una dirección de envio asociada')
     }
 
     if (!this.validStatus(order.status as OrderStatus, newStatus)) {

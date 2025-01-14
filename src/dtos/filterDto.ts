@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsInt, IsArray } from 'class-validator';
+import { IsOptional, IsString, IsInt, IsArray, IsBoolean } from 'class-validator';
 
 export class FilterDto {
   @IsOptional()
@@ -12,4 +12,8 @@ export class FilterDto {
   @IsOptional()
   @IsArray()
   sizes?: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  isCustomizable?: boolean;
 }

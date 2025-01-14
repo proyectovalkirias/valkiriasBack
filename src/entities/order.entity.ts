@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { OrderDetail } from './orderDetails.entity';
@@ -24,9 +26,9 @@ export class Order {
   })
   id: string;
 
-  @Column()
+  @CreateDateColumn()
   @ApiProperty({
-    description: 'Order date',
+    description: 'Order creation date',
   })
   createdAt: Date;
 
@@ -41,9 +43,9 @@ export class Order {
   })
   status: OrderStatus;
 
-  @Column()
+  @UpdateDateColumn()
   @ApiProperty({
-    description: 'Update Order Status',
+    description: 'Order last update date',
   })
   updatedAt: Date;
 
@@ -51,7 +53,11 @@ export class Order {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Address, { nullable: true })
+  @ManyToOne(() => Address, { nullable: false })
+  @JoinColumn({ name: 'userAddressId'})
+  @ApiProperty({
+    description: 'Address selected for the order',
+  })
   userAddress: Address;
 
   @OneToOne(() => OrderDetail, (orderDetail) => orderDetail.order, {

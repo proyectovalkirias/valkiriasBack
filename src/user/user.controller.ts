@@ -21,11 +21,18 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from 'src/dtos/updateUserDto';
+import { Address } from 'src/entities/address.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from 'src/entities/user.entity';
 
 @ApiTags('users')
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService,
+  @InjectRepository(User)
+  private readonly userRepository: Repository<User>  
+  ) {}
 
   @ApiOperation({ summary: 'Get All Users' })
   @UseGuards(AuthGuard, RoleGuard)
@@ -122,9 +129,32 @@ export class UserController {
     }
 
     const updatedUser = await this.userService.updateUser(id, updateUser);
-  
-    
-  
     return updatedUser;
+  }
+
+
+  @ApiOperation({ summary: 'Delete Addresse'})
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Delete(':id/deleteAddress/:addressId')
+  async deleteAddress(
+    @Param('id') userId: string,
+    @Param('addressId') addressId: string
+  ){
+   return await this.userService.removeAddress(userId, addressId);
+  }
+
+  @ApiOperation({summary: 'Get Address by'})
+  @Get('address/:id')
+  async getAddress(@Param('id') id: string) {
+    return this.userService.getAddresses(id);
+  }
+
+  @ApiOperation({ summary: 'Get Address by Id'})
+  @Get('addresses/:addressId')
+  async getAddressById(
+    @Param('addressId') addressId: string,
+  ){
+    return this.userService.getAddressById(addressId)
   }
 }
