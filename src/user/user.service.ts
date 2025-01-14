@@ -12,6 +12,7 @@ import { Address } from 'src/entities/address.entity';
 import { AddressDto } from 'src/dtos/addressDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { throttle } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -45,6 +46,9 @@ export class UserService {
 
   async getUserByEmail(email: string): Promise<Partial<User> | null>{
     const user = await this.userRepository.getUserByEmail(email);
+    if(!user) {
+      throw new NotFoundException('Usuario no encontrado')
+    }
 
     const { password, ...userWithoutPass } = user;
 
@@ -72,6 +76,7 @@ export class UserService {
       throw new NotFoundException('Usuario no encontrado');
     }
     
+    
     const updatedAddresses = [];
     
     for (const addressDto of addresses) {
@@ -79,8 +84,14 @@ export class UserService {
         (existingAddress) =>
           existingAddress.street === addressDto.street &&
         existingAddress.number === addressDto.number &&
-        existingAddress.postalCode === addressDto.postalCode
+        existingAddress.postalCode === addressDto.postalCode &&
+        existingAddress.city === addressDto.city &&
+        existingAddress.state === addressDto.state
       );
+
+      if(address) {
+        throw new BadRequestException('La dirección ya se encuentra')
+      }
       
       if (!address) {
         
@@ -219,6 +230,19 @@ export class UserService {
     }
 
     return user.addresses;
+  }
+
+  async getAddressById( addressId: string) { 
+    console.log('Buscando dirección con id:', addressId);
+    const address = await this.addressRepository.findOne({
+      where: { id: addressId},
+    })
+    if(!address) {
+      console.log('direccion no encontrada')
+      throw new NotFoundException('Dirección no encontrada')
+    }
+
+    return address;
   }
 
 }
