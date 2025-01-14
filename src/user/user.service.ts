@@ -43,13 +43,12 @@ export class UserService {
     return userWithoutPass;
   }
 
-  async getUserByEmail(email: string): Promise<Partial<User>> {
+  async getUserByEmail(email: string): Promise<Partial<User> | null>{
     const user = await this.userRepository.getUserByEmail(email);
-    if (!user) throw new NotFoundException('Usuario no encontrado');
 
     const { password, ...userWithoutPass } = user;
 
-    return userWithoutPass;
+    return userWithoutPass || null;
   }
 
   async createUser(userData: UserDto) {

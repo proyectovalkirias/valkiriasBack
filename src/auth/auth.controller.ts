@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -15,11 +17,20 @@ import { LoginDto } from 'src/dtos/loginDto';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { GoogleAuthGuard } from 'src/guards/google-auth.guard';
+import { UserService } from 'src/user/user.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from 'src/entities/user.entity';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
+  ) {}
 
   @ApiOperation({ summary: 'SignUp' })
   @Post('signup')
@@ -47,5 +58,49 @@ export class AuthController {
     @Body() newPassword: forgotPasswordDto,
   ) {
     return this.authService.changePassword(email, newPassword);
+  }
+
+
+  @ApiOperation({ summary: 'Login Google'})
+  // @ApiBearerAuth()
+  // @UseGuards(GoogleAuthGuard)
+  @Post('google-login')
+  async googleLogin(@Body() body: { email: string; firstname: string; lastname: string; photo: string, accessToken: string }) {
+    const { email, firstname, lastname, photo, accessToken } = body;
+
+    if (!email) {
+      throw new BadRequestException('El email es obligatorio');
+    }
+
+    let user = await this.userRepository.findOne({where: {email}});
+    // if(!user) {
+    //   throw new NotFoundException('Usuario no encontrado en la base de datos')
+    // }
+
+    if (!user) {
+      const userData = {
+        email,
+        firstname,
+        lastname,
+        photo,
+        accessToken, 
+        active: true,
+      };
+
+      user = await this.userRepository.create(userData);
+      console.log('Usuario guardado en la Db')
+    }
+
+    const token = this.authService.generateToken({
+      id: user.id,
+      email: user.email,
+      role: user.isAdmin ? 'admin' : 'user',
+    });
+
+    return {
+      message: '¡Login con Google exitoso!',
+      user,
+      token
+    };
   }
 }

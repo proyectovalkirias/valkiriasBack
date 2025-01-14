@@ -53,5 +53,5 @@ export class UserDto {
   })
   @IsNotEmpty()
   @Validate(matchPassword, ['password'])
-  confirmPassword: string;
+  confirmPassword?: string;
 }
