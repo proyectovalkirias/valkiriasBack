@@ -139,9 +139,9 @@ export class UserController {
   @Delete(':id/deleteAddress/:addressId')
   async deleteAddress(
     @Param('id') userId: string,
-    @Param('addressId') addressId: string
+    @Param('addressId') addressId: string,
   ){
-   return await this.userService.removeAddress(userId, addressId);
+   return await this.userService.removeAddress(addressId, userId);
   }
 
   @ApiOperation({summary: 'Get Address by'})
@@ -151,7 +151,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Get Address by Id'})
-  @Get('addresses/:addressId')
+  @Get('address/:addressId')
   async getAddressById(
     @Param('addressId') addressId: string,
   ){
