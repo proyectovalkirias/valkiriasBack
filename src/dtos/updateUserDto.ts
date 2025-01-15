@@ -51,6 +51,16 @@ export class UpdateUserDto {
   phone?: string;
 
 
+  @ApiProperty({
+    description: 'User address',
+    example: [
+      { street: 'Calle Falsa' },
+      { number: 123 },
+      { city: 'Springfield' },
+      { state: 'Springfield' },
+      { postalCode: 12345 }
+    ]
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
