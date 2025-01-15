@@ -120,28 +120,28 @@ export class UserService {
         address.user = user;  
         
         await this.addressRepository.save(address);
-      // } else {
+      } else {
         
-      //   address.street = addressDto.street;
-      //   address.number = addressDto.number;
-      //   address.postalCode = addressDto.postalCode;
-      //   address.city = addressDto.city;
-      //   address.state = addressDto.state;
+        address.street = addressDto.street;
+        address.number = addressDto.number;
+        address.postalCode = addressDto.postalCode;
+        address.city = addressDto.city;
+        address.state = addressDto.state;
         
-      //   const coordinates = await this.geoCodingService.getCoordinates(
-      //     addressDto.street,
-      //     addressDto.number,
-      //     addressDto.city,
-      //     addressDto.state,
-      //     addressDto.postalCode,
-      //   );
+        const coordinates = await this.geoCodingService.getCoordinates(
+          addressDto.street,
+          addressDto.number,
+          addressDto.city,
+          addressDto.state,
+          addressDto.postalCode,
+        );
         
-      //   if (coordinates) {
-      //     address.latitude = coordinates.latitude;
-      //     address.longitude = coordinates.longitude;
-      //   }
+        if (coordinates) {
+          address.latitude = coordinates.latitude;
+          address.longitude = coordinates.longitude;
+        }
         
-      //   await this.addressRepository.save(address);
+        await this.addressRepository.save(address);
       }
       
       updatedAddresses.push(address);
