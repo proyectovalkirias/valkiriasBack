@@ -12,7 +12,7 @@ import { Address } from 'src/entities/address.entity';
 import { AddressDto } from 'src/dtos/addressDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { throttle } from 'rxjs';
+import { Order } from 'src/entities/order.entity';
 
 @Injectable()
 export class UserService {
@@ -23,6 +23,8 @@ export class UserService {
     private readonly userDBRepository: Repository<User>,
     private readonly userRepository: UserRepository,
     private readonly geoCodingService: GeocodingService,
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
   ) {
     console.log('GeoServiceUser:', GeocodingService);
   }
@@ -118,28 +120,28 @@ export class UserService {
         address.user = user;  
         
         await this.addressRepository.save(address);
-      } else {
+      // } else {
         
-        address.street = addressDto.street;
-        address.number = addressDto.number;
-        address.postalCode = addressDto.postalCode;
-        address.city = addressDto.city;
-        address.state = addressDto.state;
+      //   address.street = addressDto.street;
+      //   address.number = addressDto.number;
+      //   address.postalCode = addressDto.postalCode;
+      //   address.city = addressDto.city;
+      //   address.state = addressDto.state;
         
-        const coordinates = await this.geoCodingService.getCoordinates(
-          addressDto.street,
-          addressDto.number,
-          addressDto.city,
-          addressDto.state,
-          addressDto.postalCode,
-        );
+      //   const coordinates = await this.geoCodingService.getCoordinates(
+      //     addressDto.street,
+      //     addressDto.number,
+      //     addressDto.city,
+      //     addressDto.state,
+      //     addressDto.postalCode,
+      //   );
         
-        if (coordinates) {
-          address.latitude = coordinates.latitude;
-          address.longitude = coordinates.longitude;
-        }
+      //   if (coordinates) {
+      //     address.latitude = coordinates.latitude;
+      //     address.longitude = coordinates.longitude;
+      //   }
         
-        await this.addressRepository.save(address);
+      //   await this.addressRepository.save(address);
       }
       
       updatedAddresses.push(address);
@@ -199,25 +201,36 @@ export class UserService {
   }
 
 
-  async removeAddress(userId: string, addressId: string) {
-    const user = await this.userDBRepository.findOne({ 
+  async removeAddress(addressId: string, userId: string): Promise<string> {
+    
+    if(!userId || !addressId) {
+      throw new BadRequestException('ID de usuario o dirección inválido.')
+    }
+    const user = await this.userDBRepository.findOne({
       where: {id: userId},
-      relations: ['addresses']
-    })
+      relations: ['orders', 'addresses']
+    });
 
-  if(!user) {
-    throw new NotFoundException('Usuario no encontrado')
+    if(!user) {
+      throw new NotFoundException(`Usuario con ID ${userId} no encontrado`);
+    }
+    
+    const orders = await this.orderRepository.find({ 
+      where: {user:{id: userId}, userAddress:{id: addressId} }
+    });
+
+    if (orders.length > 0) {
+      return 'No se puede eliminar la dirección porque está asociada a una orden de compra.';
+    }
+
+    const address = await this.addressRepository.findOne({ where: { id: addressId } });
+    if (!address) {
+      throw new NotFoundException('La dirección no existe.')
+    }
+
+    await this.addressRepository.remove(address);
+    return 'Dirección eliminada correctamente';
   }
-  const address = user.addresses.find((addr) => addr.id === addressId);
-  if(!address) {
-    throw new NotFoundException('Dirreción no encontrada')
-  }
-
-  await this.addressRepository.delete(address);
-
-  return 'Dirección eliminada correctamente' 
-  }
-
 
   async getAddresses(userId: string) {
     const user = await this.userDBRepository.findOne({

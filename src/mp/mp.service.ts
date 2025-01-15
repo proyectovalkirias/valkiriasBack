@@ -106,19 +106,19 @@ export class MpService {
       if (payment.status === 'approved') {
         console.log('Payment approved:', payment.order);
       await this.orderService.updateOrderStatus(orderId, OrderStatus.IN_PREPARATION);  
-        /* await transporter.sendMail({
+          await transporter.sendMail({
           from: '"Valkirias" <proyecto.valkirias@gmail.com>',
           subject: 'Pago realizado con éxito',
           html: `Acabas de realizar el pago con éxito`,
-        }); */
+        });
       } else if (payment.status === 'rejected') {
         console.log('Payment rejected:', payment.id);
         await this.orderService.updateOrderStatus(orderId, OrderStatus.PENDING);
-        /* await transporter.sendMail({
+          await transporter.sendMail({
           from: '"Valkirias" <proyecto.valkirias@gmail.com>',
           subject: 'Pago rechazado',
           html: `Tu pago ha sido rechazado, por favor, verifica si tienes saldo o si se trata de otro problema, contáctanos por este mismo mail.`,
-        }); */
+        });
       }
     } catch (error) {
       console.error('Error processing webhook:', error.message);

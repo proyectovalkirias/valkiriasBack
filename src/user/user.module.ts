@@ -7,9 +7,11 @@ import { UserRepository } from './user.repository';
 import { CloudinaryConfig, CloudinaryService } from 'src/config/cloudinary';
 import { GeocodingModule } from 'src/geocoding/geocoding.module';
 import { Address } from 'src/entities/address.entity';
+import { Order } from 'src/entities/order.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Address]), GeocodingModule],
+  imports: [TypeOrmModule.forFeature([User, Address, Order]),
+   GeocodingModule],
   controllers: [UserController],
   providers: [UserService, UserRepository, CloudinaryService, CloudinaryConfig],
   exports: [UserService, UserRepository],
