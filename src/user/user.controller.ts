@@ -115,19 +115,6 @@ export class UserController {
   })
   @Put(':id')
   async updateUser(@Param('id') id: string, @Body() updateUser: UpdateUserDto) {
-    
-    if (updateUser.addresses) {
-      
-      if (Array.isArray(updateUser.addresses)) {
-        for (const address of updateUser.addresses) {
-          await this.userService.updateAddress(id, [address]);
-        }
-      } else {
-        
-        await this.userService.updateAddress(id, [updateUser.addresses]);
-      }
-    }
-
     const updatedUser = await this.userService.updateUser(id, updateUser);
     return updatedUser;
   }
