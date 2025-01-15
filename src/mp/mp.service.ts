@@ -97,29 +97,90 @@ export class MpService {
       const orderId = body.preferenceData.external_reference;
       const order = await this.orderRepository.findOne({
         where: { id: orderId },
+        relations: ['user', 'orderDetails'],
       });
 
       if(!order) {
         throw new NotFoundException('Order not found');
       }
 
+      if (!order.user || !order.user.email) {
+        throw new NotFoundException('Usuario o correo no encontrados en la orden');
+      }
+
       if (payment.status === 'approved') {
         console.log('Payment approved:', payment.order);
-      await this.orderService.updateOrderStatus(orderId, OrderStatus.IN_PREPARATION);  
+          await this.orderService.updateOrderStatus(orderId, OrderStatus.IN_PREPARATION);  
+          
           await transporter.sendMail({
           from: '"Valkirias" <proyecto.valkirias@gmail.com>',
+          to: order.user.email,
           subject: 'Pago realizado con éxito',
-          html: `Acabas de realizar el pago con éxito`,
+          html: `
+          <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #3e1a4d; background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #b093bf; text-align: center; margin-bottom: 20px;">¡Gracias por tu compra!</h1>
+            <p style="font-size: 16px; color: #7b548b; margin-bottom: 10px;">Hola <strong>${order.user.firstname}</strong>,</p>
+            <p style="color: #3e1a4d; margin-bottom: 20px;">
+              Nos complace informarte que tu pago ha sido <strong style="color: #d57159;">aprobado</strong> con éxito. Tu pedido está en preparación.
+            </p>
+            <p style="color: #3e1a4d; font-size: 16px; font-weight: bold; margin-bottom: 10px;">Detalles del pedido:</p>
+            
+            <!-- Detalles del producto -->
+            <ul style="list-style: none; padding: 0; margin-bottom: 20px; color: #7b548b;">
+              ${order.orderDetail.product.map(
+                (prod) => `
+                  <li style="margin-bottom: 10px; font-size: 15px;">
+                    <span style="font-weight: bold; color: #b093bf;">${prod.name}</span> - ${order.orderDetail.quantity} x $${order.orderDetail.price}
+                  </li>`
+              ).join('')}
+            </ul>
+      
+            <hr style="border: 0; border-top: 1px solid #b093bf; margin: 20px 0;">
+            <p style="font-size: 14px; color: #7b548b; margin-bottom: 20px;">
+              Si tienes alguna pregunta, no dudes en contactarnos.
+            </p>
+            <div style="text-align: center; margin-top: 20px;">
+              <a href="https://valkiriasfront.onrender.com/Home" style="display: inline-block; background-color: #b093bf; color: #fff; text-decoration: none; padding: 12px 25px; font-size: 16px; border-radius: 5px; font-weight: bold;">
+                Ir al Home
+              </a>
+            </div>
+            <p style="text-align: center; font-size: 12px; color: #7b548b; margin-top: 20px;">
+              &copy; 2025 Valkirias. Todos los derechos reservados.
+            </p>
+          </div>
+        `,
         });
       } else if (payment.status === 'rejected') {
         console.log('Payment rejected:', payment.id);
         await this.orderService.updateOrderStatus(orderId, OrderStatus.PENDING);
           await transporter.sendMail({
           from: '"Valkirias" <proyecto.valkirias@gmail.com>',
+          to: order.user.email,
           subject: 'Pago rechazado',
-          html: `Tu pago ha sido rechazado, por favor, verifica si tienes saldo o si se trata de otro problema, contáctanos por este mismo mail.`,
-        });
-      }
+          html: `
+           <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #3e1a4d; background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: 0 auto;">
+           <h1 style="color: #d57159; text-align: center; margin-bottom: 20px;">Hubo un problema con tu pago</h1>
+           <p style="font-size: 16px; color: #7b548b; margin-bottom: 10px;">Hola <strong>${order.user.firstname}</strong>,</p>
+           <p style="color: #3e1a4d; margin-bottom: 20px;">
+           Lamentamos informarte que tu pago no se ha podido procesar correctamente. Por favor, verifica los detalles de tu tarjeta o método de pago e inténtalo nuevamente.
+           </p>
+
+           <hr style="border: 0; border-top: 1px solid #b093bf; margin: 20px 0;">
+           <p style="font-size: 14px; color: #7b548b; margin-bottom: 20px;">
+           Si necesitas ayuda, no dudes en contactarnos para resolver cualquier inconveniente.
+           </p>
+           <div style="text-align: center; margin-top: 20px;">
+           <a href="https://valkiriasfront.onrender.com/Home" style="display: inline-block; background-color: #d57159; color: #fff; text-decoration: none; padding: 12px 25px; font-size: 16px; border-radius: 5px; font-weight: bold;">
+           Regresar al Home
+           </a>
+           </div>
+           <p style="text-align: center; font-size: 12px; color: #7b548b; margin-top: 20px;">
+          &copy; 2025 Valkirias. Todos los derechos reservados.
+      </p>
+    </div>
+  `,
+      });
+  }
     } catch (error) {
       console.error('Error processing webhook:', error.message);
       throw new Error('Fallo al procesar webhoook');
