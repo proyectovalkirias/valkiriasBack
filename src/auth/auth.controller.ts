@@ -3,20 +3,16 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDto } from 'src/dtos/userDto';
 import { LoginDto } from 'src/dtos/loginDto';
 import { forgotPasswordDto } from 'src/dtos/forgotPasswordDto';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { GoogleAuthGuard } from 'src/guards/google-auth.guard';
 import { UserService } from 'src/user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -85,10 +81,14 @@ export class AuthController {
         active: true,
       };
 
-      user = await this.userRepository.create(userData);
+      user = this.userRepository.create(userData);
       user= await this.userRepository.save(user);
       console.log("usuario creado", user)
       console.log('Usuario guardado en la Db')
+    } else {
+      user.accessToken = accessToken;
+      user = await this.userRepository.save(user);
+    console.log("usuario actualizado con accessToken", user);  
     }
 
     const token = this.authService.generateToken({
