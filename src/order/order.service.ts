@@ -26,7 +26,6 @@ export class OrderService {
     @Inject(forwardRef(() => MpService))
     private readonly mercadoPagoService: MpService,
     @InjectRepository(Address)
-    private readonly addressRepository: Repository<Address>,
     private readonly userService: UserService,
   ) {
 
