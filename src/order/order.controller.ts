@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -72,5 +73,37 @@ export class OrderController {
       throw new Error('Estado inválido');
     }
     return this.orderService.updateOrderStatusManual(orderId, newStatus);
+  }
+
+  @ApiOperation({ summary: 'Order Status Manual'})
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
+  @Put(':orderId/status/manual')
+  async updateOrderStatusManual(
+    @Param('orderId') orderId: string,
+    @Body('newStatus') newStatus: OrderStatus,
+  ) {
+    try {
+      const updatedOrder = await this.orderService.updateOrderStatusManual(orderId, newStatus);
+      return updatedOrder;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
+  }
+
+
+  @ApiOperation({ summary: 'Update Order'})
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
+  @Put(':orderId/status')
+  async updateOrderStatus(
+    @Param('orderId') orderId: string,
+    @Body('status') status: OrderStatus,
+  ) {
+    await this.orderService.updateOrderStatus(orderId, status);
+    return { message: 'Estado de la orden actualizado correctamente' };
   }
 }
