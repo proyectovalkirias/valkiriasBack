@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -13,7 +14,6 @@ import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CreateOrderDto } from 'src/dtos/createOrderDto';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { GoogleAuthGuard } from 'src/guards/google-auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 
 @Controller('order')
@@ -22,7 +22,7 @@ export class OrderController {
 
   @ApiOperation({ summary: 'New Order' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard || GoogleAuthGuard)
+  @UseGuards(AuthGuard)
   @Post()
   newOrder(@Body() createOrderDto: CreateOrderDto): Promise<{ url: string }> {
     return this.orderService.createOrder(createOrderDto);
@@ -54,7 +54,7 @@ export class OrderController {
 
   @ApiOperation({ summary: 'Get Order By User' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard || GoogleAuthGuard)
+  @UseGuards(AuthGuard)
   @Get('user/:id')
   getOrderByUser(@Param('userId') userId: string) {
     return this.orderService.getOrderUserId(userId);
@@ -72,5 +72,37 @@ export class OrderController {
       throw new Error('Estado inválido');
     }
     return this.orderService.updateOrderStatusManual(orderId, newStatus);
+  }
+
+  @ApiOperation({ summary: 'Order Status Manual'})
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
+  @Put(':orderId/status/manual')
+  async updateOrderStatusManual(
+    @Param('orderId') orderId: string,
+    @Body('newStatus') newStatus: OrderStatus,
+  ) {
+    try {
+      const updatedOrder = await this.orderService.updateOrderStatusManual(orderId, newStatus);
+      return updatedOrder;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
+  }
+
+
+  @ApiOperation({ summary: 'Update Order'})
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
+  @Put(':orderId/status')
+  async updateOrderStatus(
+    @Param('orderId') orderId: string,
+    @Body('status') status: OrderStatus,
+  ) {
+    await this.orderService.updateOrderStatus(orderId, status);
+    return { message: 'Estado de la orden actualizado correctamente' };
   }
 }
