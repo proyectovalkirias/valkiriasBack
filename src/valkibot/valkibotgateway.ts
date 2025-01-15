@@ -55,7 +55,7 @@ export class ValkibotGateway implements OnGatewayConnection, OnGatewayDisconnect
       return;
     }
     const { isAdmin, firstname } = sender; 
-    console.log(`Mensaje recibido de ${isAdmin ? 'Admin' : 'Usuario'} (${firstname}):`, body);
+    console.log(`Mensaje recibido de ${firstname ? 'Admin' : 'Usuario'}:`, body);
 
     if (isAdmin) {
       const targetUser = Array.from(this.users.values()).find((u) => !u.isAdmin);

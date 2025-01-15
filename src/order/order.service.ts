@@ -11,6 +11,7 @@ import { MpService } from 'src/mp/mp.service';
 import { validate as isUUID } from 'uuid';
 import { Address } from 'src/entities/address.entity';
 import { ORDER_CHECKPOINTS } from 'src/utils/checkpoints.mock';
+import { UserService } from 'src/user/user.service';
 
 
 @Injectable()
@@ -49,7 +50,7 @@ export class OrderService {
 
   async createOrder(createOrder: CreateOrderDto): Promise<{ url: string }> {
     let total = 0;
-    const { userId, products } = createOrder;
+    const { userId, addressId, products } = createOrder;
 
     if(!isUUID(userId)) {
       throw new BadRequestException(`Invalid user Id: ${userId}`);
@@ -58,10 +59,7 @@ export class OrderService {
     const user = await this.userRepository.getUserById(userId);
     if (!user) throw new NotFoundException('User not found');
 
-    const address = await this.addressRepository.findOne({
-      where: { id: createOrder.addressId, user: { id: createOrder.addressId} }
-    })
-
+    const address = await this.userService.getAddressById(addressId)
     if(!address) {
       throw new NotFoundException('Dirección para envio de pedido no encontrada')
     }
