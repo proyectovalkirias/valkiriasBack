@@ -53,7 +53,7 @@ export class Order {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Address, { nullable: false })
+  @ManyToOne(() => Address, (address) => address.orders, { nullable: false })
   @JoinColumn({ name: 'userAddressId'})
   @ApiProperty({
     description: 'Address selected for the order',

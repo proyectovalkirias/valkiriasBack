@@ -1,7 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ChatLog } from 'src/entities/chatLog.entity';
+import { User } from 'src/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ValkibotService {
+  constructor(
+    @InjectRepository(ChatLog)
+    private chatLogRepository: Repository<ChatLog>,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
+
   private options = {
     inicio: [
       { id: 'productos', label: '¿Que ofrecemos?' },
@@ -34,10 +46,14 @@ export class ValkibotService {
       'Si necesitás más info sobre costos o tiempos, ¡escribinos por WhatsApp!',
     talles:
       'Nuestras prendas son unisex y trabajamos talles para niños y adultos. Si no ves el color que querés en la web, consultanos por WhatsApp, que vemos qué podemos hacer. 🎨👕',
-    chat: 'Si no encontrás lo que buscás o preferís hablar con alguien del equipo, escribinos directamente al WhatsApp. ¡Te esperamos con buena onda y muchas ideas! 🦊💬',
+    whatsapp: 'Si no encontrás lo que buscás o preferís hablar con alguien del equipo, escribinos directamente al WhatsApp. ¡Te esperamos con buena onda y muchas ideas! 🦊💬',
     pedidosespeciales:
       'Hacemos combos de buzos y remeras para egresados y conjuntos deportivos personalizados para fútbol o básquet. 🏀⚽\n' +
       'Por la cantidad de detalles que esto requiere, te recomiendo que consultes directamente por WhatsApp. ¡Hagamos magia juntos! ✨',
+
+      volver: [
+        { id: 'inicio', label: 'Volver al menú principal 🦊✨' },
+      ],
   };
 
   async getResponse(
@@ -71,14 +87,79 @@ export class ValkibotService {
       };
     }
 
+    if (lowerMessage === 'productos') {
+      return {
+        reply:
+          '¡Estas son nuestras opciones de productos! Elige lo que más te guste: 👇',
+          options: [
+            ...this.options.productos,  
+            ...this.options.volver,     
+          ], 
+      };
+    }
+
+    if (lowerMessage === 'fer') {
+      return {
+        reply: 'Fer!  Soy Valki 🦊✨, y con este mensaje te quiero decir que tenes que aprobar a los pibes de Proyecto Valkirias, no se si se lo merecen, pero lo necesitan 💕💕',
+        options: this.options.volver,
+      };
+    }
+
+    if (lowerMessage === 'caro') {
+      return {
+        reply: 'Caro!  Soy Valki!🦊✨ Y en nombre de los pibes de Proyecto Valkirias me toca decirte: ¡Gracias por todo este proceso de aprendizaje! ¡Te queremos! (Lean ahora, puse este mensaje pregrabado antes de la entrega porque me sobran huevos y se que vamos a aprobar, saludos cordiales!) ',
+        options: this.options.volver,
+      };  
+    }
+    const lowerMessageValid = this.options[lowerMessage];
+    if (lowerMessageValid) {
+      let replyText = lowerMessageValid;
+      let responseOptions;
+  
+      
+      if (lowerMessage === 'productos') {
+        responseOptions = [
+          ...this.options.productos,   
+          ...this.options.volver,      
+        ];
+      } 
+     
+      else if (
+        lowerMessage === 'formasdepago' ||
+        lowerMessage === 'envios' ||
+        lowerMessage === 'talles' ||
+        lowerMessage === 'pedidosespeciales'
+      ) {
+        responseOptions = [
+          ...this.options.volver,  
+        ];
+      }
+      return {
+        reply: replyText,
+        options: responseOptions, 
+      };
+    }
+  
+
+    if (lowerMessage === 'volver') {
+      return {
+        reply:
+          '¡Volvimos al menú principal! 🦊✨ ¿En qué más puedo ayudarte?',
+        options: this.options.inicio,
+      };
+    }
+
     if (this.options[lowerMessage]) {
       return { reply: this.options[lowerMessage] };
     }
 
-    if (lowerMessage === 'chatService') {
+    if (lowerMessage === 'chat') {
       return {
         reply:
-          'Conéctate al chat en vivo con uno de nuestros operadores humanos. 🦊✨ Utiliza el botón para iniciar la conversación.',
+          '¡Te estamos derivando al chat en vivo para que hables con un humano! 💬 Nuestro equipo está listo para ayudarte. 🙌',
+        options: [
+          ...this.options.volver, 
+        ],
       };
     }
 
@@ -87,4 +168,86 @@ export class ValkibotService {
         'Escribí "hola" o "inicio" para ver las opciones disponibles o contáctanos por WhatsApp. 🦊✨',
     };
   }
+
+
+  async createChatLog(userId: string): Promise<ChatLog> {
+
+    const existingChatLog = await this.chatLogRepository.createQueryBuilder('chatLog')
+    .leftJoinAndSelect('chatLog.user', 'user')
+    .where('chatLog.userId = :userId', { userId })  
+    .getOne();
+
+    console.log("REGISTRO DE CHATS:" + existingChatLog);
+  
+    if (existingChatLog) {
+      console.log('Chat log encontrado:', existingChatLog);
+      return existingChatLog;
+    }
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
+
+    const chatLog = new ChatLog();
+    chatLog.user = user; 
+    chatLog.messages = []; 
+    chatLog.timestamp = new Date();
+    chatLog.isActive = true;
+    return this.chatLogRepository.save(chatLog);
+  }
+
+  async addMessageToChatLog(userId: string, message: { sender: string; content: string }): Promise<ChatLog> {
+    console.log('Mensaje antes de llamar a addMessageToChatLog:', message);
+    const chatLog = await this.chatLogRepository.findOne({
+      where: { user: { id: userId }, isActive: true },
+      relations: ['user'],
+    });
+
+    if (!chatLog) {
+      console.log('No se encontró un chat activo para este usuario.');
+      return null;
+    }
+    const { sender, content } = message;
+    console.log('Contenido del mensaje:', content);
+
+    const newMessage = { sender, content };
+
+    chatLog.messages = chatLog.messages ? [...chatLog.messages, newMessage] : [newMessage];
+    console.log('Contenido del mensaje:', message.content);
+    console.log('Mensajes después de agregar:', chatLog.messages);
+    chatLog.timestamp = new Date()
+    return this.chatLogRepository.save(chatLog); 
+  }
+
+  
+  async closeChat(userId: string): Promise<ChatLog> {
+    const chatLog = await this.chatLogRepository.findOne({
+      where: { user: { id: userId }, isActive: true },
+      relations: ['user'],
+    });
+
+    if (!chatLog) {
+      console.log('No se encontró un chat activo para este usuario.');
+      return null;
+    }
+
+    chatLog.isActive = false; 
+    return this.chatLogRepository.save(chatLog);
+  }
+
+  async getMessagesById(userId: string): Promise<ChatLog[]> {
+
+    console.log("Buscando mensajes para userId:", userId);
+
+    const queryBuilder = this.chatLogRepository.createQueryBuilder("chatLog");
+  
+    const messages = await queryBuilder
+      .where("chatLog.userId = :userId", { userId })  
+      .orderBy("chatLog.timestamp", "ASC")
+      .getMany();
+
+    console.log("Mensajes encontrados:", messages);
+    return messages
+  }
 }
+

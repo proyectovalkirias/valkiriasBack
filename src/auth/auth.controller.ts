@@ -73,10 +73,8 @@ export class AuthController {
     }
 
     let user = await this.userRepository.findOne({where: {email}});
-    // if(!user) {
-    //   throw new NotFoundException('Usuario no encontrado en la base de datos')
-    // }
-
+ 
+    console.log("usuario encontrado", user)
     if (!user) {
       const userData = {
         email,
@@ -88,6 +86,8 @@ export class AuthController {
       };
 
       user = await this.userRepository.create(userData);
+      user= await this.userRepository.save(user);
+      console.log("usuario creado", user)
       console.log('Usuario guardado en la Db')
     }
 
@@ -104,3 +104,4 @@ export class AuthController {
     };
   }
 }
+
