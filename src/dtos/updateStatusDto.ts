@@ -7,7 +7,7 @@ export class UpdateOrderStatusManualDto {
   @ApiProperty({ 
     enum: OrderStatus, 
     description: 'Nuevo estado de la orden',
-    example: { "newStatus": "ON_THE_WAY" }
+    example: "en camino"
  })
   @IsEnum(OrderStatus)
   newStatus: OrderStatus;
@@ -17,7 +17,7 @@ export class UpdateOrderStatusDto {
   @ApiProperty({ 
     enum: OrderStatus, 
     description: 'Estado de la orden',
-    example: { "newStatus": "IN_PREPARATION" }
+    example: "en preparación"
  })
   @IsEnum(OrderStatus)
   status: OrderStatus;

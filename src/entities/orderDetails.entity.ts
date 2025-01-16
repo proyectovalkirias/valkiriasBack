@@ -5,11 +5,13 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Product } from './product.entity';
 import { Order } from './order.entity';
+import { Address } from './address.entity';
 
 @Entity({
   name: 'orderDetails',
@@ -50,4 +52,11 @@ export class OrderDetail {
   @ManyToMany(() => Product)
   @JoinTable({ name: 'orderDetail_product' })
   product: Product[];
+
+  @ManyToOne(() => Address, { nullable: false })
+  @JoinColumn({ name: 'userAddressId' })
+  @ApiProperty({
+    description: 'Address selected for the order',
+  })
+  address: Address;
 }

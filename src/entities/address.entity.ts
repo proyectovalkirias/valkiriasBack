@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 import { Order } from "./order.entity";
+import { OrderDetail } from "./orderDetails.entity";
 
 
 @Entity({ name: 'addresses'}) 
@@ -67,6 +68,12 @@ import { Order } from "./order.entity";
 
           @OneToMany(() => Order, (order) => order.userAddress)
           orders: Order[];
+
+          @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.address)
+          @ApiProperty({
+            description: 'Address user',
+          })
+          orderDetails: OrderDetail[]
 
     }
     
