@@ -12,7 +12,7 @@ import {
 import { User } from './user.entity';
 import { OrderDetail } from './orderDetails.entity';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
-import { Address } from './address.entity';
+// import { Address } from './address.entity';
 
 @Entity({
   name: 'orders',
@@ -53,12 +53,12 @@ export class Order {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Address, (address) => address.orders, { nullable: false })
-  @JoinColumn({ name: 'userAddressId'})
-  @ApiProperty({
-    description: 'Address selected for the order',
-  })
-  userAddress: Address;
+  // @ManyToOne(() => Address, (address) => address.orders, { nullable: false })
+  // @JoinColumn({ name: 'userAddressId'})
+  // @ApiProperty({
+  //   description: 'Address selected for the order',
+  // })
+  // userAddress: Address;
 
   @OneToOne(() => OrderDetail, (orderDetail) => orderDetail.order, {
     cascade: true,
