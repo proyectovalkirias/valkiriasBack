@@ -15,6 +15,7 @@ import { CreateOrderDto } from 'src/dtos/createOrderDto';
 import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
+import { UpdateOrderStatusDto, UpdateOrderStatusManualDto } from 'src/dtos/updateStatusDto';
 
 @Controller('order')
 export class OrderController {
@@ -77,13 +78,15 @@ export class OrderController {
   @ApiOperation({ summary: 'Order Status Manual'})
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RoleGuard)
-  @Put(':orderId/status/manual')
   async updateOrderStatusManual(
     @Param('orderId') orderId: string,
-    @Body('newStatus') newStatus: OrderStatus,
+    @Body() updateOrderStatusManualDto: UpdateOrderStatusManualDto,
   ) {
     try {
-      const updatedOrder = await this.orderService.updateOrderStatusManual(orderId, newStatus);
+      const updatedOrder = await this.orderService.updateOrderStatusManual(
+        orderId,
+        updateOrderStatusManualDto.newStatus,
+      );
       return updatedOrder;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -100,9 +103,10 @@ export class OrderController {
   @Put(':orderId/status')
   async updateOrderStatus(
     @Param('orderId') orderId: string,
-    @Body('status') status: OrderStatus,
+    @Body() updateOrderStatusDto: UpdateOrderStatusDto,
   ) {
-    await this.orderService.updateOrderStatus(orderId, status);
+    await this.orderService.updateOrderStatus(orderId, updateOrderStatusDto.status);
     return { message: 'Estado de la orden actualizado correctamente' };
   }
 }
+

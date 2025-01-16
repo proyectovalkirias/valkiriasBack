@@ -7,7 +7,10 @@ export class ChatLog {
     @PrimaryGeneratedColumn('uuid')
     id: string;
   
-    @OneToOne(() => User) 
+    @OneToOne(() => User, (user) => user.id, {
+      cascade: true,
+      onDelete: 'CASCADE'
+    }) 
     @JoinColumn({ name: 'userId' })
     user: User; 
   
