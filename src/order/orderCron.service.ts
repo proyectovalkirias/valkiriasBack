@@ -11,6 +11,7 @@ export class OrderCronService {
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   async handleOrderStatus() {
+    console.log('Cron job ejecutando');
     this.logger.log('Estado de orden actualizando...');
 
     const orders = await this.orderService.getOrderStatus();

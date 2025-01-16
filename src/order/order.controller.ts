@@ -16,10 +16,14 @@ import { OrderStatus } from 'src/utils/orderStatus.enum';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { UpdateOrderStatusDto, UpdateOrderStatusManualDto } from 'src/dtos/updateStatusDto';
+import { OrderCronService } from './orderCron.service';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly orderCrons: OrderCronService,
+  ) {}
 
   @ApiOperation({ summary: 'New Order' })
   @ApiBearerAuth()
@@ -38,8 +42,8 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Get Order By Id' })
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Get(':id')
   getOrderById(@Param('id') id: string) {
     return this.orderService.getOrder(id);
@@ -77,8 +81,8 @@ export class OrderController {
   // }
 
   @ApiOperation({ summary: 'Order Status Manual'})
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Put(':id/status/manual')
   async updateOrderStatusManual(
     @Param('orderId') orderId: string,
@@ -100,8 +104,8 @@ export class OrderController {
 
 
   @ApiOperation({ summary: 'Update Order'})
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard, RoleGuard)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RoleGuard)
   @Put(':orderId/status')
   async updateOrderStatus(
     @Param('orderId') orderId: string,
@@ -110,5 +114,14 @@ export class OrderController {
     await this.orderService.updateOrderStatus(orderId, updateOrderStatusDto.status);
     return { message: 'Estado de la orden actualizado correctamente' };
   }
+
+  @Get('run-cron')
+  @ApiOperation({ summary: 'Ejecutar cron job manualmente' }) 
+  async runCronJob() {
+    await this.orderCrons.handleOrderStatus();
+    return { message: 'Cron job ejecutado manualmente' }; 
+  }
+
+  
 }
 
