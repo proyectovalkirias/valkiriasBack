@@ -38,8 +38,8 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: 'Get Order By Id' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, RoleGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, RoleGuard)
   @Get(':id')
   getOrderById(@Param('id') id: string) {
     return this.orderService.getOrder(id);
@@ -56,28 +56,30 @@ export class OrderController {
   @ApiOperation({ summary: 'Get Order By User' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @Get('user/:id')
+  @Get('user/:userId')
   getOrderByUser(@Param('userId') userId: string) {
+    console.log('User ID Controller:', userId);
     return this.orderService.getOrderUserId(userId);
   }
 
-  @ApiOperation({ summary: 'Order Status' })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, RoleGuard)
-  @Put(':id/status')
-  async updateStatus(
-    @Param('id') orderId: string,
-    @Body() newStatus: OrderStatus,
-  ) {
-    if (!Object.values(OrderStatus).includes(newStatus)) {
-      throw new Error('Estado inválido');
-    }
-    return this.orderService.updateOrderStatusManual(orderId, newStatus);
-  }
+  // @ApiOperation({ summary: 'Order Status' })
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, RoleGuard)
+  // @Put(':id/status')
+  // async updateStatus(
+  //   @Param('id') orderId: string,
+  //   @Body() newStatus: OrderStatus,
+  // ) {
+  //   if (!Object.values(OrderStatus).includes(newStatus)) {
+  //     throw new Error('Estado inválido');
+  //   }
+  //   return this.orderService.updateOrderStatusManual(orderId, newStatus);
+  // }
 
   @ApiOperation({ summary: 'Order Status Manual'})
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, RoleGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, RoleGuard)
+  @Put(':id/status/manual')
   async updateOrderStatusManual(
     @Param('orderId') orderId: string,
     @Body() updateOrderStatusManualDto: UpdateOrderStatusManualDto,
@@ -98,8 +100,8 @@ export class OrderController {
 
 
   @ApiOperation({ summary: 'Update Order'})
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard, RoleGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, RoleGuard)
   @Put(':orderId/status')
   async updateOrderStatus(
     @Param('orderId') orderId: string,

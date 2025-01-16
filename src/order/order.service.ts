@@ -130,7 +130,7 @@ export class OrderService {
   async getOrderUserId(userId: string) {
     const orders = await this.orderRepository.find({
       where: { user: { id: userId } },
-      relations: ['orderDetail', 'orderDetail.product', 'userAddress'],
+      relations: ['user','orderDetail', 'orderDetail.product', 'userAddress'],
     });
 
     if (!orders || orders.length === 0) {
@@ -152,7 +152,7 @@ export class OrderService {
   getOrder(id: string) {
     const order = this.orderRepository.findOne({
       where: { id },
-      relations: [ 'orderDetail', 'orderDetail.product', 'orderTrack'],
+      relations: [ 'orderDetail', 'orderDetail.product'],
     });
 
     if (!order) throw new NotFoundException('Orden no encontrada');
