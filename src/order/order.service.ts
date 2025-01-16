@@ -69,7 +69,7 @@ export class OrderService {
     order.createdAt = new Date();
     order.updatedAt = new Date();
     order.user = user;
-    order.userAddress = address;
+    // order.userAddress = address;
     order.status = OrderStatus.PENDING;
 
     const newOrder = await this.orderRepository.save(order);
@@ -110,6 +110,7 @@ export class OrderService {
     orderDetail.product = productArray;
     orderDetail.price = Number(total.toFixed(2));
     orderDetail.size = products[0].size;
+    orderDetail.address = address;
     orderDetail.quantity = products.reduce((sum, item) => sum + item.quantity, 0);
     // orderDetail.price = Number(Number(total).toFixed(2));
 
