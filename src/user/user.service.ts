@@ -216,7 +216,7 @@ export class UserService {
     }
     
     const orders = await this.orderRepository.find({ 
-      where: {user:{id: userId}, userAddress:{id: addressId} }
+      where: {user:{id: userId}, orderDetail: { address: { id: addressId } }  }
     });
 
     if (orders.length > 0) {

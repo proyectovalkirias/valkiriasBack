@@ -131,7 +131,7 @@ export class OrderService {
   async getOrderUserId(userId: string) {
     const orders = await this.orderRepository.find({
       where: { user: { id: userId } },
-      relations: ['user','orderDetail', 'orderDetail.product', 'userAddress'],
+      relations: ['user','orderDetail', 'orderDetail.product', 'orderDetail.address'],
     });
 
     if (!orders || orders.length === 0) {
@@ -139,7 +139,7 @@ export class OrderService {
     }
 
     const ordersWithCoordinates = orders.map((order) => {
-      const coordinates = this.getCoordinatesForStatus(order.status, order.userAddress);
+      const coordinates = this.getCoordinatesForStatus(order.status, order.orderDetail.address);
       return {
         ...order,
         coordinates,
@@ -230,13 +230,13 @@ export class OrderService {
   ): Promise<Order> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
-      relations: [' userAddress']
+      relations: ['orderDetail', 'orderDetail.address']
     });
     if (!order) {
       throw new Error('Orden no encontrada');
     }
 
-    if(!order.userAddress) {
+    if(!order.orderDetail.address) {
       throw new NotFoundException('Este pedido no tiene una dirección de envio asociada')
     }
 
