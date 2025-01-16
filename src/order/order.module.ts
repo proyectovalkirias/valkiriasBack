@@ -10,6 +10,7 @@ import { UserModule } from 'src/user/user.module';
 import { ProductPrice } from 'src/entities/productPrice.entity';
 import { MpModule } from 'src/mp/mp.module';
 import { Address } from 'src/entities/address.entity';
+import { OrderCronService } from './orderCron.service';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { Address } from 'src/entities/address.entity';
     ]),
     UserModule,
   ],
-  providers: [OrderService],
+  providers: [OrderService, OrderCronService],
   controllers: [OrderController],
   exports: [OrderService],
 })

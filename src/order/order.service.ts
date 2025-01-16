@@ -137,7 +137,8 @@ export class OrderService {
     if (!orders || orders.length === 0) {
       throw new NotFoundException('No existen ordenes para este usuario');
     }
-
+    
+    
     const ordersWithCoordinates = orders.map((order) => {
       const coordinates = this.getCoordinatesForStatus(order.status, order.orderDetail.address);
       return {
@@ -254,4 +255,5 @@ export class OrderService {
       updatedAt: new Date(),
     });
   }
+
 }
