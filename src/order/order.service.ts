@@ -205,14 +205,22 @@ export class OrderService {
     });
   }
 
-  async validStatus(currentStatus: OrderStatus, newStatus: OrderStatus) {
+  async validStatus(
+    currentStatus: OrderStatus,
+    newStatus: OrderStatus,
+  ): Promise<boolean> {
     const statusFlow: Record<OrderStatus, OrderStatus[]> = {
       [OrderStatus.PENDING]: [OrderStatus.IN_PREPARATION],
       [OrderStatus.IN_PREPARATION]: [OrderStatus.ON_THE_WAY],
       [OrderStatus.ON_THE_WAY]: [OrderStatus.DELIVERED],
       [OrderStatus.DELIVERED]: [],
     };
-    return statusFlow[currentStatus]?.includes(newStatus) || false;
+
+    if (!(currentStatus in statusFlow)) {
+      throw new BadRequestException(`Estado actual '${currentStatus}' no válido`);
+    }
+
+    return statusFlow[currentStatus].includes(newStatus);
   }
 
   async updateOrderStatusManual(
